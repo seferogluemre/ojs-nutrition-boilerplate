@@ -4,11 +4,11 @@ import { deleteSessionCookie, setSessionCookie } from "better-auth/cookies";
 import { createAuthEndpoint, createAuthMiddleware } from "better-auth/plugins";
 import type {
     AuthPluginSchema,
-    BetterAuthPlugin,
+  BetterAuthPlugin,
     GenericEndpointContext,
-    InferOptionSchema,
-    Session,
-    User,
+  InferOptionSchema,
+  Session,
+  User,
 } from "better-auth/types";
 import { PERMISSIONS } from "../../../roles/constants";
 import { isPermissionGrantedToUser } from "../../../roles/helpers";
