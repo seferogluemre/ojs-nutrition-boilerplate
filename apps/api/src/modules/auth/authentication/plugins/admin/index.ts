@@ -1,20 +1,19 @@
-import { z } from "zod";
-import { APIError } from "better-auth/api";
-import { createAuthEndpoint, createAuthMiddleware } from "better-auth/plugins";
-import { getSessionFromCtx } from "better-auth/api";
-import type {
-  BetterAuthPlugin,
-  InferOptionSchema,
-  AuthPluginSchema,
-  Session,
-  User,
-  GenericEndpointContext,
-} from "better-auth/types";
+
+import { APIError, getSessionFromCtx } from "better-auth/api";
 import { deleteSessionCookie, setSessionCookie } from "better-auth/cookies";
-import { getAdminAdapter } from "./adapter";
-import { isPermissionGrantedToUser } from "../../../roles/helpers";
+import { createAuthEndpoint, createAuthMiddleware } from "better-auth/plugins";
+import type {
+    AuthPluginSchema,
+    BetterAuthPlugin,
+    GenericEndpointContext,
+    InferOptionSchema,
+    Session,
+    User,
+} from "better-auth/types";
 import { PERMISSIONS } from "../../../roles/constants";
+import { isPermissionGrantedToUser } from "../../../roles/helpers";
 import type { PermissionIdentifier } from "../../../roles/types";
+import { getAdminAdapter } from "./adapter";
 
 const getDate = (span: number, unit: "sec" | "ms" = "ms") => {
   return new Date(Date.now() + (unit === "sec" ? span * 1000 : span));

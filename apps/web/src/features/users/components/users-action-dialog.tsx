@@ -1,92 +1,42 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "#hooks/use-toast";
+import { PasswordInput } from "#components/password-input";
+import { SelectDropdown } from "#components/select-dropdown";
 import { Button } from "#components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from "#components/ui/dialog";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "#components/ui/form";
 import { Input } from "#components/ui/input";
 import { ScrollArea } from "#components/ui/scroll-area";
-import { PasswordInput } from "#components/password-input";
-import { SelectDropdown } from "#components/select-dropdown";
+import { toast } from "#hooks/use-toast";
+import { useForm } from "react-hook-form";
 import { userTypes } from "../data/data";
 import { User } from "../data/schema";
 
-const formSchema = z
-  .object({
-    firstName: z.string().min(1, { message: "First Name is required." }),
-    lastName: z.string().min(1, { message: "Last Name is required." }),
-    username: z.string().min(1, { message: "Username is required." }),
-    phoneNumber: z.string().min(1, { message: "Phone number is required." }),
-    email: z
-      .string()
-      .min(1, { message: "Email is required." })
-      .email({ message: "Email is invalid." }),
-    password: z.string().transform((pwd) => pwd.trim()),
-    role: z.string().min(1, { message: "Role is required." }),
-    confirmPassword: z.string().transform((pwd) => pwd.trim()),
-    isEdit: z.boolean(),
-  })
-  .superRefine(({ isEdit, password, confirmPassword }, ctx) => {
-    if (!isEdit || (isEdit && password !== "")) {
-      if (password === "") {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Password is required.",
-          path: ["password"],
-        });
-      }
-
-      if (password.length < 8) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Password must be at least 8 characters long.",
-          path: ["password"],
-        });
-      }
-
-      if (!password.match(/[a-z]/)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Password must contain at least one lowercase letter.",
-          path: ["password"],
-        });
-      }
-
-      if (!password.match(/\d/)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Password must contain at least one number.",
-          path: ["password"],
-        });
-      }
-
-      if (password !== confirmPassword) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Passwords don't match.",
-          path: ["confirmPassword"],
-        });
-      }
-    }
-  });
-type UserForm = z.infer<typeof formSchema>;
+interface UserFormData {
+  firstName: string;
+  lastName: string;
+  username: string;
+  phoneNumber: string;
+  email: string;
+  password: string;
+  role: string;
+  confirmPassword: string;
+  isEdit: boolean;
+}
 
 interface Props {
   currentRow?: User;
@@ -96,8 +46,7 @@ interface Props {
 
 export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
   const isEdit = !!currentRow;
-  const form = useForm<UserForm>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<UserFormData>({
     defaultValues: isEdit
       ? {
           ...currentRow,
@@ -118,10 +67,10 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
         },
   });
 
-  const onSubmit = (values: UserForm) => {
+  const onSubmit = (values: UserFormData) => {
     form.reset();
     toast({
-      title: "You submitted the following values:",
+      title: "Form başarıyla gönderildi:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(values, null, 2)}</code>
@@ -134,192 +83,179 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
   const isPasswordTouched = !!form.formState.dirtyFields.password;
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(state) => {
-        form.reset();
-        onOpenChange(state);
-      }}
-    >
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader className="text-left">
-          <DialogTitle>{isEdit ? "Edit User" : "Add New User"}</DialogTitle>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-screen overflow-y-auto sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{isEdit ? "Kullanıcı Düzenle" : "Yeni Kullanıcı"}</DialogTitle>
           <DialogDescription>
-            {isEdit ? "Update the user here. " : "Create new user here. "}
-            Click save when you&apos;re done.
+            {isEdit
+              ? "Kullanıcı bilgilerini güncelleyin"
+              : "Yeni kullanıcı oluşturun"}
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="-mr-4 h-[26.25rem] w-full py-1 pr-4">
+        <ScrollArea className="max-h-[400px] w-full">
           <Form {...form}>
-            <form
-              id="user-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 p-0.5"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
               <FormField
                 control={form.control}
                 name="firstName"
+                rules={{
+                  required: "Ad gerekli"
+                }}
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      First Name
-                    </FormLabel>
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Ad</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="John"
-                        className="col-span-4"
-                        autoComplete="off"
-                        {...field}
-                      />
+                      <Input className="col-span-3" {...field} />
                     </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
+                    <FormMessage className="col-span-4" />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="lastName"
+                rules={{
+                  required: "Soyad gerekli"
+                }}
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      Last Name
-                    </FormLabel>
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Soyad</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Doe"
-                        className="col-span-4"
-                        autoComplete="off"
-                        {...field}
-                      />
+                      <Input className="col-span-3" {...field} />
                     </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
+                    <FormMessage className="col-span-4" />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="username"
+                rules={{
+                  required: "Kullanıcı adı gerekli"
+                }}
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      Username
-                    </FormLabel>
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Kullanıcı Adı</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="john_doe"
-                        className="col-span-4"
-                        {...field}
-                      />
+                      <Input className="col-span-3" {...field} />
                     </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
+                    <FormMessage className="col-span-4" />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="email"
+                rules={{
+                  required: "Email gerekli",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "Geçersiz email adresi"
+                  }
+                }}
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      Email
-                    </FormLabel>
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="john.doe@gmail.com"
-                        className="col-span-4"
-                        {...field}
-                      />
+                      <Input className="col-span-3" {...field} />
                     </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
+                    <FormMessage className="col-span-4" />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="phoneNumber"
+                rules={{
+                  required: "Telefon numarası gerekli"
+                }}
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      Phone Number
-                    </FormLabel>
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Telefon</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="+123456789"
-                        className="col-span-4"
-                        {...field}
-                      />
+                      <Input className="col-span-3" {...field} />
                     </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
+                    <FormMessage className="col-span-4" />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="role"
+                rules={{
+                  required: "Rol seçimi gerekli"
+                }}
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      Role
-                    </FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      placeholder="Select a role"
-                      className="col-span-4"
-                      items={userTypes.map(({ label, value }) => ({
-                        label,
-                        value,
-                      }))}
-                    />
-                    <FormMessage className="col-span-4 col-start-3" />
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Rol</FormLabel>
+                    <FormControl>
+                      <SelectDropdown
+                        className="col-span-3"
+                        options={userTypes}
+                        placeholder="Rol seçin"
+                        emptyText="Rol bulunamadı"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="col-span-4" />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="password"
+                rules={{
+                  required: !isEdit ? "Şifre gerekli" : false,
+                  minLength: {
+                    value: 8,
+                    message: "Şifre en az 8 karakter olmalı"
+                  },
+                  validate: (value) => {
+                    if (isEdit && !value) return true; // Edit modda boş şifre OK
+                    if (!value.match(/[a-z]/)) return "En az bir küçük harf gerekli";
+                    if (!value.match(/\d/)) return "En az bir rakam gerekli";
+                    return true;
+                  }
+                }}
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      Password
-                    </FormLabel>
+                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                    <FormLabel className="text-right">Şifre</FormLabel>
                     <FormControl>
-                      <PasswordInput
-                        placeholder="e.g., S3cur3P@ssw0rd"
-                        className="col-span-4"
-                        {...field}
-                      />
+                      <PasswordInput className="col-span-3" {...field} />
                     </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
+                    <FormMessage className="col-span-4" />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      Confirm Password
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        disabled={!isPasswordTouched}
-                        placeholder="e.g., S3cur3P@ssw0rd"
-                        className="col-span-4"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
-                  </FormItem>
-                )}
-              />
+              {(!isEdit || isPasswordTouched) && (
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  rules={{
+                    required: "Şifre tekrarı gerekli",
+                    validate: (value) => {
+                      const password = form.getValues("password");
+                      return value === password || "Şifreler eşleşmiyor";
+                    }
+                  }}
+                  render={({ field }) => (
+                    <FormItem className="grid grid-cols-4 items-center gap-4">
+                      <FormLabel className="text-right">Şifre Tekrarı</FormLabel>
+                      <FormControl>
+                        <PasswordInput className="col-span-3" {...field} />
+                      </FormControl>
+                      <FormMessage className="col-span-4" />
+                    </FormItem>
+                  )}
+                />
+              )}
             </form>
           </Form>
         </ScrollArea>
         <DialogFooter>
-          <Button type="submit" form="user-form">
-            Save changes
+          <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
+            {isEdit ? "Güncelle" : "Oluştur"}
           </Button>
         </DialogFooter>
       </DialogContent>
