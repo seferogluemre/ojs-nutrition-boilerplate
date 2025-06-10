@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig-custom/elysia.json",
+  "extends": "../../packages/tooling-config/tsconfig/elysia.json",
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
