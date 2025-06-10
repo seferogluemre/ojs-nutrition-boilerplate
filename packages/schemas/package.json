@@ -1,0 +1,19 @@
+{
+  "name": "@onlyjs/schema",
+  "version": "0.0.0",
+  "dependencies": {
+    "@eslint/js": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "@onlyjs/api": "*"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "tsconfig-custom": "*",
+    "@typescript-eslint/parser": "^8.28.0"
+  }
+}

@@ -1,0 +1,3 @@
+# Web specific ignores
+# Currently no web-specific rules needed
+.env

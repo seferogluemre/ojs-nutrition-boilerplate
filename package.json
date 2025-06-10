@@ -1,0 +1,65 @@
+{
+  "name": "@onlyjs/monorepo",
+  "scripts": {
+    "build": "turbo build",
+    "format": "prettier --config packages/tooling-config/prettier/index.js --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "lint": "eslint --config packages/tooling-config/eslint/index.js --ext .js,.jsx,.ts,.tsx .",
+    "dev": "turbo run dev serve --parallel",
+    "dev:web": "turbo run dev --filter=@onlyjs/web",
+    "dev:api": "turbo run serve --filter=@onlyjs/api"
+  },
+  "description": "A barebones Turborepo example for working with Task Graphs.",
+  "dependencies": {
+    "@elysiajs/eden": "1.2.0",
+    "@tanstack/react-query": "^5.72.2",
+    "date-fns": "^4.1.0",
+    "syncpack": "^13.0.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@dotenvx/dotenvx": "^1.44.1",
+    "@faker-js/faker": "^9.3.0",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "bun-types": "latest",
+    "eslint": "^9.16.0",
+    "eslint-config-custom": "0.0.0",
+    "globals": "^15.13.0",
+    "knip": "^5.41.1",
+    "prettier": "^3.4.2",
+    "prettier-config-custom": "0.0.0",
+    "tsconfig-custom": "0.0.0",
+    "turbo": "latest",
+    "type-fest": "^4.41.0",
+    "typescript": "^5.8.2"
+  },
+  "packageManager": "bun@1.2.10",
+  "private": true,
+  "resolutions": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@babel/parser": "7.26.9",
+    "@babel/core": "7.26.9",
+    "date-fns": "^4.1.0",
+    "eslint": "^9.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.8.2"
+  },
+  "trustedDependencies": [
+    "#prisma/client",
+    "@prisma/client",
+    "@prisma/engines",
+    "@swc/core",
+    "esbuild",
+    "prisma",
+    "sharp"
+  ],
+  "workspaces": [
+    "apps/*",
+    "packages/**"
+  ]
+}

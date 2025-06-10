@@ -1,0 +1,7 @@
+{
+  "extends": "tsconfig-custom/react-node.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "../../dist/apps/web/.node.tsbuildinfo",
+  },
+  "include": ["vite.config.ts"]
+}

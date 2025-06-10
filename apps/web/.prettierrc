@@ -1,0 +1,41 @@
+{
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "importOrder": [
+    "^path$",
+    "^vite$",
+    "^@vitejs/(.*)$",
+    "^react$",
+    "^react-dom/client$",
+    "^react/(.*)$",
+    "^globals$",
+    "^zod$",
+    "^axios$",
+    "^date-fns$",
+    "^js-cookie$",
+    "^react-hook-form$",
+    "^use-intl$",
+    "^@radix-ui/(.*)$",
+    "^@hookform/resolvers/zod$",
+    "^@tanstack/(.*)$",
+    "^@tabler/icons-react$",
+    "<THIRD_PARTY_MODULES>",
+    "^@boilerplate/(.*)$",
+    "^@/assets/(.*)",
+    "^@/api/(.*)$",
+    "^@/stores/(.*)$",
+    "^@/lib/(.*)$",
+    "^@/utils/(.*)$",
+    "^@/constants/(.*)$",
+    "^@/context/(.*)$",
+    "^@/hooks/(.*)$",
+    "^@/components/layouts/(.*)$",
+    "^@/components/ui/(.*)$",
+    "^@/components/errors/(.*)$",
+    "^@/components/(.*)$",
+    "^@/features/(.*)$",
+    "^[./]"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "name": "@onlyjs/api",
+  "version": "0.0.1",
+  "dependencies": {
+    "@elysiajs/bearer": "^1.1.2",
+    "@elysiajs/cors": "^1.1.1",
+    "@elysiajs/cron": "^1.2.0",
+    "@elysiajs/static": "^1.2.0",
+    "@elysiajs/swagger": "1.2.2",
+    "@prisma/client": "^6.6.0",
+    "@react-email/components": "^0.0.33",
+    "better-auth": "^1.2.7",
+    "elysia": "1.2.25",
+    "http-errors": "^2.0.0",
+    "prisma": "^6.6.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "redis": "^4.7.0",
+    "slugify": "^1.6.6"
+  },
+  "devDependencies": {
+    "@types/http-errors": "^2.0.4",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "bun-plugin-dts": "^0.3.0",
+    "prisma-case-format": "^2.2.1",
+    "prismabox": "^1.1.24",
+    "react-email": "^3.0.7"
+  },
+  "main": "./src/index.ts",
+  "private": true,
+  "config": {
+    "envFile": "../../config/apps/api/.env",
+    "envCmd": "dotenvx run --quiet -f $npm_package_config_envFile --"
+  },
+  "scripts": {
+    "build": "$npm_package_config_envCmd bun ./src/core/build.ts",
+    "emails:preview": "email dev --dir src/emails --port 3333",
+    "knip": "knip --workspace apps/api",
+    "prisma:format": "prisma-case-format --file ./prisma/schema.prisma --table-case pascal --field-case camel --enum-case pascal --map-table-case snake,plural --map-field-case snake --map-enum-case snake --pluralize",
+    "prisma:generate": "$npm_package_config_envCmd prisma generate",
+    "prisma:migrate": "$npm_package_config_envCmd prisma migrate dev",
+    "prisma:studio": "$npm_package_config_envCmd prisma studio",
+    "prisma:seed": "$npm_package_config_envCmd bun run prisma:generate && $npm_package_config_envCmd bun ./prisma/seed.ts",
+    "serve": "$npm_package_config_envCmd bun run --watch ./src/index.ts",
+    "start": "$npm_package_config_envCmd bun ../../dist/apps/api/index.js",
+    "db:start": "docker-compose up -d",
+    "db:stop": "docker-compose down",
+    "db:logs": "docker-compose logs -f",
+    "db:init": "bun run db:start && bun run prisma:generate && bun run prisma:migrate"
+  },
+  "type": "module",
+  "types": "./src/types.ts",
+  "imports": {
+    "#prisma/*": "./prisma/client/*",
+    "#prisma/client/sql/*": "./prisma/client/sql/*",
+    "#prismabox/*": "./prisma/prismabox/*",
+    "#*": "./src/*"
+  },
+  "exports": "./src/types.ts",
+  "prisma": {
+    "seed": "bun run prisma/seed.ts"
+  }
+}

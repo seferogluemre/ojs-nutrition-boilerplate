@@ -1,0 +1,23 @@
+{
+  "name": "@onlyjs/eden",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build-api": "bun --cwd ../../apps/api build",
+    "link-types": "ln -sf ../../dist/apps/api/index.d.ts ./types.d.ts",
+    "prepare-types": "bun build-api && bun link-types"
+  },
+  "dependencies": {
+    "elysia": "1.2.25",
+    "@elysiajs/eden": "1.2.0"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./types": "./types.d.ts"
+  }
+}

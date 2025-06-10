@@ -1,0 +1,21 @@
+{
+  "extends": "tsconfig-custom/react-app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "../../dist/apps/web/.app.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "#*": ["./src/*"]
+    },
+    "outDir": "../../dist/apps/web"
+  },
+  "files": [],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.json"],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "../api/tsconfig.json"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "extends": "tsconfig-custom/elysia.json",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+    "tsBuildInfoFile": "../../dist/apps/api/.tsbuildinfo",
+    "paths": {
+      "#prisma/*": ["./prisma/client/*"],
+      "#prismabox/*": ["./prisma/prismabox/*"],
+      "#*": ["./src/*"]
+    },
+    "outDir": "../../dist/apps/api"
+  },
+  "include": ["src/**/*.ts", "prisma/**/*.ts"],
+  "references": []
+}

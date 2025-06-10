@@ -1,0 +1,8 @@
+# API specific ignores
+.env
+/prisma/prismabox/*
+/prisma/client/*
+
+# Public Storage directory
+public/storage/*
+!public/storage/.gitkeep

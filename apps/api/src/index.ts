@@ -1,0 +1,35 @@
+import { loadEnv } from './config/env';
+import path from 'path';
+import { Elysia } from 'elysia';
+import cors from '@elysiajs/cors';
+import staticPlugin from '@elysiajs/static';
+import swagger from '@elysiajs/swagger';
+import routes, { swaggerTags } from './modules';
+import { handleElysiaError } from './config/error-handler';
+import { prepareSwaggerConfig } from './config/swagger.config';
+
+loadEnv();
+
+const app = new Elysia()
+  .use(cors())
+  .onError(handleElysiaError)
+  .use(
+    staticPlugin({
+      assets: path.join(process.cwd(), 'public', 'storage'),
+      prefix: '/storage',
+    }),
+  )
+  .use(routes)
+  .listen(process.env.PORT ? parseInt(process.env.PORT) : 3000);
+
+if (process.env.NODE_ENV === 'development') {
+  const swaggerConfig = await prepareSwaggerConfig({ tags: swaggerTags });
+
+  app.use(swagger(swaggerConfig));
+}
+
+console.log(
+  `🦊 Elysia is running at ${app.server?.url.protocol}//${app.server?.hostname}:${app.server?.port}`,
+);
+
+export type App = typeof app;
