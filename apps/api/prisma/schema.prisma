@@ -449,3 +449,154 @@ model FileLibraryAsset {
 
   @@map("file_library_assets")
 }
+
+model Customer {
+  /// @prismabox.hide
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.options{minLength:2,maxLength:50}
+  firstName String @map("first_name") @db.VarChar(50)
+
+  /// @prismabox.options{minLength:2,maxLength:50}
+  lastName String @map("last_name") @db.VarChar(50)
+
+  /// @prismabox.options{minLength:2,maxLength:101}
+  name String @map("full_name") @db.VarChar(101)
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  username String @unique @db.VarChar(100)
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  email String @unique @db.VarChar(100)
+
+  /// @prismabox.options{minLength:2,maxLength:16}
+  password String @db.VarChar(16)
+
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  ProductComments ProductComments[]
+
+  @@map("customers")
+}
+
+model Category {
+  /// @prismabox.hide
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  name String @unique
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  slug String @unique
+
+  /// @prismabox.options{minimum:0}
+  order Int @default(0)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  /// @prismabox.hide
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+  categoryId Int @map("category_id")
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  name String
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  slug String @unique
+
+  /// @prismabox.options{minLength:0,maxLength:50}
+  shortDescription String @map("short_description") @db.VarChar(50)
+
+  /// @prismabox.options{minLength:0,maxLength:250}
+  longDescription String @map("long_description") @db.VarChar(250)
+
+  /// @prismabox.options{minimum:0}
+  price Int
+
+  /// @prismabox.options{minLength:0,maxLength:255}
+  primaryPhotoUrl String @map("primary_photo_url")
+
+  /// @prismabox.options{minimum:0}
+  reviewCount Int @default(0) @map("review_count")
+
+  /// @prismabox.options{minimum:0,maximum:5}
+  averageRating Int @default(0) @map("average_rating")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  category Category          @relation(fields: [categoryId], references: [id])
+  photos   ProductPhoto[]
+  comments ProductComments[]
+
+  @@map("products")
+}
+
+model ProductPhoto {
+  /// @prismabox.hide
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+  productId Int @map("product_id")
+
+  /// @prismabox.options{default:false}
+  isPrimaryPhoto Boolean @default(false) @map("is_primary_photo")
+
+  /// @prismabox.options{minLength:0,maxLength:255}
+  url String
+
+  /// @prismabox.options{minimum:0}
+  fileSize Int @map("file_size")
+
+  /// @prismabox.options{minimum:0}
+  order Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("product_photos")
+}
+
+model ProductComments {
+  /// @prismabox.hide
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+
+  /// @prismabox.hide
+  productId Int
+
+  /// @prismabox.hide
+  customerId Int
+
+  /// @prismabox.options{minLength:0,maxLength:50}
+  title String? @map("title") @db.VarChar(50)
+
+  /// @prismabox.options{minLength:0,maxLength:250}
+  content String? @map("content") @db.VarChar(250)
+
+  /// @prismabox.options{minimum:1,maximum:5}
+  rating Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  Product   Product  @relation(fields: [productId], references: [id])
+  Customer  Customer @relation(fields: [customerId], references: [id])
+
+  @@map("product_comments")
+}
