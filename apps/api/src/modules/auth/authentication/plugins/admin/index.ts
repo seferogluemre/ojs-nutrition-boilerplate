@@ -1,22 +1,23 @@
-
-import { APIError, getSessionFromCtx } from "better-auth/api";
-import { deleteSessionCookie, setSessionCookie } from "better-auth/cookies";
-import { createAuthEndpoint, createAuthMiddleware } from "better-auth/plugins";
+import { APIError, getSessionFromCtx } from 'better-auth/api';
+import { deleteSessionCookie, setSessionCookie } from 'better-auth/cookies';
+import { createAuthEndpoint, createAuthMiddleware } from 'better-auth/plugins';
 import type {
-    AuthPluginSchema,
+  AuthPluginSchema,
   BetterAuthPlugin,
-    GenericEndpointContext,
+  GenericEndpointContext,
   InferOptionSchema,
   Session,
   User,
-} from "better-auth/types";
-import { PERMISSIONS } from "../../../roles/constants";
-import { isPermissionGrantedToUser } from "../../../roles/helpers";
-import type { PermissionIdentifier } from "../../../roles/types";
-import { getAdminAdapter } from "./adapter";
+} from 'better-auth/types';
+import { z } from 'zod';
 
-const getDate = (span: number, unit: "sec" | "ms" = "ms") => {
-  return new Date(Date.now() + (unit === "sec" ? span * 1000 : span));
+import { PERMISSIONS } from '../../../roles/constants';
+import { isPermissionGrantedToUser } from '../../../roles/helpers';
+import type { PermissionIdentifier } from '../../../roles/types';
+import { getAdminAdapter } from './adapter';
+
+const getDate = (span: number, unit: 'sec' | 'ms' = 'ms') => {
+  return new Date(Date.now() + (unit === 'sec' ? span * 1000 : span));
 };
 
 const getEndpointResponse = async <T>(ctx: {
@@ -148,26 +149,29 @@ export const admin = <O extends AdminOptions>(options?: O) => {
   };
 
   const opts = {
-    defaultRole: "user",
+    defaultRole: 'user',
     ...options,
     permissions: { ...defaultPermissions, ...options?.permissions },
   };
 
   const ERROR_CODES = {
-    FAILED_TO_CREATE_USER: "Failed to create user",
-    USER_NOT_HAS_ROLE: "User does not have role",
-    YOU_CANNOT_BAN_YOURSELF: "You cannot ban yourself",
-    ROLE_NOT_FOUND: "Role not found",
-    USER_NOT_FOUND: "User not found",
-    UNAUTHORIZED: "Unauthorized",
-    PERMISSION_DENIED: "Permission denied",
+    FAILED_TO_CREATE_USER: 'Failed to create user',
+    USER_NOT_HAS_ROLE: 'User does not have role',
+    YOU_CANNOT_BAN_YOURSELF: 'You cannot ban yourself',
+    ROLE_NOT_FOUND: 'Role not found',
+    USER_NOT_FOUND: 'User not found',
+    UNAUTHORIZED: 'Unauthorized',
+    PERMISSION_DENIED: 'Permission denied',
   } as const;
 
-  const checkPermission = async (ctx: GenericEndpointContext, requiredPermission: PermissionIdentifier) => {
+  const checkPermission = async (
+    ctx: GenericEndpointContext,
+    requiredPermission: PermissionIdentifier,
+  ) => {
     const user = ctx.context.session?.user as UserWithRole;
     const hasPermission = await isPermissionGrantedToUser(user, requiredPermission);
     if (!hasPermission) {
-      throw new APIError("FORBIDDEN", {
+      throw new APIError('FORBIDDEN', {
         message: ERROR_CODES.PERMISSION_DENIED,
       });
     }
@@ -176,25 +180,25 @@ export const admin = <O extends AdminOptions>(options?: O) => {
   const adminMiddleware = createAuthMiddleware(async (ctx) => {
     const session = await getSessionFromCtx(ctx);
     if (!session?.session) {
-      throw new APIError("UNAUTHORIZED", {
+      throw new APIError('UNAUTHORIZED', {
         message: ERROR_CODES.UNAUTHORIZED,
       });
     }
     const user = session.user as UserWithRole;
     if (!user.rolesSlugs) {
-      throw new APIError("FORBIDDEN", {
+      throw new APIError('FORBIDDEN', {
         message: ERROR_CODES.USER_NOT_HAS_ROLE,
       });
     }
     if (user.deletedAt) {
-      throw new APIError("NOT_FOUND", {
+      throw new APIError('NOT_FOUND', {
         message: ERROR_CODES.USER_NOT_FOUND,
       });
     }
     return { session: { user, session: session.session } };
   });
   return {
-    id: "better-auth-admin",
+    id: 'better-auth-admin',
     init(ctx) {
       return {
         options: {
@@ -204,9 +208,9 @@ export const admin = <O extends AdminOptions>(options?: O) => {
                 async before(user) {
                   if (options?.defaultRole === false) return;
                   const adapter = getAdminAdapter(ctx);
-                  const defaultRole = await adapter.findRoleBySlug(options?.defaultRole ?? "basic");
+                  const defaultRole = await adapter.findRoleBySlug(options?.defaultRole ?? 'basic');
                   if (!defaultRole) {
-                    throw new APIError("BAD_REQUEST", {
+                    throw new APIError('BAD_REQUEST', {
                       message: ERROR_CODES.ROLE_NOT_FOUND,
                     });
                   }
@@ -248,7 +252,7 @@ export const admin = <O extends AdminOptions>(options?: O) => {
       after: [
         {
           matcher(context) {
-            return context.path === "/list-sessions";
+            return context.path === '/list-sessions';
           },
           handler: createAuthMiddleware(async (ctx) => {
             const response = await getEndpointResponse<SessionWithImpersonatedBy[]>(ctx);
@@ -267,32 +271,32 @@ export const admin = <O extends AdminOptions>(options?: O) => {
     },
     endpoints: {
       listUserSessions: createAuthEndpoint(
-        "/admin/list-user-sessions",
+        '/admin/list-user-sessions',
         {
-          method: "POST",
+          method: 'POST',
           use: [adminMiddleware],
           body: z.object({
             userId: z.string({
-              description: "The user id",
+              description: 'The user id',
             }),
           }),
           metadata: {
             openapi: {
-              operationId: "listUserSessions",
-              summary: "List user sessions",
-              description: "List user sessions",
+              operationId: 'listUserSessions',
+              summary: 'List user sessions',
+              description: 'List user sessions',
               responses: {
                 200: {
-                  description: "List of user sessions",
+                  description: 'List of user sessions',
                   content: {
-                    "application/json": {
+                    'application/json': {
                       schema: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           sessions: {
-                            type: "array",
+                            type: 'array',
                             items: {
-                              $ref: "#/components/schemas/Session",
+                              $ref: '#/components/schemas/Session',
                             },
                           },
                         },
@@ -307,37 +311,37 @@ export const admin = <O extends AdminOptions>(options?: O) => {
         async (ctx) => {
           await checkPermission(ctx, opts.permissions.listUserSessions);
           const sessions = await ctx.context.internalAdapter.listSessions(ctx.body.userId);
-          ctx.setHeader("Content-Type", "application/json");
+          ctx.setHeader('Content-Type', 'application/json');
           return {
             sessions: sessions,
           };
         },
       ),
       unbanUser: createAuthEndpoint(
-        "/admin/unban-user",
+        '/admin/unban-user',
         {
-          method: "POST",
+          method: 'POST',
           body: z.object({
             userId: z.string({
-              description: "The user id",
+              description: 'The user id',
             }),
           }),
           use: [adminMiddleware],
           metadata: {
             openapi: {
-              operationId: "unbanUser",
-              summary: "Unban a user",
-              description: "Unban a user",
+              operationId: 'unbanUser',
+              summary: 'Unban a user',
+              description: 'Unban a user',
               responses: {
                 200: {
-                  description: "User unbanned",
+                  description: 'User unbanned',
                   content: {
-                    "application/json": {
+                    'application/json': {
                       schema: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           user: {
-                            $ref: "#/components/schemas/User",
+                            $ref: '#/components/schemas/User',
                           },
                         },
                       },
@@ -353,26 +357,26 @@ export const admin = <O extends AdminOptions>(options?: O) => {
           const user = await ctx.context.internalAdapter.updateUser(ctx.body.userId, {
             isBanned: false,
           });
-          ctx.setHeader("Content-Type", "application/json");
+          ctx.setHeader('Content-Type', 'application/json');
           return ctx.json({
             user: user,
           });
         },
       ),
       banUser: createAuthEndpoint(
-        "/admin/ban-user",
+        '/admin/ban-user',
         {
-          method: "POST",
+          method: 'POST',
           body: z.object({
             userId: z.string({
-              description: "The user id",
+              description: 'The user id',
             }),
             /**
              * Reason for the ban
              */
             banReason: z
               .string({
-                description: "The reason for the ban",
+                description: 'The reason for the ban',
               })
               .optional(),
             /**
@@ -380,26 +384,26 @@ export const admin = <O extends AdminOptions>(options?: O) => {
              */
             banExpiresIn: z
               .number({
-                description: "The number of seconds until the ban expires",
+                description: 'The number of seconds until the ban expires',
               })
               .optional(),
           }),
           use: [adminMiddleware],
           metadata: {
             openapi: {
-              operationId: "banUser",
-              summary: "Ban a user",
-              description: "Ban a user",
+              operationId: 'banUser',
+              summary: 'Ban a user',
+              description: 'Ban a user',
               responses: {
                 200: {
-                  description: "User banned",
+                  description: 'User banned',
                   content: {
-                    "application/json": {
+                    'application/json': {
                       schema: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           user: {
-                            $ref: "#/components/schemas/User",
+                            $ref: '#/components/schemas/User',
                           },
                         },
                       },
@@ -413,55 +417,55 @@ export const admin = <O extends AdminOptions>(options?: O) => {
         async (ctx) => {
           await checkPermission(ctx, opts.permissions.banUser);
           if (ctx.body.userId === ctx.context.session.user.id) {
-            throw new APIError("BAD_REQUEST", {
+            throw new APIError('BAD_REQUEST', {
               message: ERROR_CODES.YOU_CANNOT_BAN_YOURSELF,
             });
           }
           const user = await ctx.context.internalAdapter.updateUser(ctx.body.userId, {
             isBanned: true,
-            banReason: ctx.body.banReason || options?.defaultBanReason || "No reason",
+            banReason: ctx.body.banReason || options?.defaultBanReason || 'No reason',
             banExpiresAt: ctx.body.banExpiresIn
-              ? getDate(ctx.body.banExpiresIn, "sec")
+              ? getDate(ctx.body.banExpiresIn, 'sec')
               : options?.defaultBanExpiresIn
-                ? getDate(options.defaultBanExpiresIn, "sec")
+                ? getDate(options.defaultBanExpiresIn, 'sec')
                 : undefined,
           });
           //revoke all sessions
           await ctx.context.internalAdapter.deleteSessions(ctx.body.userId);
-          ctx.setHeader("Content-Type", "application/json");
+          ctx.setHeader('Content-Type', 'application/json');
           return ctx.json({
             user: user,
           });
         },
       ),
       impersonateUser: createAuthEndpoint(
-        "/admin/impersonate-user",
+        '/admin/impersonate-user',
         {
-          method: "POST",
+          method: 'POST',
           body: z.object({
             userId: z.string({
-              description: "The user id",
+              description: 'The user id',
             }),
           }),
           use: [adminMiddleware],
           metadata: {
             openapi: {
-              operationId: "impersonateUser",
-              summary: "Impersonate a user",
-              description: "Impersonate a user",
+              operationId: 'impersonateUser',
+              summary: 'Impersonate a user',
+              description: 'Impersonate a user',
               responses: {
                 200: {
-                  description: "Impersonation session created",
+                  description: 'Impersonation session created',
                   content: {
-                    "application/json": {
+                    'application/json': {
                       schema: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           session: {
-                            $ref: "#/components/schemas/Session",
+                            $ref: '#/components/schemas/Session',
                           },
                           user: {
-                            $ref: "#/components/schemas/User",
+                            $ref: '#/components/schemas/User',
                           },
                         },
                       },
@@ -477,8 +481,8 @@ export const admin = <O extends AdminOptions>(options?: O) => {
           const targetUser = await ctx.context.internalAdapter.findUserById(ctx.body.userId);
 
           if (!targetUser) {
-            throw new APIError("NOT_FOUND", {
-              message: "User not found",
+            throw new APIError('NOT_FOUND', {
+              message: 'User not found',
             });
           }
 
@@ -490,19 +494,19 @@ export const admin = <O extends AdminOptions>(options?: O) => {
             {
               impersonatedById: ctx.context.session.user.id,
               expiresAt: options?.impersonationSessionDuration
-                ? getDate(options.impersonationSessionDuration, "sec")
-                : getDate(60 * 60, "sec"), // 1 hour
+                ? getDate(options.impersonationSessionDuration, 'sec')
+                : getDate(60 * 60, 'sec'), // 1 hour
             },
           );
           if (!session) {
-            throw new APIError("INTERNAL_SERVER_ERROR", {
+            throw new APIError('INTERNAL_SERVER_ERROR', {
               message: ERROR_CODES.FAILED_TO_CREATE_USER,
             });
           }
           const authCookies = ctx.context.authCookies;
           deleteSessionCookie(ctx);
           await ctx.setSignedCookie(
-            "admin_session",
+            'admin_session',
             ctx.context.session.session.token,
             ctx.context.secret,
             authCookies.sessionToken.options,
@@ -515,7 +519,7 @@ export const admin = <O extends AdminOptions>(options?: O) => {
             },
             true,
           );
-          ctx.setHeader("Content-Type", "application/json");
+          ctx.setHeader('Content-Type', 'application/json');
           return ctx.json({
             session: session,
             user: targetUser,
@@ -523,9 +527,9 @@ export const admin = <O extends AdminOptions>(options?: O) => {
         },
       ),
       stopImpersonating: createAuthEndpoint(
-        "/admin/stop-impersonating",
+        '/admin/stop-impersonating',
         {
-          method: "POST",
+          method: 'POST',
         },
         async (ctx) => {
           await checkPermission(ctx, opts.permissions.stopImpersonating);
@@ -538,65 +542,65 @@ export const admin = <O extends AdminOptions>(options?: O) => {
             }
           >(ctx);
           if (!session) {
-            throw new APIError("UNAUTHORIZED", {
+            throw new APIError('UNAUTHORIZED', {
               message: ERROR_CODES.UNAUTHORIZED,
             });
           }
           if (!session.session.impersonatedById) {
-            throw new APIError("BAD_REQUEST", {
-              message: "You are not impersonating anyone",
+            throw new APIError('BAD_REQUEST', {
+              message: 'You are not impersonating anyone',
             });
           }
           const user = await ctx.context.internalAdapter.findUserById(
             session.session.impersonatedById,
           );
           if (!user) {
-            throw new APIError("INTERNAL_SERVER_ERROR", {
-              message: "Failed to find user",
+            throw new APIError('INTERNAL_SERVER_ERROR', {
+              message: 'Failed to find user',
             });
           }
-          const adminCookie = await ctx.getSignedCookie("admin_session", ctx.context.secret);
+          const adminCookie = await ctx.getSignedCookie('admin_session', ctx.context.secret);
           if (!adminCookie) {
-            throw new APIError("INTERNAL_SERVER_ERROR", {
-              message: "Failed to find admin session",
+            throw new APIError('INTERNAL_SERVER_ERROR', {
+              message: 'Failed to find admin session',
             });
           }
           const adminSession = await ctx.context.internalAdapter.findSession(adminCookie);
           if (!adminSession || adminSession.session.userId !== user.id) {
-            throw new APIError("INTERNAL_SERVER_ERROR", {
-              message: "Failed to find admin session",
+            throw new APIError('INTERNAL_SERVER_ERROR', {
+              message: 'Failed to find admin session',
             });
           }
           await setSessionCookie(ctx, adminSession);
-          ctx.setHeader("Content-Type", "application/json");
+          ctx.setHeader('Content-Type', 'application/json');
           return ctx.json(adminSession);
         },
       ),
       revokeUserSession: createAuthEndpoint(
-        "/admin/revoke-user-session",
+        '/admin/revoke-user-session',
         {
-          method: "POST",
+          method: 'POST',
           body: z.object({
             sessionToken: z.string({
-              description: "The session token",
+              description: 'The session token',
             }),
           }),
           use: [adminMiddleware],
           metadata: {
             openapi: {
-              operationId: "revokeUserSession",
-              summary: "Revoke a user session",
-              description: "Revoke a user session",
+              operationId: 'revokeUserSession',
+              summary: 'Revoke a user session',
+              description: 'Revoke a user session',
               responses: {
                 200: {
-                  description: "Session revoked",
+                  description: 'Session revoked',
                   content: {
-                    "application/json": {
+                    'application/json': {
                       schema: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           success: {
-                            type: "boolean",
+                            type: 'boolean',
                           },
                         },
                       },
@@ -610,37 +614,37 @@ export const admin = <O extends AdminOptions>(options?: O) => {
         async (ctx) => {
           await checkPermission(ctx, opts.permissions.revokeUserSession);
           await ctx.context.internalAdapter.deleteSession(ctx.body.sessionToken);
-          ctx.setHeader("Content-Type", "application/json");
+          ctx.setHeader('Content-Type', 'application/json');
           return ctx.json({
             success: true,
           });
         },
       ),
       revokeUserSessions: createAuthEndpoint(
-        "/admin/revoke-user-sessions",
+        '/admin/revoke-user-sessions',
         {
-          method: "POST",
+          method: 'POST',
           body: z.object({
             userId: z.string({
-              description: "The user id",
+              description: 'The user id',
             }),
           }),
           use: [adminMiddleware],
           metadata: {
             openapi: {
-              operationId: "revokeUserSessions",
-              summary: "Revoke all user sessions",
-              description: "Revoke all user sessions",
+              operationId: 'revokeUserSessions',
+              summary: 'Revoke all user sessions',
+              description: 'Revoke all user sessions',
               responses: {
                 200: {
-                  description: "Sessions revoked",
+                  description: 'Sessions revoked',
                   content: {
-                    "application/json": {
+                    'application/json': {
                       schema: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           success: {
-                            type: "boolean",
+                            type: 'boolean',
                           },
                         },
                       },
@@ -654,37 +658,37 @@ export const admin = <O extends AdminOptions>(options?: O) => {
         async (ctx) => {
           await checkPermission(ctx, opts.permissions.revokeUserSessions);
           await ctx.context.internalAdapter.deleteSessions(ctx.body.userId);
-          ctx.setHeader("Content-Type", "application/json");
+          ctx.setHeader('Content-Type', 'application/json');
           return ctx.json({
             success: true,
           });
         },
       ),
       removeUser: createAuthEndpoint(
-        "/admin/remove-user",
+        '/admin/remove-user',
         {
-          method: "POST",
+          method: 'POST',
           body: z.object({
             userId: z.string({
-              description: "The user id",
+              description: 'The user id',
             }),
           }),
           use: [adminMiddleware],
           metadata: {
             openapi: {
-              operationId: "removeUser",
-              summary: "Remove a user",
-              description: "Delete a user and all their sessions and accounts. Cannot be undone.",
+              operationId: 'removeUser',
+              summary: 'Remove a user',
+              description: 'Delete a user and all their sessions and accounts. Cannot be undone.',
               responses: {
                 200: {
-                  description: "User removed",
+                  description: 'User removed',
                   content: {
-                    "application/json": {
+                    'application/json': {
                       schema: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           success: {
-                            type: "boolean",
+                            type: 'boolean',
                           },
                         },
                       },
@@ -698,7 +702,7 @@ export const admin = <O extends AdminOptions>(options?: O) => {
         async (ctx) => {
           await checkPermission(ctx, opts.permissions.deleteUser);
           await ctx.context.internalAdapter.deleteUser(ctx.body.userId);
-          ctx.setHeader("Content-Type", "application/json");
+          ctx.setHeader('Content-Type', 'application/json');
           return ctx.json({
             success: true,
           });
@@ -714,18 +718,18 @@ const schema = {
   user: {
     fields: {
       isBanned: {
-        type: "boolean",
+        type: 'boolean',
         defaultValue: false,
         required: false,
         input: false,
       },
       banReason: {
-        type: "string",
+        type: 'string',
         required: false,
         input: false,
       },
       banExpiresAt: {
-        type: "date",
+        type: 'date',
         required: false,
         input: false,
       },
@@ -734,7 +738,7 @@ const schema = {
   session: {
     fields: {
       impersonatedById: {
-        type: "string",
+        type: 'string',
         required: false,
       },
     },
