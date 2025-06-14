@@ -8,3 +8,4 @@ export * from './base-formatter';
 export * from './service-helpers';
 export * from './middleware-utils';
 export * from './pagination';
+export * from './jwt';

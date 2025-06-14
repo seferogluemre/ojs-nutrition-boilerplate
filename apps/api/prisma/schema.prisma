@@ -470,8 +470,9 @@ model Customer {
   /// @prismabox.options{minLength:2,maxLength:100}
   email String @unique @db.VarChar(100)
 
-  /// @prismabox.options{minLength:2,maxLength:16}
-  password String @db.VarChar(16)
+  password String
+
+  refreshToken String? @map("refresh_token")
 
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
