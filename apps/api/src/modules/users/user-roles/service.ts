@@ -1,7 +1,7 @@
-import { User } from '#prisma/client';
+import prisma from '#core/prisma';
+import { User } from '@prisma/client';
 import { NotFoundException } from '../../../utils';
 import { UserRoleUpdatePayload } from './types';
-import prisma from '#core/prisma';
 
 
 export abstract class UserRolesService {

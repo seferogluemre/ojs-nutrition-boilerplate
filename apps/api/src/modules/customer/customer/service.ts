@@ -1,36 +1,20 @@
-import { prisma } from '#core';
 import {
   BadRequestException,
   ConflictException,
   NotFoundException,
   UnauthorizedException,
 } from '#utils';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
+import { prisma } from '#core';
+import { HandleError } from '#shared/error/handle-error';
 import {
   generateCustomerTokenPair,
   invalidateCustomerSession,
-  refreshCustomerTokenPair,
-  verifyCustomerAccessToken,
+  refreshCustomerTokenPair
 } from '../../../utils/jwt';
 import { AuthResponseType, LoginPayload, SignUpPayload } from '../auth/types';
 
 export abstract class CustomerService {
-  private static async handlePrismaError(
-    error: unknown,
-    context: 'find' | 'create' | 'update' | 'delete',
-  ) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
-        throw new NotFoundException('Customer not found');
-      }
-      if (error.code === 'P2002') {
-        throw new ConflictException('Customer already exists');
-      }
-    }
-    console.error(`Error in CustomerService.${context}:`, error);
-    throw error;
-  }
 
   static async signUp(payload: SignUpPayload): Promise<AuthResponseType> {
     try {
@@ -91,7 +75,8 @@ export abstract class CustomerService {
         refreshToken,
       };
     } catch (error) {
-      throw this.handlePrismaError(error, 'create');
+      await HandleError.handlePrismaError(error, 'customer', 'create');
+      throw error;
     }
   }
 
@@ -107,7 +92,8 @@ export abstract class CustomerService {
 
       return customer;
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'customer', 'find');
+      throw error;
     }
   }
 
@@ -123,7 +109,8 @@ export abstract class CustomerService {
 
       return customer;
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'customer', 'find');
+      throw error;
     }
   }
 
@@ -163,7 +150,8 @@ export abstract class CustomerService {
         refreshToken,
       };
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'customer', 'find');
+      throw error;
     }
   }
 
@@ -171,7 +159,8 @@ export abstract class CustomerService {
     try {
       return await invalidateCustomerSession(accessToken);
     } catch (error) {
-      throw this.handlePrismaError(error, 'update');
+      await HandleError.handlePrismaError(error, 'customer', 'update');
+      throw error;
     }
   }
 
@@ -185,7 +174,8 @@ export abstract class CustomerService {
 
       return await refreshCustomerTokenPair(refreshToken);
     } catch (error) {
-      throw this.handlePrismaError(error, 'update');
+      await HandleError.handlePrismaError(error, 'customer', 'update');
+      throw error;
     }
   }
 }

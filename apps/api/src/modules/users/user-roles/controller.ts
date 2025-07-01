@@ -1,8 +1,8 @@
 import { Elysia } from 'elysia';
+import { dtoWithMiddlewares, ForbiddenException } from '../../../utils';
+import { AuditLogAction, AuditLogEntity, withAuditLog } from '../../audit-logs';
 import { auth, authSwagger } from '../../auth/authentication/plugin';
 import { PERMISSIONS } from '../../auth/roles/constants';
-import { dtoWithMiddlewares, ForbiddenException } from '../../../utils';
-import { withAuditLog, AuditLogAction, AuditLogEntity } from '../../audit-logs';
 import { ensureUserHasPermission } from '../../auth/roles/helpers';
 import { UserFormatter } from '../formatters';
 import { userRoleUpdateDto } from './dtos';

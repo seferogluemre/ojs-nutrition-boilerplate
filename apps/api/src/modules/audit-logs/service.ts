@@ -1,8 +1,8 @@
+import { prisma } from "#core";
 import { Prisma } from "#prisma/client";
-import { AuditLogActionType, AuditLogEntityType, AuditLogIndexQuery } from "./types";
 import { PaginationService } from "../../utils";
 import { AuditLogFormatter } from "./formatters";
-import { prisma } from "#core";
+import { AuditLogActionType, AuditLogEntityType, AuditLogIndexQuery } from "./types";
 
 export interface CreateAuditLogInput {
     userId: string;

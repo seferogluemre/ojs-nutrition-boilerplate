@@ -1,7 +1,7 @@
 import { t } from 'elysia';
 
-import { FileLibraryAssetType } from '#prisma/index';
 import { FileLibraryAssetPlain, FileLibraryAssetPlainInputUpdate } from '#prismabox/FileLibraryAsset';
+import { FileLibraryAssetType } from '#prismabox/FileLibraryAssetType';
 import { ControllerHook, errorResponseDto, prepareFilters, uuidValidation } from '../../utils';
 import { paginationQueryDto, paginationResponseDto } from '../../utils/pagination';
 

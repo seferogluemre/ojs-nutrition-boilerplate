@@ -1,9 +1,9 @@
 import { FileLibraryAssetsService } from '#modules/file-library-assets';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { Gender } from '#prisma/index';
+import { HandleError } from '#shared/error/handle-error';
 import { User } from '@prisma/client';
-import { ConflictException, InternalServerErrorException, NotFoundException } from '../../utils';
+import { InternalServerErrorException, NotFoundException } from '../../utils';
 import { betterAuth } from '../auth/authentication/instance';
 import { getUserFilters } from './dtos';
 import { UserCreatePayload, UserIndexQuery, UserUpdatePayload } from './types';
@@ -34,20 +34,7 @@ interface UserPayload {
 }
 
 export abstract class UsersService {
-  private static async handlePrismaError(
-    error: unknown,
-    context: 'find' | 'create' | 'update' | 'delete',
-  ) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
-        throw new NotFoundException('Kullanıcı bulunamadı');
-      }
-      if (error.code === 'P2002' && context === 'create') {
-        throw new ConflictException('Kullanıcı adı zaten alınmış');
-      }
-    }
-    throw error;
-  }
+  
 
   private static async prepareUserPayload(payloadRaw: UserUpdatePayload): Promise<UserPayload> {
     const email = payloadRaw.email?.toLowerCase();
@@ -180,12 +167,8 @@ export abstract class UsersService {
 
       return updatedUser;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException('Bu kullanıcı adı veya email zaten kullanılıyor');
-        }
-      }
-      throw error;
+        await HandleError.handlePrismaError(error, 'user', 'create');
+        throw error;
     }
   }
 
@@ -235,11 +218,7 @@ export abstract class UsersService {
 
       return updatedUser;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException('Bu kullanıcı adı veya email zaten kullanılıyor');
-        }
-      }
+      await HandleError.handlePrismaError(error, 'user', 'update');
       throw error;
     }
   }
@@ -252,12 +231,7 @@ export abstract class UsersService {
         },
       });
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundException('Kullanıcı bulunamadı');
-        }
-      }
-      throw error;
+      await HandleError.handlePrismaError(error, 'user', 'delete');
     }
   }
 
@@ -276,7 +250,7 @@ export abstract class UsersService {
         data: { deletedAt: null },
       });
     } catch (error) {
-      await this.handlePrismaError(error, 'update');
+      await HandleError.handlePrismaError(error, 'user', 'update');
       throw error;
     }
   }

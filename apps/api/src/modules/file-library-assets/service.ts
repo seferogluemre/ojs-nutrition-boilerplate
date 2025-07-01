@@ -1,9 +1,9 @@
 import { prisma } from '#/core';
 import { Prisma } from '#prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import fs from 'fs';
 import path from 'path';
 
+import { HandleError } from '#shared/error/handle-error';
 import { NotFoundException } from '../../utils';
 import { PaginationService } from '../../utils/pagination';
 import { FILE_LIBRARY_ASSET_TYPE_RULES, normalizeMimeType } from './constants';
@@ -15,18 +15,6 @@ import {
 } from './types';
 
 export abstract class FileLibraryAssetsService {
-  private static async handlePrismaError(
-    error: unknown,
-    context: 'find' | 'create' | 'update' | 'delete',
-  ) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
-        throw new NotFoundException('Dosya bulunamadı');
-      }
-    }
-    console.error(`Error in FileLibraryAssetsService.${context}:`, error);
-    throw error;
-  }
 
   static async index(query: FileLibraryAssetIndexQuery) {
     try {
@@ -51,7 +39,8 @@ export abstract class FileLibraryAssetsService {
 
       return { data, total };
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'fileLibraryAsset', 'find');
+      throw error;
     }
   }
 
@@ -67,7 +56,8 @@ export abstract class FileLibraryAssetsService {
 
       return fileLibraryAsset;
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'fileLibraryAsset', 'find');
+      throw error;
     }
   }
 
@@ -121,7 +111,8 @@ export abstract class FileLibraryAssetsService {
 
       return fileLibraryAsset;
     } catch (error) {
-      throw this.handlePrismaError(error, 'create');
+      await HandleError.handlePrismaError(error, 'fileLibraryAsset', 'create');
+      throw error;
     }
   }
 
@@ -149,7 +140,8 @@ export abstract class FileLibraryAssetsService {
 
       return fileLibraryAsset;
     } catch (error) {
-      throw this.handlePrismaError(error, 'update');
+      await HandleError.handlePrismaError(error, 'fileLibraryAsset', 'update');
+      throw error;
     }
   }
 
@@ -175,7 +167,8 @@ export abstract class FileLibraryAssetsService {
 
       return deletedAsset;
     } catch (error) {
-      throw this.handlePrismaError(error, 'delete');
+      await HandleError.handlePrismaError(error, 'fileLibraryAsset', 'delete');
+      throw error;
     }
   }
 }

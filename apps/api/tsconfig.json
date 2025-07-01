@@ -9,7 +9,8 @@
       "#prisma/*": ["./prisma/client/*"],
       "#prismabox/*": ["./prisma/prismabox/*"],
       "#*": ["./src/*"],
-      "#core": ["./src/core/*"]
+      "@core": ["./src/core/*"],
+      "@prisma": ["./prisma/client/*"]
     },
     "outDir": "../../dist/apps/api"
   },

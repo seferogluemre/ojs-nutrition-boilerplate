@@ -1,10 +1,10 @@
 import { Elysia } from 'elysia';
-import { SystemAdministrationService } from './service';
+import { auditLogsController } from '../audit-logs';
+import { UserFormatter } from '../users';
 import {
     initialUserSetupDto,
 } from './dto';
-import { auditLogsController } from '../audit-logs';
-import { UserFormatter } from '../users';
+import { SystemAdministrationService } from './service';
 
 const app = new Elysia({
     prefix: '/system-administration',

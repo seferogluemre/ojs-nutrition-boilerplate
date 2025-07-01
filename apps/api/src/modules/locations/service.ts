@@ -1,18 +1,8 @@
+import { HandleError } from '#shared/error/handle-error';
 import { NotFoundException, PaginationQuery } from '#utils';
 import { Prisma } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export abstract class LocationsService {
-  private static async handlePrismaError(error: unknown, context: 'find') {
-    if (error instanceof PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
-        throw new NotFoundException('Record not found');
-      }
-    }
-    console.error(`Error in LocationsService.${context}:`, error);
-    throw error;
-  }
-
   // Country Methods
   static async indexCountries(query: PaginationQuery & { search?: string }) {
     try {
@@ -40,7 +30,8 @@ export abstract class LocationsService {
 
       return { data, total };
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'country', 'find');
+      throw error;
     }
   }
 
@@ -56,7 +47,8 @@ export abstract class LocationsService {
 
       return country;
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'country', 'find');
+      throw error;
     }
   }
 
@@ -93,7 +85,8 @@ export abstract class LocationsService {
 
       return { data, total };
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'state', 'find');
+      throw error;
     }
   }
 
@@ -112,7 +105,8 @@ export abstract class LocationsService {
 
       return state;
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'state', 'find');
+      throw error;
     }
   }
 
@@ -153,7 +147,8 @@ export abstract class LocationsService {
 
       return { data, total };
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'city', 'find');
+      throw error;
     }
   }
 
@@ -173,7 +168,8 @@ export abstract class LocationsService {
 
       return city;
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'region', 'find');
+      throw error;
     }
   }
 
@@ -206,7 +202,8 @@ export abstract class LocationsService {
 
       return { data, total };
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'region', 'find');
+      throw error;
     }
   }
 
@@ -222,7 +219,8 @@ export abstract class LocationsService {
 
       return region;
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'subregion', 'find');
+      throw error;
     }
   }
 
@@ -256,7 +254,8 @@ export abstract class LocationsService {
 
       return { data, total };
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'subregion', 'find');
+      throw error;
     }
   }
 
@@ -272,7 +271,8 @@ export abstract class LocationsService {
 
       return subregion;
     } catch (error) {
-      throw this.handlePrismaError(error, 'find');
+      await HandleError.handlePrismaError(error, 'subregion', 'find');
+      throw error;
     }
   }
 }
