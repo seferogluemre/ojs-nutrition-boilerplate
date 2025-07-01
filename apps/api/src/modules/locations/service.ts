@@ -1,6 +1,5 @@
-import { prisma } from '#core';
-import { Prisma } from '#prisma/client';
 import { NotFoundException, PaginationQuery } from '#utils';
+import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export abstract class LocationsService {

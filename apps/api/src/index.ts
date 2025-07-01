@@ -1,12 +1,12 @@
-import { loadEnv } from './config/env';
-import path from 'path';
-import { Elysia } from 'elysia';
 import cors from '@elysiajs/cors';
 import staticPlugin from '@elysiajs/static';
 import swagger from '@elysiajs/swagger';
-import routes, { swaggerTags } from './modules';
+import { Elysia } from 'elysia';
+import path from 'path';
+import { loadEnv } from './config/env';
 import { handleElysiaError } from './config/error-handler';
 import { prepareSwaggerConfig } from './config/swagger.config';
+import routes, { swaggerTags } from './modules';
 
 loadEnv();
 

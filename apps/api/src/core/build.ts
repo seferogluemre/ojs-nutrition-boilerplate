@@ -1,5 +1,5 @@
-import { loadEnv } from '../config/env'
-import dts from 'bun-plugin-dts'
+import dts from 'bun-plugin-dts';
+import { loadEnv } from '../config/env';
 
 loadEnv();
 

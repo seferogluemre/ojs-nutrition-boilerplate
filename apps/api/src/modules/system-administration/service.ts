@@ -1,8 +1,8 @@
+import { prisma } from '#core';
+import { Gender } from '#prismabox/Gender';
+import { GoneException } from '../../utils';
 import { RolesService } from '../auth/roles/service';
 import { UsersService } from '../users';
-import { GoneException } from '../../utils';
-import { prisma } from '#core';
-import { Gender } from '#prisma/client';
 
 export class SystemAdministrationService {
     static async setupInitialUser() {

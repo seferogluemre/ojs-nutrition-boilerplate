@@ -1,4 +1,4 @@
-import { Prisma } from '#prisma/client';
+import { Prisma } from '@prisma/client';
 
 type SwapDecimalWithNumber<T> = {
     [k in keyof T]: T[k] extends Prisma.DecimalJsLike

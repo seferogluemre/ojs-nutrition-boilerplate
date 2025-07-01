@@ -1,10 +1,10 @@
+import { cache, prisma } from "#core";
+import { Gender } from "#prismabox/Gender";
 import { betterAuth as betterAuthBase } from "better-auth";
-import { openAPI } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { AuthenticationService } from "./service";
+import { openAPI } from "better-auth/plugins";
 import { admin } from "./plugins/admin";
-import { prisma, cache } from "#core";
-import { Gender } from "#prisma/client";
+import { AuthenticationService } from "./service";
 
 export const betterAuth = betterAuthBase({
     database: prismaAdapter(prisma, {

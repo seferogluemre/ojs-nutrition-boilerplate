@@ -1,10 +1,8 @@
-import { prisma } from '#core';
 import { FileLibraryAssetsService } from '#modules/file-library-assets';
-import { Gender, Prisma, User } from '#prisma/client';
-import { FileLibraryAssetType } from '#prisma/enums';
-import { UserWhereUnique } from '#prismabox/User';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
+import { Gender } from '#prisma/index';
+import { User } from '@prisma/client';
 import { ConflictException, InternalServerErrorException, NotFoundException } from '../../utils';
 import { betterAuth } from '../auth/authentication/instance';
 import { getUserFilters } from './dtos';

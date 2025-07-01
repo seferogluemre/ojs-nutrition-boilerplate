@@ -1,8 +1,8 @@
-import { Gender, Prisma } from '#prisma/client';
 import { UserInputUpdate, UserPlain } from '#prismabox/User';
-import { __nullable__ } from '#prismabox/barrel';
+import { __nullable__, Gender } from '#prismabox/barrel';
 import { t } from 'elysia';
 
+import { Prisma } from '@prisma/client';
 import { ControllerHook, errorResponseDto } from '../../utils';
 import { passwordValidation } from './field-validations';
 

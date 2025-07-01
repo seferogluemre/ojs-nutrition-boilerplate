@@ -1,10 +1,7 @@
-import { FileLibraryAssetType } from '#prisma/client';
-import {
-  FileLibraryAssetPlain,
-  FileLibraryAssetPlainInputUpdate,
-} from '#prismabox/FileLibraryAsset';
 import { t } from 'elysia';
 
+import { FileLibraryAssetType } from '#prisma/index';
+import { FileLibraryAssetPlain, FileLibraryAssetPlainInputUpdate } from '#prismabox/FileLibraryAsset';
 import { ControllerHook, errorResponseDto, prepareFilters, uuidValidation } from '../../utils';
 import { paginationQueryDto, paginationResponseDto } from '../../utils/pagination';
 

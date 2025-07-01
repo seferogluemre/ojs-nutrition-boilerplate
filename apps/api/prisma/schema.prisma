@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "./client"
 
   runtime                = "bun"
@@ -76,6 +76,17 @@ enum FileLibraryAssetMimeType {
   @@map("file_asset_mime_type")
 }
 
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+
+  @@map("order_status")
+}
+
 model User {
   id String @id @default(uuid())
 
@@ -114,13 +125,16 @@ model User {
   banReason    String?
   banExpiresAt DateTime?
 
-  createdUsers   User[]     @relation("UserToCreator")
-  auditLogs      AuditLog[] @relation("AuditLogsToUser")
-  posts          Post[]     @relation("PostToUser")
-  userRoles      UserRole[] @relation("UserRoleToUser")
+  createdUsers   User[]        @relation("UserToCreator")
+  auditLogs      AuditLog[]    @relation("AuditLogsToUser")
+  posts          Post[]        @relation("PostToUser")
+  userRoles      UserRole[]    @relation("UserRoleToUser")
   sessions       Session[]
   accounts       Account[]
-  impersonations Session[]  @relation("SessionToImpersonatedBy")
+  impersonations Session[]     @relation("SessionToImpersonatedBy")
+  orders         Order[]       @relation("OrderToUser")
+  addresses      UserAddress[] @relation("UserAddressToUser")
+  cart           Cart?         @relation("CartToUser")
 
   @@index([deletedAt])
   @@map("users")
@@ -415,6 +429,8 @@ model City {
   countryId   Int     @map("country_id")
   country     Country @relation(fields: [countryId], references: [id])
 
+  userAddresses UserAddress[]
+
   @@index([stateId])
   @@index([countryId])
   @@map("cities")
@@ -516,6 +532,15 @@ model Product {
   /// @prismabox.options{minLength:2,maxLength:100}
   slug String @unique
 
+  /// @prismabox.options{minimum:0}
+  stock Int @default(0)
+
+  /// @prismabox.options{minLength:0,maxLength:100}
+  variant String? @db.VarChar(100)
+
+  /// @prismabox.options{default:true}
+  isActive Boolean @default(true) @map("is_active")
+
   /// @prismabox.options{minLength:0,maxLength:50}
   shortDescription String @map("short_description") @db.VarChar(50)
 
@@ -537,9 +562,11 @@ model Product {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  category Category          @relation(fields: [categoryId], references: [id])
-  photos   ProductPhoto[]
-  comments ProductComments[]
+  category   Category          @relation(fields: [categoryId], references: [id])
+  photos     ProductPhoto[]
+  comments   ProductComments[]
+  cartItems  CartItem[]        @relation("CartItemToProduct")
+  orderItems OrderItem[]       @relation("OrderItemToProduct")
 
   @@map("products")
 }
@@ -600,4 +627,134 @@ model ProductComments {
   Customer  Customer @relation(fields: [customerId], references: [id])
 
   @@map("product_comments")
+}
+
+model Cart {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+  userId String @unique @map("user_id")
+  user   User   @relation("CartToUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("carts")
+}
+
+model CartItem {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+  cartId Int  @map("cart_id")
+  cart   Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  /// @prismabox.hide
+  productId Int     @map("product_id")
+  product   Product @relation("CartItemToProduct", fields: [productId], references: [id])
+
+  /// @prismabox.options{minimum:1}
+  quantity Int @default(1)
+
+  /// @prismabox.options{minimum:0}
+  unitPrice Int @map("unit_price") // Ürünün o anki fiyatı
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("cart_items")
+}
+
+model Order {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+  userId String @map("user_id")
+  user   User   @relation("OrderToUser", fields: [userId], references: [id])
+
+  /// @prismabox.options{minLength:1,maxLength:20}
+  orderNumber String @unique @map("order_number")
+
+  status OrderStatus @default(PENDING)
+
+  /// @prismabox.options{minimum:0}
+  subtotal Int
+
+  shippingAddress Json @map("shipping_address") @db.JsonB
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+  orderId Int   @map("order_id")
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  /// @prismabox.hide
+  productId Int     @map("product_id")
+  product   Product @relation("OrderItemToProduct", fields: [productId], references: [id])
+
+  /// @prismabox.options{minimum:1}
+  quantity Int
+
+  /// @prismabox.options{minimum:0}
+  unitPrice Int @map("unit_price") // Sipariş anındaki ürün fiyatı
+
+  /// @prismabox.options{minimum:0}
+  totalPrice Int @map("total_price") // quantity * unitPrice
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("order_items")
+}
+
+model UserAddress {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+  userId String @map("user_id")
+  user   User   @relation("UserAddressToUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  title String @db.VarChar(30) // "Ev", "İş" vs.
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  recipientName String @map("recipient_name") @db.VarChar(100)
+
+  /// @prismabox.options{minLength:10,maxLength:15}
+  phone String @db.VarChar(15)
+
+  /// @prismabox.options{minLength:5,maxLength:255}
+  addressLine1 String @map("address_line_1") @db.VarChar(255)
+
+  /// @prismabox.options{minLength:0,maxLength:255}
+  addressLine2 String? @map("address_line_2") @db.VarChar(255)
+
+  /// @prismabox.hide
+  cityId Int  @map("city_id")
+  city   City @relation(fields: [cityId], references: [id])
+
+  /// @prismabox.options{minLength:5,maxLength:10}
+  postalCode String @map("postal_code") @db.VarChar(10)
+
+  isDefault Boolean @default(false) @map("is_default")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_addresses")
 }

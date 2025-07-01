@@ -1,10 +1,9 @@
 
-import { NotFoundException } from '../../utils';
-import { Prisma } from '#prisma/client';
+import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { NotFoundException } from '../../utils';
 import { PaginationQuery } from '../../utils/pagination';
 import { PostCreatePayload, PostUpdatePayload } from './types';
-import { prisma } from '#core';
 
 export abstract class PostsService {
     private static async handlePrismaError(error: unknown, context: 'find' | 'create' | 'update' | 'delete') {

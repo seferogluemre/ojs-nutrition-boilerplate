@@ -1,10 +1,10 @@
-import { SystemAdministrationService } from '#modules/system-administration/service';
-import { Gender } from '#prisma/enums';
 import { loadEnv } from '#config/env';
+import prisma from '#core/prisma';
+import { SystemAdministrationService } from '#modules/system-administration/service';
+import { Gender } from '#prisma/client';
 import { faker } from '@faker-js/faker';
 import * as fs from 'fs';
 import * as path from 'path';
-import prisma from '#core/prisma';
 
 loadEnv();
 
