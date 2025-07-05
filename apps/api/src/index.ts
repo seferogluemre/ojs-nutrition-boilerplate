@@ -3,6 +3,7 @@ import staticPlugin from '@elysiajs/static';
 import swagger from '@elysiajs/swagger';
 import { Elysia } from 'elysia';
 import path from 'path';
+
 import { loadEnv } from './config/env';
 import { handleElysiaError } from './config/error-handler';
 import { prepareSwaggerConfig } from './config/swagger.config';

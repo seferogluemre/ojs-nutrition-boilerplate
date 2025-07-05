@@ -562,13 +562,32 @@ model Product {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  category   Category          @relation(fields: [categoryId], references: [id])
-  photos     ProductPhoto[]
-  comments   ProductComments[]
-  cartItems  CartItem[]        @relation("CartItemToProduct")
-  orderItems OrderItem[]       @relation("OrderItemToProduct")
+  category        Category          @relation(fields: [categoryId], references: [id])
+  photos          ProductPhoto[]
+  comments        ProductComments[]
+  cartItems       CartItem[]        @relation("CartItemToProduct")
+  orderItems      OrderItem[]       @relation("OrderItemToProduct")
+  productVariants ProductVariant[]
 
   @@map("products")
+}
+
+model ProductVariant {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  productId Int     @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  name String
+
+  cartItems CartItem[] @relation("CartItemToProductVariant")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, name])
+  @@map("product_variants")
 }
 
 model ProductPhoto {
@@ -659,6 +678,10 @@ model CartItem {
 
   /// @prismabox.options{minimum:1}
   quantity Int @default(1)
+
+  /// @prismabox.hide
+  productVariantId Int            @map("product_variant_id")
+  productVariant   ProductVariant @relation("CartItemToProductVariant", fields: [productVariantId], references: [id], onDelete: Cascade)
 
   /// @prismabox.options{minimum:0}
   unitPrice Int @map("unit_price") // Ürünün o anki fiyatı

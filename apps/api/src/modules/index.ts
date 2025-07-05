@@ -1,6 +1,7 @@
 import Elysia from 'elysia';
 
 import { authenticationController, rolesController } from './auth';
+import { cartController } from './cart';
 import { authController as customerAuthController } from './customer';
 import { fileLibraryAssetsController } from './file-library-assets';
 import { locationsController } from './locations';
@@ -19,6 +20,7 @@ const app = new Elysia()
   .use(fileLibraryAssetsController)
   .use(customerAuthController)
   .use(userAddressesController)
+  .use(cartController)
   .get(
     '/',
     () => ({
