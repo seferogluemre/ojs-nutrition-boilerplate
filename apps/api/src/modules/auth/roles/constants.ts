@@ -35,6 +35,13 @@ export const PERMISSIONS = {
     UPDATE: { key: 'file-library-assets:update', description: 'Dosya Güncelle' },
     DESTROY: { key: 'file-library-assets:destroy', description: 'Dosya Sil' },
   },
+  PRODUCTS: {
+    INDEX: { key: 'products:index', description: 'Ürünleri Görüntüle' },
+    SHOW: { key: 'products:show', description: 'Ürün Görüntüle' },
+    CREATE: { key: 'products:create', description: 'Ürün Oluştur' },
+    UPDATE: { key: 'products:update', description: 'Ürün Güncelle' },
+    DESTROY: { key: 'products:destroy', description: 'Ürün Sil' },
+  },
 } as const satisfies Record<string, Record<string, GenericPermissionObject>>;
 
 export const PERMISSION_KEYS = [
@@ -65,6 +72,11 @@ export const PERMISSION_GROUPS = {
     key: 'posts',
     description: 'Gönderiler',
     permissions: Object.values(PERMISSIONS.POSTS),
+  },
+  PRODUCTS: {
+    key: 'products',
+    description: 'Ürünler',
+    permissions: Object.values(PERMISSIONS.PRODUCTS),
   },
 } as const satisfies Record<
   string,

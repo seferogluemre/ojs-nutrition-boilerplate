@@ -20,7 +20,7 @@ const app = new Elysia()
       prefix: '/storage',
     }),
   )
-  .use(routes)
+  .group('/api', (app) => app.use(routes))
   .listen(process.env.PORT ? parseInt(process.env.PORT) : 3000);
 
 if (process.env.NODE_ENV === 'development') {

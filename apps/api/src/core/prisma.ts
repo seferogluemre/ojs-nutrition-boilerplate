@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '#prisma/client';
 
 const enableQueryLog = false;
 const prisma = new PrismaClient(
