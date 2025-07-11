@@ -138,16 +138,16 @@ export const Header = ({
       {/* Mobile Layout */}
       <div className="md:hidden flex items-center justify-between w-full">
         <Button variant="ghost" size="sm">
-          <Menu className="w-6 h-6" />
+          <Menu className="w-7 h-7 stroke-2" />
         </Button>
         
         <div className="flex-1 text-center">
-          <span className="text-lg font-bold">OJS NUTRITION</span>
+          <span className="text-lg font-black">OJS NUTRITION</span>
         </div>
         
         <Button variant="ghost" size="sm" className="relative">
-          <ShoppingCart className="w-6 h-6" />
-          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          <ShoppingCart className="w-7 h-7 stroke-2" />
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-black">
             0
           </span>
         </Button>
