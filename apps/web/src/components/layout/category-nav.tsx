@@ -52,16 +52,16 @@ export const CategoryNav = ({
       </div>
 
       {/* Mobile Search Bar - 768px altı */}
-      <div className="md:hidden bg-white px-4 py-4">
+      <div className="md:hidden bg-white px-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 rounded-xl" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 rounded-xxl" />
           <Input
             type="text"
             placeholder="ARADIĞINIZ ÜRÜNÜ YAZINIZ..."
             className="w-full pl-10 pr-16 py-2 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <Button
-            size="sm"
+            size="lg"
             className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 hover:bg-gray-800 text-white px-2 py-1 h-6 text-xs"
           >
             ARA

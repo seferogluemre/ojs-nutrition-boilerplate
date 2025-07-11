@@ -2,7 +2,8 @@ import { Button } from "#components/ui/button";
 import { Input } from "#components/ui/input";
 import { cn } from "#lib/utils";
 import { ChevronDown, Menu, Search, ShoppingCart, User } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import { MobileSidebar } from "#components/layout/mobile-sidebar";
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean;
@@ -14,6 +15,16 @@ export const Header = ({
   fixed,
   ...props
 }: HeaderProps) => {
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  const toggleMobileSidebar = () => {
+    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  };
+
+  const closeMobileSidebar = () => {
+    setIsMobileSidebarOpen(false);
+  };
+
   return (
     <header
       className={cn(
@@ -137,7 +148,7 @@ export const Header = ({
 
       {/* Mobile Layout */}
       <div className="md:hidden flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={toggleMobileSidebar}>
           <Menu className="w-7 h-7 stroke-2" />
         </Button>
         
@@ -152,6 +163,9 @@ export const Header = ({
           </span>
         </Button>
       </div>
+
+      {/* Mobile Sidebar */}
+      <MobileSidebar isOpen={isMobileSidebarOpen} onClose={closeMobileSidebar} />
     </header>
   );
 };
