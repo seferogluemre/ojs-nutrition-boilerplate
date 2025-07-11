@@ -1,5 +1,6 @@
 import { LayoutWithNav } from "#components/layout/layout-with-nav";
 import { Main } from "#components/layout/main";
+import { CategoryCards } from "./components/category-cards";
 import { HeroBanner } from "./components/hero-banner";
 
 export default function Home() {
@@ -9,6 +10,9 @@ export default function Home() {
       <HeroBanner />
       
       <Main>
+        {/* Category Cards Section */}
+        <CategoryCards />
+        
         {/* Anasayfa içeriği buraya gelecek */}
         <div className="container mx-auto py-8">
           <h1 className="text-3xl font-bold text-center mb-8">OJS NUTRITION</h1>
