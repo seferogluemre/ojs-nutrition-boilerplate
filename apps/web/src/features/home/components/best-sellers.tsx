@@ -109,11 +109,11 @@ export const BestSellers = ({
         </h2>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 justify-items-center max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6 justify-items-center max-w-7xl mx-auto">
           {bestSellerProducts.map((product) => (
             <div
               key={product.id}
-              className="relative w-[200px] h-[365px] bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+              className="relative w-[200px] h-[368px] md:w-[272.66px] md:h-[389.66px] lg:w-[200px] lg:h-[375px] bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
             >
               {/* Discount Badge */}
               {product.discountPercentage && (
