@@ -1,5 +1,6 @@
 import { LayoutWithNav } from "#components/layout/layout-with-nav";
 import { Main } from "#components/layout/main";
+import { BestSellers } from "./components/best-sellers";
 import { CategoryCards } from "./components/category-cards";
 import { HeroBanner } from "./components/hero-banner";
 
@@ -12,6 +13,9 @@ export default function Home() {
       <Main>
         {/* Category Cards Section */}
         <CategoryCards />
+        
+        {/* Best Sellers Section */}
+        <BestSellers />
         
         {/* Anasayfa içeriği buraya gelecek */}
         <div className="container mx-auto py-8">
