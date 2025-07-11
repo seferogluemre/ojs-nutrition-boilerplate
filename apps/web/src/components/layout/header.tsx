@@ -1,9 +1,16 @@
+import { CartSidebar } from "#components/layout/cart-sidebar";
+import { MobileSidebar } from "#components/layout/mobile-sidebar";
 import { Button } from "#components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "#components/ui/dropdown-menu";
 import { Input } from "#components/ui/input";
 import { cn } from "#lib/utils";
 import { ChevronDown, Menu, Search, ShoppingCart, User } from "lucide-react";
 import React, { useState } from "react";
-import { MobileSidebar } from "#components/layout/mobile-sidebar";
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean;
@@ -16,6 +23,7 @@ export const Header = ({
   ...props
 }: HeaderProps) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -23,6 +31,14 @@ export const Header = ({
 
   const closeMobileSidebar = () => {
     setIsMobileSidebarOpen(false);
+  };
+
+  const toggleCartSidebar = () => {
+    setIsCartSidebarOpen(!isCartSidebarOpen);
+  };
+
+  const closeCartSidebar = () => {
+    setIsCartSidebarOpen(false);
   };
 
   return (
@@ -66,26 +82,43 @@ export const Header = ({
         {/* Account & Cart - Sağ */}
         <div className="flex items-center space-x-4 flex-shrink-0">
           {/* Hesabım Button - Border'lı ve dropdown oklı */}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center space-x-2 border-gray-300 hover:bg-gray-50 px-4 py-2 h-10"
-          >
-            <User className="w-5 h-5 text-gray-600" />
-            <span className="text-gray-700 font-medium">HESAP</span>
-            <ChevronDown className="w-4 h-4 text-gray-600" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center space-x-2 border-gray-300 hover:bg-gray-50 px-4 py-2 h-10"
+              >
+                <User className="w-5 h-5 text-gray-600" />
+                <span className="text-gray-700 font-medium">HESAP</span>
+                <ChevronDown className="w-4 h-4 text-gray-600" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem className="text-center border-b border-gray-300">
+                <a href="/sign-in" className="w-full">
+                  Üye girişi
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-center">
+                <a href="/sign-up" className="w-full">
+                  Üye ol
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           {/* Sepet Button - Gri background'lu */}
           <Button 
             size="sm" 
             className="flex items-center space-x-2 relative bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 h-10"
+            onClick={toggleCartSidebar}
           >
             <ShoppingCart className="w-5 h-5" />
             <span className="font-medium">SEPET</span>
             {/* Cart Badge */}
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
-              0
+              2
             </span>
           </Button>
         </div>
@@ -121,26 +154,43 @@ export const Header = ({
         {/* Account & Cart - Sağ */}
         <div className="flex items-center space-x-2 flex-shrink-0">
           {/* Hesabım Button - Tablet için kompakt */}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center space-x-1 border-gray-300 hover:bg-gray-50 px-3 py-2 h-9"
-          >
-            <User className="w-4 h-4 text-gray-600" />
-            <span className="text-gray-700 font-medium text-sm">HESAP</span>
-            <ChevronDown className="w-3 h-3 text-gray-600" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center space-x-1 border-gray-300 hover:bg-gray-50 px-3 py-2 h-9"
+              >
+                <User className="w-4 h-4 text-gray-600" />
+                <span className="text-gray-700 font-medium text-sm">HESAP</span>
+                <ChevronDown className="w-3 h-3 text-gray-600" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem className="text-center border-b border-gray-300">
+                <a href="/sign-in" className="w-full text-sm">
+                  Üye girişi
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-center">
+                <a href="/sign-up" className="w-full text-sm">
+                  Üye ol
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           {/* Sepet Button - Tablet için kompakt */}
           <Button 
             size="sm" 
             className="flex items-center space-x-1 relative bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 h-9"
+            onClick={toggleCartSidebar}
           >
             <ShoppingCart className="w-4 h-4" />
             <span className="font-medium text-sm">SEPET</span>
             {/* Cart Badge */}
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-              0
+              2
             </span>
           </Button>
         </div>
@@ -156,16 +206,19 @@ export const Header = ({
           <span className="text-lg font-black">OJS NUTRITION</span>
         </div>
         
-        <Button variant="ghost" size="sm" className="relative">
+        <Button variant="ghost" size="sm" className="relative" onClick={toggleCartSidebar}>
           <ShoppingCart className="w-7 h-7 stroke-2" />
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-black">
-            0
+            2
           </span>
         </Button>
       </div>
 
       {/* Mobile Sidebar */}
       <MobileSidebar isOpen={isMobileSidebarOpen} onClose={closeMobileSidebar} />
+      
+      {/* Cart Sidebar */}
+      <CartSidebar isOpen={isCartSidebarOpen} onClose={closeCartSidebar} />
     </header>
   );
 };

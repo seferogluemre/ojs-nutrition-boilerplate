@@ -1,3 +1,4 @@
+import { InfoBanner } from "#components/layout/info-banner";
 import React from "react";
 import { CategoryNav } from "./category-nav";
 import { Header } from "./header";
@@ -18,6 +19,9 @@ export const LayoutWithNav = ({
       
       {/* Category Navigation - Header ile yapışık */}
       <CategoryNav />
+      
+      {/* Info Banner - Category Navigation ile yapışık */}
+      <InfoBanner />
       
       {/* Main Content */}
       <div className={headerFixed ? "mt-16" : ""}>
