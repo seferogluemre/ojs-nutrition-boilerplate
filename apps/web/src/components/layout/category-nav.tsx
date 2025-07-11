@@ -25,32 +25,34 @@ export const CategoryNav = ({
     <nav
       className={cn(
         // Desktop/Tablet: gri arkaplan, Mobile: beyaz arkaplan
-        "bg-white sm:bg-gray-900 text-white sm:border-t sm:border-gray-800",
+        "bg-white md:bg-gray-900 text-white md:border-t md:border-gray-800",
         // Header ile aynı padding değerleri
-        "px-0 sm:px-26 md:px-56 lg:px-56 xl:px-64 2xl:px-72",
-        "py-0 sm:py-3",
+        "px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20",
+        "py-0 md:py-3",
         className,
       )}
       {...props}
     >
-      {/* Desktop/Tablet Kategori Links - 578px üzeri */}
-      <div className="hidden sm:flex items-center justify-center">
-        <ul className="flex items-center justify-between w-full max-w-6xl space-x-4 md:space-x-8 lg:space-x-12 xl:space-x-16 2xl:space-x-20">
-          {categories.map((category) => (
-            <li key={category}>
-              <a
-                href="#"
-                className="text-white hover:text-gray-300 transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap"
-              >
-                {category}
-              </a>
-            </li>
-          ))}
-        </ul>
+      {/* Desktop/Tablet Kategori Links - 768px üzeri */}
+      <div className="hidden md:flex items-center justify-center">
+        <div className="w-full max-w-7xl mx-auto">
+          <ul className="flex items-center justify-between w-full px-6 lg:px-8 xl:px-12 2xl:px-16">
+            {categories.map((category) => (
+              <li key={category}>
+                <a
+                  href="#"
+                  className="text-white hover:text-gray-300 transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap"
+                >
+                  {category}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
-      {/* Mobile Search Bar - 578px altı */}
-      <div className="sm:hidden bg-white px-4">
+      {/* Mobile Search Bar - 768px altı */}
+      <div className="md:hidden bg-white px-4 py-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 rounded-xl" />
           <Input

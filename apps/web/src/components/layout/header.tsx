@@ -18,24 +18,24 @@ export const Header = ({
     <header
       className={cn(
         "flex h-16 items-center justify-between bg-white border-b border-gray-200",
-        // Responsive padding: Mobile (px-26), Tablet/Desktop (px-56) - aynı değer
-        "px-26 md:p-5 lg:px-56 xl:px-64 2xl:px-72",
+        // Responsive padding - tutarlı ortalama için
+        "px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20",
         fixed && "header-fixed peer/header fixed z-50 w-full shadow-md",
         className,
       )}
       {...props}
     >
       {/* Desktop Layout (lg+) */}
-      <div className="hidden lg:flex items-center justify-between w-full">
+      <div className="hidden lg:flex items-center justify-between w-full max-w-7xl mx-auto">
         {/* Logo - Sol */}
         <div className="flex-shrink-0">
           <div className="flex items-center">
-           <img src="/images/image.png" alt="logo" className=" h-10" />
+           <img src="/images/image.png" alt="logo" className="h-10" />
           </div>
         </div>
 
-        {/* Search Bar - Orta */}
-        <div className="flex-1 max-w-md ml-12 lg:ml-16 mr-2 lg:mr-3">
+        {/* Search Bar - Orta, esnek genişlik */}
+        <div className="flex-1 max-w-lg mx-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
@@ -53,7 +53,7 @@ export const Header = ({
         </div>
 
         {/* Account & Cart - Sağ */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 flex-shrink-0">
           {/* Hesabım Button - Border'lı ve dropdown oklı */}
           <Button 
             variant="outline" 
@@ -81,16 +81,16 @@ export const Header = ({
       </div>
 
       {/* Tablet Layout (md-lg) */}
-      <div className="hidden md:flex lg:hidden items-center justify-between w-full">
+      <div className="hidden md:flex lg:hidden items-center justify-between w-full max-w-5xl mx-auto">
         {/* Logo - Sol */}
         <div className="flex-shrink-0">
           <div className="flex items-center">
-           <img src="/images/image.png" alt="logo" className=" h-8" />
+           <img src="/images/image.png" alt="logo" className="h-8" />
           </div>
         </div>
 
         {/* Search Bar - Orta */}
-        <div className="flex-1 max-w-sm ml-6 mr-3">
+        <div className="flex-1 max-w-md mx-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
@@ -108,7 +108,7 @@ export const Header = ({
         </div>
 
         {/* Account & Cart - Sağ */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 flex-shrink-0">
           {/* Hesabım Button - Tablet için kompakt */}
           <Button 
             variant="outline" 
