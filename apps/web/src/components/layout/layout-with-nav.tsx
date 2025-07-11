@@ -1,6 +1,7 @@
 import { InfoBanner } from "#components/layout/info-banner";
 import React from "react";
 import { CategoryNav } from "./category-nav";
+import { Footer } from "./footer";
 import { Header } from "./header";
 
 interface LayoutWithNavProps {
@@ -13,20 +14,21 @@ export const LayoutWithNav = ({
   headerFixed = false 
 }: LayoutWithNavProps) => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
       <Header fixed={headerFixed} />
       
-      {/* Category Navigation - Header ile yapışık */}
       <CategoryNav />
       
-      {/* Info Banner - Category Navigation ile yapışık */}
       <InfoBanner />
       
       {/* Main Content */}
-      <div className={headerFixed ? "mt-16" : ""}>
+      <div className={headerFixed ? "mt-20 flex-1" : "flex-1"}>
         {children}
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

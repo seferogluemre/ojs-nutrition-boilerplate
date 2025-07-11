@@ -44,9 +44,9 @@ export const Header = ({
   return (
     <header
       className={cn(
-        "flex h-16 items-center justify-between bg-white border-b border-gray-200",
-        // Responsive padding - tutarlı ortalama için
-        "px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20",
+        "flex h-20 items-center justify-between bg-white border-b border-gray-200",
+        // Responsive padding - tutarlı ortalama için + vertical padding eklendi
+        "px-4 py-3 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20",
         fixed && "header-fixed peer/header fixed z-50 w-full shadow-md",
         className,
       )}
