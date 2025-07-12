@@ -77,9 +77,9 @@ export default function ProductDetail() {
 
   const getFlavorStyle = (flavor: ProductFlavor, isSelected: boolean) => {
     return {
-      backgroundColor: isSelected ? flavor.color : '#f3f4f6',
+      backgroundColor: '#ffffff',
       borderColor: isSelected ? '#3b82f6' : '#d1d5db',
-      color: isSelected ? '#ffffff' : '#374151',
+      color: '#374151',
     };
   };
 
@@ -114,7 +114,7 @@ export default function ProductDetail() {
     <Main>
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* 2 Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           
           {/* Left Column - Product Image */}
           <div className="flex justify-center">
@@ -128,7 +128,7 @@ export default function ProductDetail() {
           </div>
           
           {/* Right Column - Product Info */}
-          <div className="flex flex-col space-y-6">
+          <div className="flex flex-col space-y-4">
             
             {/* Product Name */}
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
@@ -171,16 +171,16 @@ export default function ProductDetail() {
             {/* Flavors Section */}
             {product.flavors && product.flavors.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">AROMA:</h3>
-                <div className="grid grid-cols-3 gap-3">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">AROMA:</h3>
+                <div className="flex flex-wrap gap-3">
                   {product.flavors.map((flavor) => (
                     <button
                       key={flavor.id}
                       onClick={() => setSelectedFlavor(flavor)}
                       disabled={!flavor.available}
                       className={cn(
-                        "relative px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all duration-200",
-                        "h-[35px] flex items-center justify-center",
+                        "relative ps-2  rounded-lg border-2 text-sm font-medium transition-all duration-200",
+                        "h-[35px] flex items-center justify-between min-w-[120px]",
                         selectedFlavor?.id === flavor.id 
                           ? "border-blue-500 ring-2 ring-blue-200" 
                           : "border-gray-300 hover:border-gray-400",
@@ -188,7 +188,11 @@ export default function ProductDetail() {
                       )}
                       style={getFlavorStyle(flavor, selectedFlavor?.id === flavor.id)}
                     >
-                      {flavor.name}
+                      <span className="flex-1 text-sm text-center pr-2">{flavor.name}</span>
+                      <div 
+                        className="w-8 h-full rounded-r-md flex-shrink-0" 
+                        style={{ backgroundColor: flavor.color }}
+                      ></div>
                       {selectedFlavor?.id === flavor.id && (
                         <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-1">
                           <Check className="w-3 h-3 text-white" />
@@ -203,7 +207,7 @@ export default function ProductDetail() {
             {/* Sizes Section */}
             {product.sizes && product.sizes.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">BOYUT:</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">BOYUT:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {product.sizes.map((size) => (
                     <button
@@ -216,101 +220,101 @@ export default function ProductDetail() {
                           : "border-gray-300 hover:border-gray-400"
                       )}
                     >
-                      {/* Discount Badge */}
-                      {size.discountPercentage && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold">
-                          %{size.discountPercentage}
-                          <div className="text-[8px] font-normal">İNDİRİM</div>
-                        </div>
-                      )}
-                      
-                      <div className="font-bold text-gray-900">{size.weight}</div>
-                      <div className="text-sm text-gray-600">{size.servings} servis</div>
-                      
-                      <div className="mt-2">
-                        {size.oldPrice && (
-                          <div className="text-xs text-gray-500 line-through">
-                            {size.oldPrice} TL
+                        {/* Discount Badge - Middle Top */}
+                        {size.discountPercentage && (
+                          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold z-10">
+                            %{size.discountPercentage}
+                            <div className="text-[8px] font-normal">İNDİRİM</div>
                           </div>
                         )}
-                        <div className="font-bold text-gray-900">
-                          {size.price} TL
+                        
+                        <div className="font-bold text-gray-900">{size.weight}</div>
+                        <div className="text-sm text-gray-600">{size.servings} servis</div>
+                        
+                        <div className="mt-2">
+                          {size.oldPrice && (
+                            <div className="text-xs text-gray-500 line-through">
+                              {size.oldPrice} TL
+                            </div>
+                          )}
+                          <div className="font-bold text-gray-900">
+                            {size.price} TL
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* Price Section */}
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-3xl font-bold text-gray-900">
-                  {getCurrentPrice()} TL
-                  {getOldPrice() && (
-                    <span className="text-lg text-gray-500 line-through ml-3">
-                      {getOldPrice()} TL
-                    </span>
-                  )}
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-gray-600">Servis başına</div>
-                  <div className="text-lg font-semibold text-gray-900">
-                    {getServingPrice()} TL
+                      </button>
+                    ))}
                   </div>
+                </div>
+              )}
+              
+              {/* Price Section */}
+              <div className="bg-white p-3 rounded-lg  border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-3xl font-bold text-gray-900">
+                    {getCurrentPrice()} TL
+                    {getOldPrice() && (
+                      <span className="text-lg text-gray-500 line-through ml-3">
+                        {getOldPrice()} TL
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-600">Servis başına</div>
+                    <div className="text-lg font-semibold text-gray-900">
+                      {getServingPrice()} TL
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Quantity and Add to Cart */}
+                <div className="flex items-center gap-4">
+                  {/* Quantity Selector */}
+                  <div className="flex items-center border border-gray-300 rounded-lg">
+                    <button
+                      onClick={decreaseQuantity}
+                      className="p-2 hover:bg-gray-100 transition-colors"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="px-4 py-2 font-semibold min-w-[50px] text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={increaseQuantity}
+                      className="p-2 hover:bg-gray-100 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  {/* Add to Cart Button */}
+                  <Button className="flex-1 bg-black hover:bg-gray-800 text-white py-3 px-6 text-lg font-semibold">
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    SEPETE EKLE
+                  </Button>
                 </div>
               </div>
               
-              {/* Quantity and Add to Cart */}
-              <div className="flex items-center gap-4">
-                {/* Quantity Selector */}
-                <div className="flex items-center border border-gray-300 rounded-lg">
-                  <button
-                    onClick={decreaseQuantity}
-                    className="p-2 hover:bg-gray-100 transition-colors"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="px-4 py-2 font-semibold min-w-[50px] text-center">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={increaseQuantity}
-                    className="p-2 hover:bg-gray-100 transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-                
-                {/* Add to Cart Button */}
-                <Button className="flex-1 bg-black hover:bg-gray-800 text-white py-3 px-6 text-lg font-semibold">
-                  <ShoppingCart className="w-5 h-5 mr-2" />
-                  SEPETE EKLE
-                </Button>
+              {/* Benefits Section */}
+              <div className="grid grid-cols-3 gap-4 pt-2">
+                {product.benefits.map((benefit, index) => (
+                  <div key={index} className="text-center">
+                    <div className="flex justify-center mb-2 text-gray-600">
+                      {getBenefitIcon(benefit.icon)}
+                    </div>
+                    <div className="text-sm font-semibold text-gray-900">
+                      {benefit.title}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      {benefit.description}
+                    </div>
+                  </div>
+                ))}
               </div>
+              
             </div>
-            
-            {/* Benefits Section */}
-            <div className="grid grid-cols-3 gap-4 pt-4">
-              {product.benefits.map((benefit, index) => (
-                <div key={index} className="text-center">
-                  <div className="flex justify-center mb-2 text-gray-600">
-                    {getBenefitIcon(benefit.icon)}
-                  </div>
-                  <div className="text-sm font-semibold text-gray-900">
-                    {benefit.title}
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {benefit.description}
-                  </div>
-                </div>
-              ))}
-            </div>
-            
           </div>
         </div>
-      </div>
-    </Main>
-  );
+      </Main>
+    );
 } 

@@ -71,14 +71,15 @@ export const mockProducts: Product[] = [
     estimatedDelivery: "Aynı Gün Kargo",
     
     flavors: [
-      { id: "biskuvi", name: "Bisküvi", color: "#8B4513", available: true },
+      { id: "biskuvi", name: "Bisküvi", color: "#D2B48C", available: true },
       { id: "cikolata", name: "Çikolata", color: "#654321", available: true },
       { id: "muz", name: "Muz", color: "#FFD700", available: true },
       { id: "salted-caramel", name: "Salted Caramel", color: "#CD853F", available: true },
       { id: "choco-nut", name: "Choco Nut", color: "#8B4513", available: true },
-      { id: "hindistan-cevizi", name: "Hindistan Cevizi", color: "#DEB887", available: true },
+      { id: "hindistan-cevizi", name: "Hindistan Cevizi", color: "#F5F5DC", available: true },
       { id: "raspberry-cheesecake", name: "Raspberry Cheesecake", color: "#C71585", available: true },
       { id: "cilek", name: "Çilek", color: "#DC143C", available: true },
+      { id: "vanilya", name: "Vanilya", color: "#F5DEB3", available: true },
     ],
     
     sizes: [
@@ -145,10 +146,14 @@ export const mockProducts: Product[] = [
     
     flavors: [
       { id: "sade", name: "Sade", color: "#F5F5F5", available: true },
+      { id: "vanilya", name: "Vanilya", color: "#F5DEB3", available: true },
+      { id: "cikolata", name: "Çikolata", color: "#654321", available: true },
     ],
     
     sizes: [
-      { id: "500g", weight: "500G", servings: 20, price: 749 },
+      { id: "500g", weight: "500G", servings: 20, price: 749, isRecommended: true },
+      { id: "1kg", weight: "1KG", servings: 40, price: 1399, oldPrice: 1598, discountPercentage: 12 },
+      { id: "2kg", weight: "2KG", servings: 80, price: 2699, oldPrice: 3196, discountPercentage: 15 },
     ],
     
     badges: [
@@ -178,10 +183,15 @@ export const mockProducts: Product[] = [
     
     flavors: [
       { id: "karisik", name: "Karışık", color: "#4169E1", available: true },
+      { id: "cikolata", name: "Çikolata", color: "#654321", available: true },
+      { id: "vanilya", name: "Vanilya", color: "#F5DEB3", available: true },
+      { id: "meyve", name: "Meyve", color: "#FF6B6B", available: true },
     ],
     
     sizes: [
-      { id: "paket", weight: "PAKET", servings: 30, price: 799, oldPrice: 1126, discountPercentage: 29 },
+      { id: "paket-kucuk", weight: "KÜÇÜK PAKET", servings: 30, price: 799, oldPrice: 1126, discountPercentage: 29, isRecommended: true },
+      { id: "paket-orta", weight: "ORTA PAKET", servings: 45, price: 1199, oldPrice: 1598, discountPercentage: 25 },
+      { id: "paket-buyuk", weight: "BÜYÜK PAKET", servings: 60, price: 1599, oldPrice: 2196, discountPercentage: 27 },
     ],
     
     badges: [
@@ -206,9 +216,22 @@ export const mockProducts: Product[] = [
     image: "/images/collagen.jpg",
     slug: "pea-protein",
     inStock: true,
-    flavors: [{ id: "vanilya", name: "Vanilya", color: "#F5DEB3", available: true }],
-    sizes: [{ id: "300g", weight: "300G", servings: 12, price: 349 }],
+    
+    flavors: [
+      { id: "vanilya", name: "Vanilya", color: "#F5DEB3", available: true },
+      { id: "cikolata", name: "Çikolata", color: "#654321", available: true },
+      { id: "sade", name: "Sade", color: "#F5F5F5", available: true },
+      { id: "karamel", name: "Karamel", color: "#CD853F", available: true },
+    ],
+    
+    sizes: [
+      { id: "300g", weight: "300G", servings: 12, price: 349, isRecommended: true },
+      { id: "600g", weight: "600G", servings: 24, price: 649, oldPrice: 798, discountPercentage: 18 },
+      { id: "1200g", weight: "1.2KG", servings: 48, price: 1199, oldPrice: 1496, discountPercentage: 20 },
+    ],
+    
     badges: [{ id: "vegan", text: "VEGAN", color: "green" }],
+    
     benefits: [
       { icon: "truck", title: "Aynı Gün", description: "Ücretsiz Kargo" },
       { icon: "shield", title: "750.000+", description: "Mutlu Müşteri" },
@@ -226,9 +249,20 @@ export const mockProducts: Product[] = [
     image: "/images/collagen.jpg",
     slug: "micellar-casein",
     inStock: true,
-    flavors: [{ id: "vanilya", name: "Vanilya", color: "#F5DEB3", available: true }],
-    sizes: [{ id: "450g", weight: "450G", servings: 18, price: 599 }],
+    
+    flavors: [
+      { id: "vanilya", name: "Vanilya", color: "#F5DEB3", available: true },
+      { id: "cikolata", name: "Çikolata", color: "#654321", available: true },
+      { id: "cilek", name: "Çilek", color: "#DC143C", available: true },
+    ],
+    
+    sizes: [
+      { id: "450g", weight: "450G", servings: 18, price: 599, isRecommended: true },
+      { id: "900g", weight: "900G", servings: 36, price: 1099, oldPrice: 1298, discountPercentage: 15 },
+    ],
+    
     badges: [{ id: "night-protein", text: "GECE PROTEİNİ", color: "blue" }],
+    
     benefits: [
       { icon: "truck", title: "Aynı Gün", description: "Ücretsiz Kargo" },
       { icon: "shield", title: "750.000+", description: "Mutlu Müşteri" },
