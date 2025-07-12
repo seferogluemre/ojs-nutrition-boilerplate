@@ -44,7 +44,7 @@ export const Header = ({
   return (
     <header
       className={cn(
-        "flex h-20 items-center justify-between bg-white border-b border-gray-200",
+        "flex h-20 items-center justify-between bg-white border-b border-gray-200 relative",
         // Responsive padding - tutarlı ortalama için + vertical padding eklendi
         "px-4 py-3 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20",
         fixed && "header-fixed peer/header fixed z-50 w-full shadow-md",
@@ -94,7 +94,7 @@ export const Header = ({
                 <ChevronDown className="w-4 h-4 text-gray-600" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuContent align="end" className="w-40 z-[9999]" sideOffset={5}>
               <DropdownMenuItem className="text-center border-b border-gray-300">
                 <a href="/sign-in" className="w-full">
                   Üye girişi
@@ -166,7 +166,7 @@ export const Header = ({
                 <ChevronDown className="w-3 h-3 text-gray-600" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuContent align="end" className="w-40 z-[9999]" sideOffset={5}>
               <DropdownMenuItem className="text-center border-b border-gray-300">
                 <a href="/sign-in" className="w-full text-sm">
                   Üye girişi
