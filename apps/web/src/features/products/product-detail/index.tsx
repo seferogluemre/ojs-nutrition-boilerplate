@@ -179,8 +179,8 @@ export default function ProductDetail() {
                       onClick={() => setSelectedFlavor(flavor)}
                       disabled={!flavor.available}
                       className={cn(
-                        "relative ps-2  rounded-lg border-2 text-sm font-medium transition-all duration-200",
-                        "h-[35px] flex items-center justify-between min-w-[120px]",
+                        "relative ps-2 rounded-lg border-2 text-sm font-medium transition-all duration-200",
+                        "h-[35px] md:h-[40px] flex items-center justify-between min-w-[120px] md:min-w-[130px]",
                         selectedFlavor?.id === flavor.id 
                           ? "border-blue-500 ring-2 ring-blue-200" 
                           : "border-gray-300 hover:border-gray-400",
@@ -188,9 +188,9 @@ export default function ProductDetail() {
                       )}
                       style={getFlavorStyle(flavor, selectedFlavor?.id === flavor.id)}
                     >
-                      <span className="flex-1 text-sm text-center pr-2">{flavor.name}</span>
+                      <span className="flex-1 text-xs md:text-sm text-center pr-1 md:pr-2">{flavor.name}</span>
                       <div 
-                        className="w-8 h-full rounded-r-md flex-shrink-0" 
+                        className="w-6 md:w-8 h-full rounded-r-md flex-shrink-0" 
                         style={{ backgroundColor: flavor.color }}
                       ></div>
                       {selectedFlavor?.id === flavor.id && (
@@ -208,13 +208,13 @@ export default function ProductDetail() {
             {product.sizes && product.sizes.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">BOYUT:</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {product.sizes.map((size) => (
                     <button
                       key={size.id}
                       onClick={() => setSelectedSize(size)}
                       className={cn(
-                        "relative p-4 rounded-lg border-2 text-center transition-all duration-200",
+                        "relative p-3 md:p-4 rounded-lg border-2 text-center transition-all duration-200",
                         selectedSize?.id === size.id 
                           ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50" 
                           : "border-gray-300 hover:border-gray-400"
@@ -228,8 +228,8 @@ export default function ProductDetail() {
                           </div>
                         )}
                         
-                        <div className="font-bold text-gray-900">{size.weight}</div>
-                        <div className="text-sm text-gray-600">{size.servings} servis</div>
+                        <div className="font-bold text-gray-900 text-sm md:text-base">{size.weight}</div>
+                        <div className="text-xs md:text-sm text-gray-600">{size.servings} servis</div>
                         
                         <div className="mt-2">
                           {size.oldPrice && (
@@ -237,7 +237,7 @@ export default function ProductDetail() {
                               {size.oldPrice} TL
                             </div>
                           )}
-                          <div className="font-bold text-gray-900">
+                          <div className="font-bold text-gray-900 text-sm md:text-base">
                             {size.price} TL
                           </div>
                         </div>
