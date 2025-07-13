@@ -1,8 +1,8 @@
+import { prisma } from '#core';
 import { Context, Elysia, NotFoundError } from 'elysia';
-import { auth, authSwagger } from './plugin';
 import { UserFormatter } from '../../users';
 import { betterAuth } from './instance';
-import { prisma } from '#core';
+import { auth, authSwagger } from './plugin';
 
 const app = new Elysia({
     prefix: '/auth',

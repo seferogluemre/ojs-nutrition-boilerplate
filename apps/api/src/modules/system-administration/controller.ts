@@ -6,7 +6,7 @@ import {
 } from './dto';
 import { SystemAdministrationService } from './service';
 
-const app = new Elysia({
+const app: any = new Elysia({
     prefix: '/system-administration',
     detail: {
         tags: ['System Administration'],
@@ -20,6 +20,31 @@ const app = new Elysia({
             return { user: UserFormatter.response(payload.user) };
         },
         initialUserSetupDto,
+    )
+    .get(
+        '/debug/users',
+        async () => {
+            const users = await SystemAdministrationService.debugUsers();
+            return { users };
+        },
+        {
+            detail: {
+                summary: 'Debug Users',
+                description: 'Shows all users for debugging purposes',
+            },
+        },
+    )
+    .get(
+        '/test',
+        async () => {
+            return { message: 'System Administration Controller is working!' };
+        },
+        {
+            detail: {
+                summary: 'Test Endpoint',
+                description: 'Simple test endpoint',
+            },
+        },
     );
 
 export default app;

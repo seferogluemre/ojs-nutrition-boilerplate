@@ -1,8 +1,7 @@
 import { prisma } from '#core';
-import { Gender } from '#prismabox/Gender';
 import { GoneException } from '../../utils';
+import { betterAuth } from '../auth/authentication/instance';
 import { RolesService } from '../auth/roles/service';
-import { UsersService } from '../users';
 
 export class SystemAdministrationService {
     static async setupInitialUser() {
@@ -14,31 +13,80 @@ export class SystemAdministrationService {
             );
         }
 
-        // Admin rolünü oluştur
-        const adminRole = await RolesService.store({
-            name: 'Admin',
-            description: 'Sistem yöneticisi',
-            permissions: ['*'], // Tüm yetkiler
+        // Admin rolünü oluştur veya mevcut olanı getir
+        let adminRole = await prisma.role.findFirst({
+            where: { name: 'Admin' }
         });
 
-        await RolesService.store({
-            name: 'Basic',
-            description: 'Temel kullanıcı',
-            permissions: [],
+        if (!adminRole) {
+            adminRole = await RolesService.store({
+                name: 'Admin',
+                description: 'Sistem yöneticisi',
+                permissions: ['*'], // Tüm yetkiler
+            });
+        }
+
+        // Basic rolünü oluştur veya mevcut olanı getir
+        let basicRole = await prisma.role.findFirst({
+            where: { name: 'Basic' }
         });
+
+        if (!basicRole) {
+            basicRole = await RolesService.store({
+                name: 'Basic',
+                description: 'Temel kullanıcı',
+                permissions: [],
+            });
+        }
 
         // Admin kullanıcısını oluştur
-        const user = await UsersService.store({
-            password: 'password',
-            email: 'admin@example.com',
-            firstName: 'Admin',
-            lastName: 'User',
-            rolesSlugs: [adminRole.slug],
-            gender: Gender.MALE,
+        const signUpResult = await betterAuth.api.signUpEmail({
+            body: {
+                email: 'admin@example.com',
+                password: '12345678',
+                firstName: 'Admin',
+                lastName: 'User',
+                name: 'Admin User',
+            },
+        });
+
+        // Kullanıcıyı gender ve role bilgileri ile güncelleyelim
+        const user = await prisma.user.update({
+            where: { id: signUpResult.user.id },
+            data: {
+                gender: "MALE",
+                rolesSlugs: [adminRole.slug],
+            },
+        });
+
+        // UserRole tablosunu da güncelle
+        await prisma.userRole.create({
+            data: {
+                userId: user.id,
+                roleId: adminRole.id,
+            },
         });
 
         return {
             user,
         };
+    }
+
+    static async debugUsers() {
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                emailVerified: true,
+                isActive: true,
+                rolesSlugs: true,
+                createdAt: true,
+                deletedAt: true,
+            },
+        });
+
+        return users;
     }
 }

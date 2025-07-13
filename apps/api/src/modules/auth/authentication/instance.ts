@@ -1,5 +1,4 @@
 import { cache, prisma } from "#core";
-import { Gender } from "#prismabox/Gender";
 import { betterAuth as betterAuthBase } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { openAPI } from "better-auth/plugins";
@@ -48,7 +47,7 @@ export const betterAuth = betterAuthBase({
                 type: "string",
                 required: true,
                 fieldName: "gender",
-                defaultValue: Gender.MALE,
+                defaultValue: "MALE",
                 input: false
             },
             rolesSlugs: {

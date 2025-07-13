@@ -429,7 +429,8 @@ model City {
   countryId   Int     @map("country_id")
   country     Country @relation(fields: [countryId], references: [id])
 
-  userAddresses UserAddress[]
+  userAddresses     UserAddress[]
+  customerAddresses CustomerAddress[]
 
   @@index([stateId])
   @@index([countryId])
@@ -490,9 +491,10 @@ model Customer {
 
   refreshToken String? @map("refresh_token")
 
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
   ProductComments ProductComments[]
+  addresses       CustomerAddress[]   @relation("CustomerAddressToCustomer")
 
   @@map("customers")
 }
@@ -780,4 +782,43 @@ model UserAddress {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("user_addresses")
+}
+
+model CustomerAddress {
+  /// @prismabox.hide
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  /// @prismabox.hide
+  customerId Int  @map("customer_id")
+  customer   Customer @relation("CustomerAddressToCustomer", fields: [customerId], references: [id], onDelete: Cascade)
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  title String @db.VarChar(30) // "Ev", "İş" vs.
+
+  /// @prismabox.options{minLength:2,maxLength:100}
+  recipientName String @map("recipient_name") @db.VarChar(100)
+
+  /// @prismabox.options{minLength:10,maxLength:15}
+  phone String @db.VarChar(15)
+
+  /// @prismabox.options{minLength:5,maxLength:255}
+  addressLine1 String @map("address_line_1") @db.VarChar(255)
+
+  /// @prismabox.options{minLength:0,maxLength:255}
+  addressLine2 String? @map("address_line_2") @db.VarChar(255)
+
+  /// @prismabox.hide
+  cityId Int  @map("city_id")
+  city   City @relation(fields: [cityId], references: [id])
+
+  /// @prismabox.options{minLength:5,maxLength:10}
+  postalCode String @map("postal_code") @db.VarChar(10)
+
+  isDefault Boolean @default(false) @map("is_default")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("customer_addresses")
 }

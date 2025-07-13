@@ -222,7 +222,7 @@ export default function ProductDetail() {
                     >
                         {/* Discount Badge - Middle Top */}
                         {size.discountPercentage && (
-                          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold z-10">
+                          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold z-10">
                             %{size.discountPercentage}
                             <div className="text-[8px] font-normal">İNDİRİM</div>
                           </div>

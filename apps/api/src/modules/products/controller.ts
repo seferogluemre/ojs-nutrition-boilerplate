@@ -32,7 +32,6 @@ const app = new Elysia({
     },
     productIndexDto,
   )
-
   .get(
     '/:id', // GET /products/:id - Tek ürün getir
     async ({ params }) => {

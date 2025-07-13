@@ -43,5 +43,6 @@ export const app = new Elysia({
   },
   {
     ...getCartDto,
-  },
-);
+  });
+
+export default app;
