@@ -1,11 +1,10 @@
 import { Elysia } from 'elysia';
-import { NotFoundException } from '../../utils';
+import { dtoWithMiddlewares, NotFoundException } from '../../utils';
 import { PaginationService } from '../../utils/pagination';
+import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
 import { auth } from '../auth/authentication/plugin';
 import { PERMISSIONS } from '../auth/roles/constants';
 import { withPermission } from '../auth/roles/middleware';
-import { withAuditLog, AuditLogAction, AuditLogEntity } from '../audit-logs';
-import { dtoWithMiddlewares } from '../../utils';
 import {
     postCreateDto,
     postDestroyDto,

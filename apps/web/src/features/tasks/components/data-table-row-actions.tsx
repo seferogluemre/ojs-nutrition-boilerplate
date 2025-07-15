@@ -1,6 +1,3 @@
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { Row } from "@tanstack/react-table";
-import { IconTrash } from "@tabler/icons-react";
 import { Button } from "#components/ui/button";
 import {
   DropdownMenu,
@@ -15,9 +12,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#components/ui/dropdown-menu";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { IconTrash } from "@tabler/icons-react";
+import { Row } from "@tanstack/react-table";
 import { useTasks } from "../context/tasks-context";
 import { labels } from "../data/data";
-import { taskSchema } from "../data/schema";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -26,7 +25,6 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original);
 
   const { setOpen, setCurrentRow } = useTasks();
 
@@ -44,7 +42,7 @@ export function DataTableRowActions<TData>({
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(task);
+            setCurrentRow(row.original);
             setOpen("update");
           }}
         >
@@ -56,7 +54,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
+            <DropdownMenuRadioGroup value={row.original.label}>
               {labels.map((label) => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}
@@ -68,7 +66,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(task);
+            setCurrentRow(row.original);
             setOpen("delete");
           }}
         >

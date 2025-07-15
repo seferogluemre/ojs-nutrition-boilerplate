@@ -2,6 +2,7 @@ import Elysia from 'elysia';
 
 import { authenticationController, rolesController } from './auth';
 import { cartController } from './cart';
+import { categoriesController } from './categories';
 import { authController as customerAuthController } from './customer';
 import { customerAddressesController } from './customer-addresses';
 import { fileLibraryAssetsController } from './file-library-assets';
@@ -23,8 +24,9 @@ const app = new Elysia()
   .use(customerAuthController)
   .use(customerAddressesController)
   .use(userAddressesController)
- .use(cartController) 
+  .use(cartController)
   .use(productsController)
+  .use(categoriesController)
   .get(
     '/',
     () => ({
@@ -57,7 +59,8 @@ export const swaggerTags: { name: string; description: string }[] = [
   { name: 'CustomerAddress', description: 'Customer Address management endpoints' },
   { name: 'UserAddress', description: 'User Address endpoints' },
   { name: 'Product', description: 'Product management endpoints' },
-  { name: 'Cart', description: 'Shopping cart endpoints' }, 
+  { name: 'Category', description: 'Category management endpoints' },
+  { name: 'Cart', description: 'Shopping cart endpoints' },
 ];
 
 export default app;
