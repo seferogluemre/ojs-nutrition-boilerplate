@@ -1,9 +1,20 @@
 import { Main } from "#components/layout/main";
 import { Button } from "#components/ui/button";
-import { Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { useState } from "react";
 import { certificates, customerReviews, reviewStats } from "./data/customer-reviews";
 
+const REVIEWS_PER_PAGE = 3;
+
 export default function About() {
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  // Pagination logic
+  const totalPages = Math.ceil(customerReviews.length / REVIEWS_PER_PAGE);
+  const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
+  const endIndex = startIndex + REVIEWS_PER_PAGE;
+  const currentReviews = customerReviews.slice(startIndex, endIndex);
+
   const renderStars = (rating: number, size: "sm" | "lg" = "sm") => {
     const stars = [];
     const sizeClass = size === "lg" ? "w-6 h-6" : "w-4 h-4";
@@ -30,6 +41,23 @@ export default function About() {
     3: customerReviews.filter(r => r.rating === 3).length,
     2: customerReviews.filter(r => r.rating === 2).length,
     1: customerReviews.filter(r => r.rating === 1).length,
+  };
+
+  // Pagination functions
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const goToPrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -155,7 +183,7 @@ export default function About() {
 
           {/* Review Cards */}
           <div className="space-y-6 mb-8">
-            {customerReviews.map((review) => (
+            {currentReviews.map((review) => (
               <div key={review.id} className="bg-white shadow-lg rounded-lg p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
@@ -186,6 +214,47 @@ export default function About() {
               </div>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToPrevious}
+                disabled={currentPage === 1}
+                className="flex items-center gap-1"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Önceki
+              </Button>
+              
+              <div className="flex gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => goToPage(page)}
+                    className="w-10 h-10"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToNext}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-1"
+              >
+                Sonraki
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </section>
 
         {/* Contact CTA */}

@@ -49,6 +49,55 @@ export const customerReviews: CustomerReview[] = [
     date: "02/05/24",
     productName: "Collagen",
     verified: true
+  },
+  {
+    id: "1",
+    userName: "Mustafa Ü.",
+    rating: 5,
+    title: "L carnitine",
+    description: "Gayet şeffaf ve güzel kargoyla geldi çok memnun kaldım",
+    date: "06/05/24",
+    productName: "L-CARNITINE",
+    verified: true
+  },
+  {
+    id: "2",
+    userName: "Ahmet K.",
+    rating: 5,
+    title: "Mükemmel kalite",
+    description: "Ürünlerin kalitesi gerçekten çok iyi. Düzenli kullanıyorum ve sonuçlarından çok memnunum.",
+    date: "05/05/24",
+    productName: "Whey Protein",
+    verified: true
+  },
+  {
+    id: "3",
+    userName: "Zeynep A.",
+    rating: 5,
+    title: "Hızlı kargo",
+    description: "Sipariş verdiğim gün kargo çıktı, ertesi gün elimdeydi. Ürün kalitesi de harika.",
+    date: "04/05/24",
+    productName: "BCAA+",
+    verified: true
+  },
+  {
+    id: "4",
+    userName: "Mehmet S.",
+    rating: 4,
+    title: "Güvenilir firma",
+    description: "Uzun süredir alışveriş yapıyorum. Kaliteli ürünler ve güvenilir hizmet.",
+    date: "03/05/24",
+    verified: true
+  },
+  {
+    id: "5",
+    userName: "Fatma T.",
+    rating: 5,
+    title: "Çok beğendim",
+    description: "Ürün tam beklediğim gibiydi. Lezzeti ve kalitesi mükemmel.",
+    date: "02/05/24",
+    productName: "Collagen",
+    verified: true
   }
 ];
 
