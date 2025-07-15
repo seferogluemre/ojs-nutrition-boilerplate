@@ -71,12 +71,12 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
         </div>
         
         {/* Product Info */}
-        <div className="p-3 lg:p-4 flex flex-col h-[calc(100%-160px)] md:h-[calc(100%-192px)]  lg:h-[calc(100%-256px)]">
+        <div className="p-3 lg:p-4 flex flex-col h-[calc(100%-220px)] md:h-[calc(100%-192px)]  lg:h-[calc(100%-256px)]">
           {/* Product Name */}
-          <h3 className="font-bold text-gray-900 text-sm lg:text-base mb-1 line-clamp-2">
+          <h3 className="font-bold text-gray-900 text-sm lg:text-base mb-1 line-clamp-3">
             {product.name}
           </h3>
-          
+            
           {/* Short Description */}
           <p className="text-xs lg:text-sm text-gray-600 mb-2 line-clamp-2">
             {product.shortDescription}
