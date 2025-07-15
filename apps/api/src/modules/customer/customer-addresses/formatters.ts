@@ -1,5 +1,5 @@
 import { City, CustomerAddress } from '#prisma/client';
-import { BaseFormatter } from '../../utils';
+import { BaseFormatter } from '#utils';
 import { customerAddressResponseSchema } from './dtos';
 import { CustomerAddressShowResponse } from './types';
 

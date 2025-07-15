@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Elysia } from 'elysia';
 
-import { dtoWithMiddlewares } from '../../utils';
-import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
+import { AuditLogAction, AuditLogEntity, withAuditLog } from '#modules/audit-logs';
+import { dtoWithMiddlewares } from '#utils';
 import {
   customerAddressCreateDto,
   customerAddressDestroyDto,
@@ -41,7 +41,7 @@ export const app = new Elysia({
       customerAddressCreateDto,
       withAuditLog<typeof customerAddressCreateDto>({
         actionType: AuditLogAction.CREATE,
-        entityType: AuditLogEntity.USER, // TODO: CUSTOMER entity eklenebilir
+        entityType: AuditLogEntity.USER, 
         getEntityUuid: (ctx) => {
           const response = ctx.response as ReturnType<typeof CustomerAddressFormatter.response>;
           return response.uuid;

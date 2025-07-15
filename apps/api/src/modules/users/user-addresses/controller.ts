@@ -1,14 +1,14 @@
 import { Elysia } from 'elysia';
 
-import { dtoWithMiddlewares } from '../../utils';
-import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
-import { auth, authSwagger } from '../auth/authentication/plugin';
+import { AuditLogAction, AuditLogEntity, withAuditLog } from '#modules/audit-logs';
+import { authSwagger } from '#modules/auth/authentication/plugin';
+import { dtoWithMiddlewares } from '#utils';
 import {
-    userAddressCreateDto,
-    userAddressDestroyDto,
-    userAddressIndexDto,
-    userAddressShowDto,
-    userAddressUpdateDto
+  userAddressCreateDto,
+  userAddressDestroyDto,
+  userAddressIndexDto,
+  userAddressShowDto,
+  userAddressUpdateDto
 } from './dtos';
 import { UserAddressFormatter } from './formatters';
 import { UserAddressesService } from './service';
@@ -21,7 +21,7 @@ const app = new Elysia({
 })
   .guard(authSwagger, (app) =>
     app
-      .use(auth())
+      // .use(auth())
       .post(
         '', // create user address
         async ({ body, user }) => {

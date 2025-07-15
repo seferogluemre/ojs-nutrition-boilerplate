@@ -48,7 +48,7 @@ export abstract class CustomerAddressesService {
         : undefined;
 
       const [hasFilters, filters] = getCustomerAddressFilters(filterQuery);
-      const where: any = {}; // 🚨 GEÇİCİ: Prisma.CustomerAddressWhereInput henüz yok
+      const where: any = {};
 
       if (hasFilters) {
         where.OR = filters;
@@ -130,7 +130,6 @@ export abstract class CustomerAddressesService {
 
       const customerAddressPayload = await this.prepareCustomerAddressPayload(payload);
 
-      // Eğer isDefault true ise, diğer adreslerin isDefault'unu false yap
       if (payload.isDefault) {
         await prisma.customerAddress.updateMany({
           where: { 

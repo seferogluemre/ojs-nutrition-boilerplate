@@ -4,14 +4,14 @@ import { authenticationController, rolesController } from './auth';
 import { cartController } from './cart';
 import { categoriesController } from './categories';
 import { authController as customerAuthController } from './customer';
-import { customerAddressesController } from './customer-addresses';
+import { customerAddressesController } from './customer/customer-addresses';
 import { fileLibraryAssetsController } from './file-library-assets';
 import { locationsController } from './locations';
 import { postsController } from './posts';
 import productsController from './products';
 import { systemAdministrationController } from './system-administration';
-import { userAddressesController } from './user-addresses';
 import { usersController } from './users';
+import { userAddressesController } from './users/user-addresses';
 
 const app = new Elysia()
   .use(systemAdministrationController)

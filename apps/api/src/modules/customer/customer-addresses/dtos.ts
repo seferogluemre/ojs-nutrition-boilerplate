@@ -1,7 +1,7 @@
 import { CityPlain } from '#prismabox/City';
 import { CustomerAddressPlain } from '#prismabox/CustomerAddress';
 import { ControllerHook, errorResponseDto } from '#utils';
-// import { Prisma } from '@prisma/client'; // 🚨 GEÇİCİ: CustomerAddress types henüz yok
+
 import { t } from 'elysia';
 
 export function getCustomerAddressFilters(query?: { id?: string; customerId?: number }) {
@@ -9,7 +9,7 @@ export function getCustomerAddressFilters(query?: { id?: string; customerId?: nu
     return [false, [], undefined] as const;
   }
 
-  const filters: any[] = []; // 🚨 GEÇİCİ: Prisma type olmadığı için any kullanıyorum
+  const filters: any[] = []; 
   const { id, customerId } = query;
 
   if (id) {
