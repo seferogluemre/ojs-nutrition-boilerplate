@@ -7,6 +7,7 @@ import { useParams } from "@tanstack/react-router";
 import { Award, Check, Minus, Plus, Shield, ShoppingCart, Star, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { mockProducts, ProductBadge, ProductFlavor, ProductSize } from "../data/mock-products";
+import { ProductReviews } from "./components/product-reviews";
 import { RecentlyViewedProducts } from "./components/recently-viewed-products";
 
 export default function ProductDetail() {
@@ -429,6 +430,11 @@ export default function ProductDetail() {
         {/* Recently Viewed Products Section */}
         <div className="max-w-7xl mx-auto px-4 py-8">
           <RecentlyViewedProducts />
+        </div>
+
+        {/* Product Reviews Section */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <ProductReviews />
         </div>
       </Main>
     );
