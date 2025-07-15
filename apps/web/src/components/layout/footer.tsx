@@ -50,6 +50,20 @@ export const Footer = ({ className }: FooterProps) => {
     "ZMA"
   ];
 
+  // Helper function to get the correct href for specific links
+  const getHref = (linkText: string) => {
+    switch (linkText) {
+      case "İletişim":
+        return "/contact";
+      case "Hakkımızda":
+        return "/about";
+      case "Sıkça Sorulan Sorular":
+        return "/sss";
+      default:
+        return "#";
+    }
+  };
+
   return (
     <footer className={cn("text-white", className)} style={{ backgroundColor: '#222222' }}>
       {/* Top Section */}
@@ -93,7 +107,7 @@ export const Footer = ({ className }: FooterProps) => {
               <ul className="space-y-2">
                 {ojsNutritionLinks.map((link, index) => (
                   <li key={index}>
-                    <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
+                    <a href={getHref(link)} className="text-gray-300 hover:text-white transition-colors text-sm">
                       {link}
                     </a>
                   </li>
@@ -147,7 +161,7 @@ export const Footer = ({ className }: FooterProps) => {
                 <ul className="mt-4 space-y-2">
                   {ojsNutritionLinks.map((link, index) => (
                     <li key={index}>
-                      <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm block">
+                      <a href={getHref(link)} className="text-gray-300 hover:text-white transition-colors text-sm block">
                         {link}
                       </a>
                     </li>

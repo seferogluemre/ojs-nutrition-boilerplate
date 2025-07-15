@@ -21,7 +21,7 @@ export const RecentlyViewedProducts = () => {
       
       {/* Responsive Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {recentlyViewed.map((product) => (
+        {recentlyViewed.slice(0,6).map((product) => (
           <ProductCard 
             key={product.id} 
             product={product}

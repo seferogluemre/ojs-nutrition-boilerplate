@@ -1,6 +1,7 @@
 import { Main } from "#components/layout/main";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "#components/ui/accordion";
 import { Button } from "#components/ui/button";
+import { BestSellers } from "#features/home/components/best-sellers.js";
 import { useRecentlyViewed } from "#hooks";
 import { cn } from "#lib/utils";
 import { useParams } from "@tanstack/react-router";
@@ -435,6 +436,11 @@ export default function ProductDetail() {
         {/* Product Reviews Section */}
         <div className="max-w-7xl mx-auto px-4 py-8">
           <ProductReviews />
+        </div>
+
+        {/* Product Reviews Section */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <BestSellers />
         </div>
       </Main>
     );

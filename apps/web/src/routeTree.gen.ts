@@ -21,6 +21,9 @@ import { Route as auth500Import } from './routes/(auth)/500'
 
 // Create Virtual Routes
 
+const AuthenticatedContactLazyImport = createFileRoute(
+  '/_authenticated/contact',
+)()
 const errors503LazyImport = createFileRoute('/(errors)/503')()
 const errors500LazyImport = createFileRoute('/(errors)/500')()
 const errors404LazyImport = createFileRoute('/(errors)/404')()
@@ -83,6 +86,14 @@ const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+
+const AuthenticatedContactLazyRoute = AuthenticatedContactLazyImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any).lazy(() =>
+  import('./routes/_authenticated/contact.lazy').then((d) => d.Route),
+)
 
 const errors503LazyRoute = errors503LazyImport
   .update({
@@ -393,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof errors503LazyImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/contact': {
+      id: '/_authenticated/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof AuthenticatedContactLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/': {
       id: '/_authenticated/'
       path: '/'
@@ -517,6 +535,7 @@ const AuthenticatedSettingsRouteLazyRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteLazyRoute: typeof AuthenticatedSettingsRouteLazyRouteWithChildren
+  AuthenticatedContactLazyRoute: typeof AuthenticatedContactLazyRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedProductsProductIdLazyRoute: typeof AuthenticatedProductsProductIdLazyRoute
   AuthenticatedAppsIndexLazyRoute: typeof AuthenticatedAppsIndexLazyRoute
@@ -530,6 +549,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteLazyRoute:
     AuthenticatedSettingsRouteLazyRouteWithChildren,
+  AuthenticatedContactLazyRoute: AuthenticatedContactLazyRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedProductsProductIdLazyRoute:
     AuthenticatedProductsProductIdLazyRoute,
@@ -557,6 +577,7 @@ export interface FileRoutesByFullPath {
   '/403': typeof errors403LazyRoute
   '/404': typeof errors404LazyRoute
   '/503': typeof errors503LazyRoute
+  '/contact': typeof AuthenticatedContactLazyRoute
   '/': typeof AuthenticatedIndexRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
@@ -583,6 +604,7 @@ export interface FileRoutesByTo {
   '/403': typeof errors403LazyRoute
   '/404': typeof errors404LazyRoute
   '/503': typeof errors503LazyRoute
+  '/contact': typeof AuthenticatedContactLazyRoute
   '/': typeof AuthenticatedIndexRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
@@ -613,6 +635,7 @@ export interface FileRoutesById {
   '/(errors)/404': typeof errors404LazyRoute
   '/(errors)/500': typeof errors500LazyRoute
   '/(errors)/503': typeof errors503LazyRoute
+  '/_authenticated/contact': typeof AuthenticatedContactLazyRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdLazyRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
@@ -643,6 +666,7 @@ export interface FileRouteTypes {
     | '/403'
     | '/404'
     | '/503'
+    | '/contact'
     | '/'
     | '/products/$productId'
     | '/settings/account'
@@ -668,6 +692,7 @@ export interface FileRouteTypes {
     | '/403'
     | '/404'
     | '/503'
+    | '/contact'
     | '/'
     | '/products/$productId'
     | '/settings/account'
@@ -696,6 +721,7 @@ export interface FileRouteTypes {
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
+    | '/_authenticated/contact'
     | '/_authenticated/'
     | '/_authenticated/products/$productId'
     | '/_authenticated/settings/account'
@@ -770,6 +796,7 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/route.tsx",
       "children": [
         "/_authenticated/settings",
+        "/_authenticated/contact",
         "/_authenticated/",
         "/_authenticated/products/$productId",
         "/_authenticated/apps/",
@@ -823,6 +850,10 @@ export const routeTree = rootRoute
     },
     "/(errors)/503": {
       "filePath": "(errors)/503.lazy.tsx"
+    },
+    "/_authenticated/contact": {
+      "filePath": "_authenticated/contact.lazy.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/": {
       "filePath": "_authenticated/index.tsx",
