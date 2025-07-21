@@ -49,7 +49,7 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
         className={cn(
           "bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 pb-9 cursor-pointer relative overflow-hidden",
           // Increased heights for better content display
-          "w-full h-[380px] md:h-[420px] lg:h-[475px]",
+          "w-full h-[350px] md:h-[420px] lg:h-[475px]",
           className
         )}
       >
@@ -64,7 +64,7 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
         {/* Product Image */}
         <div className="h-40 md:h-48 lg:h-64 overflow-hidden rounded-t-lg">
           <img 
-            src={product.image} 
+            src={product.image || "/images/collagen.jpg"} 
             alt={product.name}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
           />
@@ -97,11 +97,6 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
             <span className="font-bold text-gray-900 text-base lg:text-lg">
               {product.price} TL
             </span>
-            {product.oldPrice && (
-              <span className="text-sm text-gray-500 line-through">
-                {product.oldPrice} TL
-              </span>
-            )}
           </div>
         </div>
       </div>
