@@ -6,12 +6,13 @@ import { auth, authSwagger } from '../auth/authentication/plugin';
 import { PERMISSIONS } from '../auth/roles/constants';
 import { withPermission } from '../auth/roles/middleware';
 import {
+  bestSellersDto,
   productCreateDto,
   productDestroyDto,
   productIndexDto,
   productShowDto,
   productUpdateDto,
-} from './dto';
+} from './dtos';
 import { ProductFormatter } from './formatter';
 import { ProductsService } from './service';
 
@@ -21,6 +22,14 @@ const app = new Elysia({
     tags: ['Product'],
   },
 })
+  .get(
+    '/best-sellers',
+    async ({ query }) => {
+      const products = await ProductsService.getBestSellers(query);
+      return products.map(ProductFormatter.bestSeller);
+    },
+    bestSellersDto,
+  )
   .get(
     '', // GET /products - Tüm ürünleri listele
     async ({ query }) => {

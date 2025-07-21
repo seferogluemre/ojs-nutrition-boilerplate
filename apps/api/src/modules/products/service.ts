@@ -201,4 +201,32 @@ export abstract class ProductsService {
       throw this.handlePrismaError(error, 'delete');
     }
   }
+
+  static async getBestSellers(query: { limit?: number } = {}) {
+    try {
+      const { limit = 10 } = query;
+
+      const products = await prisma.product.findMany({
+        where: {
+          isActive: true,
+        },
+        orderBy: [{ averageRating: 'desc' }, { reviewCount: 'desc' }],
+        take: limit,
+        include: {
+          category: {
+            select: {
+              id: true,
+              uuid: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      });
+
+      return products;
+    } catch (error) {
+      throw this.handlePrismaError(error, 'find');
+    }
+  }
 }

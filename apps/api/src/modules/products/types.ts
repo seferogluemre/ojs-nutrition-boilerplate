@@ -6,7 +6,7 @@ import {
   productIndexQuerySchema,
   productResponseSchema,
   productUpdateSchema,
-} from './dto';
+} from './dtos';
 
 // Database tipler
 export type ProductWithRelations = Product & {

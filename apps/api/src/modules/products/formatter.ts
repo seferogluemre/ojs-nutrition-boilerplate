@@ -1,5 +1,5 @@
 import { BaseFormatter } from '../../utils';
-import { productResponseSchema } from './dto';
+import { productResponseSchema } from './dtos';
 import { ProductResponse, ProductWithRelations } from './types';
 
 export abstract class ProductFormatter {
@@ -74,6 +74,23 @@ export abstract class ProductFormatter {
       primaryPhotoUrl: data.primaryPhotoUrl,
       stock: data.stock,
       isActive: data.isActive,
+    };
+  }
+
+  static bestSeller(product: any) {
+    return {
+      name: product.name,
+      short_explanation: product.shortDescription,
+      slug: product.slug,
+      price_info: {
+        total_price: product.price,
+        discounted_price: undefined,
+        price_per_servings: Math.round((product.price / 20) * 100) / 100,
+        discount_percentage: undefined,
+      },
+      photo_src: product.primaryPhotoUrl,
+      comment_count: product.reviewCount,
+      average_star: product.averageRating,
     };
   }
 }
