@@ -108,7 +108,7 @@ export abstract class CartService {
               productVariant: true,
             },
           },
-          customer: true,
+          user: true,
         },
       });
 
@@ -130,18 +130,33 @@ export abstract class CartService {
     try {
       const { customer_id, item_uuid } = params;
 
+      // 1. Cart'ı bul
       const cart = await prisma.cart.findUnique({
-        where: { customerId: customer_id },
+        where: { userId: customer_id },
       });
 
       if (!cart) {
         throw new NotFoundError('Sepet bulunamadı.');
       }
 
-      await prisma.cartItem.delete({
-        where: { id: item_uuid },
+      // 2. Item'ın bu cart'ta olup olmadığını kontrol et
+      const cartItem = await prisma.cartItem.findFirst({
+        where: {
+          uuid: item_uuid,
+          cartId: cart.id, // Sadece bu kullanıcının cart'ından silebilir
+        },
       });
 
+      if (!cartItem) {
+        throw new NotFoundError('Sepet öğesi bulunamadı.');
+      }
+
+      // 3. Item'ı sil
+      await prisma.cartItem.delete({
+        where: { uuid: item_uuid },
+      });
+
+      // 4. Güncellenmiş sepeti döndür
       const updatedCart = await prisma.cart.findUnique({
         where: { id: cart.id },
         include: {
@@ -152,8 +167,8 @@ export abstract class CartService {
               productVariant: true,
             },
           },
+          user: true,
         },
-        user: true,
       });
 
       return updatedCart;

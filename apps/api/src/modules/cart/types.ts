@@ -10,6 +10,6 @@ export type GetCartParams = {
 };
 
 export type RemoveFromCartParams = {
-  customer_id: number;
+  customer_id: string; // number değil string
   item_uuid: string;
 };
