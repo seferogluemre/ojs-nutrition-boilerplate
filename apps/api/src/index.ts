@@ -14,6 +14,10 @@ loadEnv();
 const app = new Elysia()
   .use(cors())
   .onError(handleElysiaError)
+  .use(staticPlugin({
+    assets: 'public',
+    prefix: '/',
+  }))
   .use(
     staticPlugin({
       assets: path.join(process.cwd(), 'public', 'storage'),

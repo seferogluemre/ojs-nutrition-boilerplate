@@ -37,7 +37,7 @@
     "emails:preview": "email dev --dir src/emails --port 3333",
     "knip": "knip --workspace apps/api",
     "prisma:format": "prisma-case-format --file ./prisma/schema.prisma --table-case pascal --field-case camel --enum-case pascal --map-table-case snake,plural --map-field-case snake --map-enum-case snake --pluralize",
-    "prisma:generate": "bun dotenvx run -f ../../config/apps/api/.env -- prisma generate",
+    "prisma:generate": "bun dotenvx run -f ../../config/apps/api/.env -- bun prisma generate",
     "prisma:migrate": "bun dotenvx run -f ../../config/apps/api/.env -- prisma migrate dev",
     "prisma:studio": "bun dotenvx run -f ../../config/apps/api/.env -- prisma studio",
     "prisma:seed": "bun run prisma:generate && bun dotenvx run -f ../../config/apps/api/.env -- bun ./prisma/seed.ts",

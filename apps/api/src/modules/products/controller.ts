@@ -1,6 +1,7 @@
 import { Elysia } from 'elysia';
 
 import { dtoWithMiddlewares } from '../../utils';
+import { FileUploadUtil } from '../../utils/file-upload';
 import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
 import { auth, authSwagger } from '../auth/authentication/plugin';
 import { PERMISSIONS } from '../auth/roles/constants';
@@ -53,9 +54,17 @@ const app = new Elysia({
     app
       .use(auth())
       .post(
-        '', // POST /products - Yeni ürün oluştur
+        '', 
         async ({ body }) => {
-          const product = await ProductsService.store(body);
+          // File upload handle
+          const { fileUrl } = await FileUploadUtil.uploadProductPhoto(body.primaryPhotoUrl);
+          
+          const productData = {
+            ...body,
+            primaryPhotoUrl: fileUrl,
+          };
+          
+          const product = await ProductsService.store(productData);
           return ProductFormatter.response(product);
         },
         dtoWithMiddlewares(
@@ -73,7 +82,7 @@ const app = new Elysia({
         ),
       )
       .patch(
-        '/:id', // PATCH /products/:id - Ürün güncelle
+        '/:id', 
         async ({ params, body }) => {
           const product = await ProductsService.update(params.id, body);
           return ProductFormatter.response(product);
