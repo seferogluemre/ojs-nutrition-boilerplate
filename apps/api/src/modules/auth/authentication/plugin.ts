@@ -1,9 +1,9 @@
+import { User } from '#prisma/client';
 import { DocumentDecoration, Elysia, t } from 'elysia';
 import { UnauthorizedException } from '../../../utils';
-import { PermissionIdentifier } from '../roles/types';
 import { ensureUserHasPermission } from '../roles/helpers';
+import { PermissionIdentifier } from '../roles/types';
 import { betterAuth } from './instance';
-import { User } from '#prisma/client';
 
 
 export const auth = (requiredPermission?: PermissionIdentifier | null) => new Elysia()

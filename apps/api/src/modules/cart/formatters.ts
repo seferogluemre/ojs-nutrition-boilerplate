@@ -18,7 +18,7 @@ export abstract class CartFormatter {
   static formatItem(cartItem: CartItemPayload) {
     return {
       id: cartItem.uuid,
-      pieces: cartItem.pieces,
+      quantity: cartItem.quantity,
       product: {
         id: cartItem.product.uuid,
         name: cartItem.product.name,
@@ -41,7 +41,7 @@ export abstract class CartFormatter {
    */
   static format(cart: CartPayload) {
     const subtotal = cart.items.reduce((acc, item) => {
-      return acc + item.product.price * item.pieces;
+      return acc + item.product.price * item.quantity;
     }, 0);
 
     return {
@@ -49,7 +49,7 @@ export abstract class CartFormatter {
       items: cart.items.map(CartFormatter.formatItem),
       summary: {
         total_items: cart.items.length,
-        total_pieces: cart.items.reduce((acc, item) => acc + item.pieces, 0),
+        total_quantity: cart.items.reduce((acc, item) => acc + item.quantity, 0),
         subtotal: subtotal,
       },
       updated_at: cart.updatedAt,

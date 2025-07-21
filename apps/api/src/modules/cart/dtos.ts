@@ -7,10 +7,9 @@ import { headers } from '../../utils';
 import { errorResponseDto } from '../../utils/common-dtos';
 import { type ControllerHook } from '../../utils/elysia-types';
 
-// Client'a döneceğimiz formatlanmış sepet öğesi şeması
 const formattedCartItemSchema = t.Object({
   id: CartItemPlain.properties.uuid,
-  pieces: CartItemPlain.properties.quantity,
+  quantity: CartItemPlain.properties.quantity,
   product: t.Object({
     id: ProductPlain.properties.uuid,
     name: ProductPlain.properties.name,
@@ -25,13 +24,12 @@ const formattedCartItemSchema = t.Object({
   added_at: t.Date(),
 });
 
-// Client'a döneceğimiz formatlanmış sepetin ana şeması
 const cartResponseSchema = t.Object({
   id: CartPlain.properties.uuid,
   items: t.Array(formattedCartItemSchema),
   summary: t.Object({
     total_items: t.Number(),
-    total_pieces: t.Number(),
+    total_quantity: t.Number(),
     subtotal: t.Number(),
   }),
   updated_at: t.Date(),
@@ -61,7 +59,7 @@ export const addToCartDto = {
       format: 'uuid',
       error: 'product_variant_id geçerli bir UUID olmalıdır.',
     }),
-    pieces: t.Number({
+    quantity: t.Number({
       minimum: 1,
       error: 'Adet (pieces) en az 1 olmalıdır.',
     }),

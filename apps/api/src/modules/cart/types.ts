@@ -1,11 +1,8 @@
-import { Static } from 'elysia';
-
-import { addToCartDto } from './dtos';
-
-export type AddToCartDto = Static<typeof addToCartDto>;
-
-export type AddToCartParams = AddToCartDto & {
+export type AddToCartParams = {
   customer_id: number;
+  product_id:string;
+  product_variant_id:string;
+  quantity:number;
 };
 
 export type GetCartParams = {

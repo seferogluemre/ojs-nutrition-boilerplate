@@ -8,7 +8,7 @@ import { AddToCartParams, GetCartParams, RemoveFromCartParams } from './types';
 
 export abstract class CartService {
   static async create(params: AddToCartParams) {
-    const { customer_id, product_id, product_variant_id, pieces } = params;
+    const { customer_id, product_id, product_variant_id, quantity } = params;
 
     const product = await prisma.product.findUnique({
       where: { uuid: product_id },
@@ -29,10 +29,10 @@ export abstract class CartService {
     }
 
     const cart = await prisma.cart.upsert({
-      where: { customerId: customer_id },
+      where: { userId: customer_id },
       update: {},
       create: {
-        customerId: customer_id,
+        userId: customer_id,
       },
       select: { id: true },
     });
@@ -48,15 +48,15 @@ export abstract class CartService {
         },
       },
       update: {
-        pieces: {
-          increment: pieces, // Mevcut adetin üzerine ekle
+        quantity: {
+          increment: quantity, // Mevcut adetin üzerine ekle
         },
       },
       create: {
         cartId: cart.id,
         productId: product.id,
         productVariantId: productVariant.id,
-        pieces: pieces,
+        quantity: quantity,
       },
     });
 
@@ -88,7 +88,7 @@ export abstract class CartService {
 
       const cart = await prisma.cart.findUnique({
         where: {
-          customerId: customer_id,
+          userId: customer_id,
         },
         include: {
           items: {
@@ -117,7 +117,7 @@ export abstract class CartService {
 
   static async delete(params: RemoveFromCartParams) {
     try {
-      const { customer_id } = params;
+      const { customer_id, item_uuid } = params;
 
       const cart = await prisma.cart.findUnique({
         where: { customerId: customer_id },
@@ -131,13 +131,68 @@ export abstract class CartService {
         where: { id: item_uuid },
       });
 
-      return cart;
+      const updatedCart = await prisma.cart.findUnique({
+        where: { id: cart.id },
+        include: {
+          items: {
+            orderBy: { createdAt: 'desc' },
+            include: {
+              product: true,
+              productVariant: true,
+            },
+          },
+        },
+        user: true,
+      });
+
+      return updatedCart;
     } catch (error) {
       await HandleError.handlePrismaError(
         error as Prisma.PrismaClientKnownRequestError,
         'cart',
         'delete',
       );
+    }
+  }
+
+  static async clear(params: { customer_id: string }) {
+    try {
+      const { customer_id } = params.customer_id;
+
+      const cart=await prisma.cart.findUnique({
+        where:{
+          userId:customer_id
+        }
+      })
+      
+      if(!cart){
+        throw new NotFoundError("Sepet bulunamadı")
+      }
+
+      await prisma.cartItem.deleteMany({
+        where:{
+          cartId:cart.id
+        }
+      })
+
+      const updatedCart=await prisma.cart.findUnique({
+        where:{
+          id:cart.id
+        },
+        include:{
+          items:{
+            orderBy:{createdAt:'desc'},
+            include:{
+              product:true,
+              productVariant:true
+            }
+          },
+          user:true        
+        }
+      })
+      return updatedCart;
+    } catch (error) {
+      await HandleError.handlePrismaError(error, 'cart', 'delete');
     }
   }
 }
