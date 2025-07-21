@@ -13,7 +13,7 @@ export const app = new Elysia({
         "/products/:id/variants",
         async ({ params }) => {
             const variants = await ProductVariantService.get({ product_id: params.id })
-            return ProductVariantFormatter.format(variants)
+            return ProductVariantFormatter.formatList(variants)
         },
         {
             ...getProductVariantsDto

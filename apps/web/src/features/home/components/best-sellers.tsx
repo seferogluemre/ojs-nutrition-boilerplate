@@ -1,79 +1,13 @@
+import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { Star } from "lucide-react";
 import React from "react";
+import { BestSellerProduct } from "../types/index";
 
 interface BestSellersProps extends React.HTMLAttributes<HTMLElement> {
   ref?: React.Ref<HTMLElement>;
 }
-
-const bestSellerProducts = [
-  {
-    id: 1,
-    name: "WHEY PROTEIN",
-    description: "EN ÇOK TERCİH EDİLEN PROTEIN TAKVİYESİ",
-    image: "/images/collagen.jpg",
-    rating: 5,
-    reviewCount: 10869,
-    price: 549,
-    originalPrice: null,
-    discountPercentage: null
-  },
-  {
-    id: 2,
-    name: "FITNESS PAKETİ",
-    description: "EN POPÜLER ÜRÜNLER BİR ARADA",
-    image: "/images/collagen.jpg",
-    rating: 5,
-    reviewCount: 7650,
-    price: 799,
-    originalPrice: 1126,
-    discountPercentage: 29
-  },
-  {
-    id: 3,
-    name: "GÜNLÜK VİTAMİN PAKETİ",
-    description: "EN SİK TÜKETİLEN TAKVİYELER",
-    image: "/images/collagen.jpg",
-    rating: 5,
-    reviewCount: 5013,
-    price: 549,
-    originalPrice: 717,
-    discountPercentage: 23
-  },
-  {
-    id: 4,
-    name: "PRE-WORKOUT SUPREME",
-    description: "ANTİDOPİNG ÖNCESİ TAKVİYESİ",
-    image: "/images/collagen.jpg",
-    rating: 5,
-    reviewCount: 6738,
-    price: 399,
-    originalPrice: null,
-    discountPercentage: null
-  },
-  {
-    id: 5,
-    name: "CREAM OF RICE",
-    description: "EN LEZZETLİ PİRİNÇ KREMASI",
-    image: "/images/collagen.jpg",
-    rating: 5,
-    reviewCount: 5216,
-    price: 239,
-    originalPrice: null,
-    discountPercentage: null
-  },
-  {
-    id: 6,
-    name: "CREATINE",
-    description: "EN POPÜLER SPORCU TAKVİYESİ",
-    image: "/images/collagen.jpg",
-    rating: 5,
-    reviewCount: 8558,
-    price: 239,
-    originalPrice: null,
-    discountPercentage: null
-  }
-];
 
 const StarRating = ({ rating }: { rating: number }) => {
   return (
@@ -81,8 +15,8 @@ const StarRating = ({ rating }: { rating: number }) => {
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          className={`w-4 h-4 ${
-            star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+          className={`h-4 w-4 ${
+            star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
           }`}
         />
       ))}
@@ -90,43 +24,43 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-export const BestSellers = ({
-  className,
-  ...props
-}: BestSellersProps) => {
+export const BestSellers = ({ className, ...props }: BestSellersProps) => {
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["best-sellers"],
+    queryFn: () => api.products["best-sellers"].get(),
+  });
+
   return (
-    <section
-      className={cn(
-        "py-12 bg-gray-50",
-        className,
-      )}
-      {...props}
-    >
+    <section className={cn("bg-gray-50 py-12", className)} {...props}>
       <div className="container mx-auto px-4">
         {/* Section Title */}
-        <h2 className="text-2xl lg:text-3xl font-bold text-center text-gray-900 mb-8">
+        <h2 className="mb-8 text-center text-2xl font-bold text-gray-900 lg:text-3xl">
           ÇOK SATANLAR
         </h2>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6 justify-items-center max-w-7xl mx-auto">
-          {bestSellerProducts.map((product) => (
+        <div className="mx-auto grid max-w-7xl grid-cols-2 justify-items-center gap-4 md:grid-cols-3 lg:grid-cols-6 lg:gap-6">
+          {data?.data?.slice(0, 6).map((product: BestSellerProduct) => (
             <div
               key={product.id}
-              className="relative w-[200px] h-[368px] md:w-[272.66px] md:h-[389.66px] lg:w-[200px] lg:h-[375px] bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+              className="relative h-[368px] w-[200px] cursor-pointer rounded-lg bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl md:h-[389.66px] md:w-[272.66px] lg:h-[375px] lg:w-[200px]"
             >
               {/* Discount Badge */}
               {product.discountPercentage && (
-                <div className="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold z-10">
+                <div className="absolute -right-2 -top-2 z-10 rounded-md bg-red-500 px-2 py-1 text-xs font-bold text-white">
                   %{product.discountPercentage} İNDİRİM
                 </div>
               )}
 
               {/* Product Image */}
-              <div className="w-full flex justify-center pt-4">
-                <div className="w-[168px] h-[168px] bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                  <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              <div className="flex w-full justify-center">
+                <div className="flex h-[168px] w-[168px] items-center justify-center overflow-hidden rounded-lg bg-gray-100">
+                  <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200">
+                    <img
+                      src={product.image || "/images/collagen.jpg"}
+                      alt={product.name}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                 </div>
               </div>
@@ -134,39 +68,39 @@ export const BestSellers = ({
               {/* Product Info */}
               <div className="p-4 pt-3">
                 {/* Product Name */}
-                <h3 className="text-sm font-bold text-gray-900 mb-1 leading-tight">
+                <h3 className="mb-1 text-sm font-bold leading-tight text-gray-900">
                   {product.name}
                 </h3>
 
                 {/* Description */}
-                <p className="text-xs text-gray-600 mb-2 leading-tight">
-                  {product.description}
+                <p className="mb-2 text-xs leading-tight text-gray-600">
+                  {product.short_explanation}
                 </p>
 
                 {/* Rating */}
-                <div className="flex items-center mb-1">
+                <div className="mb-1 flex items-center">
                   <StarRating rating={product.rating} />
                 </div>
 
                 {/* Review Count */}
-                <p className="text-xs text-gray-500 mb-3">
-                  {product.reviewCount} Yorum
+                <p className="mb-3 text-xs text-gray-500">
+                  {product.comment_count} Yorum
                 </p>
 
                 {/* Price */}
                 <div className="flex items-baseline space-x-2">
-                  {product.originalPrice ? (
+                  {product.price_info ? (
                     <>
                       <span className="text-lg font-bold text-gray-900">
-                        {product.price} TL
+                        {product.price_info.total_price} TL
                       </span>
                       <span className="text-sm text-red-500 line-through">
-                        {product.originalPrice} TL
+                        {product.price_info.price_per_servings} TL
                       </span>
                     </>
                   ) : (
                     <span className="text-lg font-bold text-gray-900">
-                      {product.price} TL
+                      {product.total_price} TL
                     </span>
                   )}
                 </div>
@@ -179,4 +113,4 @@ export const BestSellers = ({
   );
 };
 
-BestSellers.displayName = "BestSellers"; 
+BestSellers.displayName = "BestSellers";
