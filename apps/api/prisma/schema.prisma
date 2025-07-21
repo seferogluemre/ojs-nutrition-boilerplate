@@ -491,10 +491,10 @@ model Customer {
 
   refreshToken String? @map("refresh_token")
 
-  createdAt       DateTime            @default(now()) @map("created_at")
-  updatedAt       DateTime            @updatedAt @map("updated_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
   ProductComments ProductComments[]
-  addresses       CustomerAddress[]   @relation("CustomerAddressToCustomer")
+  addresses       CustomerAddress[] @relation("CustomerAddressToCustomer")
 
   @@map("customers")
 }
@@ -691,6 +691,7 @@ model CartItem {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  // @@unique([cartId, productVariantId])
   @@map("cart_items")
 }
 
@@ -790,7 +791,7 @@ model CustomerAddress {
   uuid String @unique @default(uuid())
 
   /// @prismabox.hide
-  customerId Int  @map("customer_id")
+  customerId Int      @map("customer_id")
   customer   Customer @relation("CustomerAddressToCustomer", fields: [customerId], references: [id], onDelete: Cascade)
 
   /// @prismabox.options{minLength:2,maxLength:100}

@@ -10,11 +10,13 @@ export abstract class CartService {
   static async create(params: AddToCartParams) {
     const { customer_id, product_id, product_variant_id, quantity } = params;
 
+    // 1. Product'ı kontrol et
     const product = await prisma.product.findUnique({
       where: { uuid: product_id },
-      select: { id: true },
+      select: { id: true, price: true },
     });
 
+    // 2. Product variant'ı kontrol et
     const productVariant = await prisma.productVariant.findUnique({
       where: { uuid: product_variant_id },
       select: { id: true, productId: true },
@@ -28,6 +30,7 @@ export abstract class CartService {
       throw new BadRequestException('Ürün varyantı, belirtilen ürüne ait değil.');
     }
 
+    // 3. Cart'ı bul veya oluştur
     const cart = await prisma.cart.upsert({
       where: { userId: customer_id },
       update: {},
@@ -37,29 +40,36 @@ export abstract class CartService {
       select: { id: true },
     });
 
-    // 4. Sepet öğesini bul veya oluştur/güncelle (upsert).
-    // Prisma'nın bu özelliği sayesinde, eğer ürün sepette varsa 'update' bloğu,
-    // yoksa 'create' bloğu çalışır.
-    await prisma.cartItem.upsert({
+    // 4. Sepette var mı kontrol et
+    const existingItem = await prisma.cartItem.findFirst({
       where: {
-        cartId_productVariantId: {
-          cartId: cart.id,
-          productVariantId: productVariant.id,
-        },
-      },
-      update: {
-        quantity: {
-          increment: quantity, // Mevcut adetin üzerine ekle
-        },
-      },
-      create: {
         cartId: cart.id,
-        productId: product.id,
         productVariantId: productVariant.id,
-        quantity: quantity,
       },
     });
 
+    if (existingItem) {
+      // Varsa quantity'yi artır
+      await prisma.cartItem.update({
+        where: { id: existingItem.id },
+        data: {
+          quantity: existingItem.quantity + quantity,
+        },
+      });
+    } else {
+      // Yoksa yeni oluştur
+      await prisma.cartItem.create({
+        data: {
+          cartId: cart.id,
+          productId: product.id,
+          productVariantId: productVariant.id,
+          quantity: quantity,
+          unitPrice: product.price, // Product'ın güncel fiyatını al
+        },
+      });
+    }
+
+    // 5. Güncellenmiş sepeti döndür
     const updatedCart = await prisma.cart.findUnique({
       where: {
         id: cart.id,
@@ -72,6 +82,7 @@ export abstract class CartService {
             productVariant: true,
           },
         },
+        user: true,
       },
     });
 
