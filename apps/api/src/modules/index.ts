@@ -10,6 +10,7 @@ import { locationsController } from './locations';
 import { ordersController } from './orders';
 import { postsController } from './posts';
 import productsController from './products';
+import { productVariantController } from './products/product-variants';
 import { systemAdministrationController } from './system-administration';
 import { usersController } from './users';
 import { userAddressesController } from './users/user-addresses';
@@ -29,6 +30,7 @@ const app = new Elysia()
   .use(ordersController)
   .use(productsController)
   .use(categoriesController)
+  .use(productVariantController)
   .get(
     '/',
     () => ({
@@ -64,6 +66,7 @@ export const swaggerTags: { name: string; description: string }[] = [
   { name: 'Category', description: 'Category management endpoints' },
   { name: 'Cart', description: 'Shopping cart endpoints' },
   { name: 'Orders', description: 'Order management endpoints' },
+  { name: 'Product Variants', description: 'Product variant management endpoints' },
 ];
 
 export default app;

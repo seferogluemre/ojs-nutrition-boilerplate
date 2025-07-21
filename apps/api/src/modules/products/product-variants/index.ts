@@ -1,0 +1,5 @@
+export {app as productVariantController} from "./controller"
+export * from "./dtos"
+export * from "./types"
+export * from "./formatters"
+export * from "./service"

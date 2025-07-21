@@ -77,6 +77,12 @@ export abstract class ProductsService {
                 slug: true,
               },
             },
+            productVariants: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         }),
         prisma.product.count({ where }),
