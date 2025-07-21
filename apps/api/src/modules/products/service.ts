@@ -79,7 +79,7 @@ export abstract class ProductsService {
             },
             productVariants: {
               select: {
-                id: true,
+                uuid: true,
                 name: true,
               },
             },
@@ -92,8 +92,8 @@ export abstract class ProductsService {
       const formattedData = data.map((product) => ({
         ...product,
         photos: [],
-        productVariants: [],
         comments: [],
+        variants: product.productVariants,
       })) as unknown as ProductWithRelations[];
 
       return {
