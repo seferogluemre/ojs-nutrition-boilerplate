@@ -92,6 +92,16 @@ export abstract class OrderService {
         throw new BadRequestException('Sepetinizde ürün bulunmuyor.');
       }
 
+      for (const item of cart.items) {
+        if (item.quantity > item.product.stock) {
+          throw new BadRequestException(`${item.product.name} için yeterli stok bulunmamaktadır. Mevcut:${item.product.stock}, İstenen:${item.quantity}`)
+        };
+
+        if (item.product.stock <= 0 || !item.product.isActive) {
+          throw new BadRequestException(`${item.product.name} stokta yok veya aktif degil`)
+        }
+      }
+
       // 2. Adresi kontrol et (optional)
       let address = null;
       let shippingAddressData = null;
@@ -176,7 +186,21 @@ export abstract class OrderService {
         },
       });
 
-      // 6. Sepeti temizle
+      for (const item of cart.items) {
+        const newStock = item.product.stock - item.quantity;
+        
+        
+        await prisma.product.update({
+          where: { id: item.productId },
+          data: {
+            stock: newStock,
+            isActive: newStock > 0 ? item.product.isActive : false,
+          },
+        });
+        
+      }
+
+      // 7. Sepeti temizle
       await prisma.cartItem.deleteMany({
         where: {
           cartId: cart.id,
@@ -197,7 +221,7 @@ export abstract class OrderService {
     const prefix = 'ORD';
     const timestamp = Date.now().toString();
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    
+
     return `${prefix}${timestamp}${random}`;
   }
 } 

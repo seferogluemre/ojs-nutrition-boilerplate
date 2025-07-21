@@ -13,13 +13,13 @@ export abstract class CartService {
     // 1. Product'ı kontrol et
     const product = await prisma.product.findUnique({
       where: { uuid: product_id },
-      select: { id: true, price: true },
+      select: { id: true, price: true, stock: true, isActive: true, name: true },
     });
 
     // 2. Product variant'ı kontrol et
     const productVariant = await prisma.productVariant.findUnique({
       where: { uuid: product_variant_id },
-      select: { id: true, productId: true },
+      select: { id: true, productId: true, },
     });
 
     if (!product || !productVariant) {
@@ -28,6 +28,17 @@ export abstract class CartService {
 
     if (productVariant.productId !== product.id) {
       throw new BadRequestException('Ürün varyantı, belirtilen ürüne ait değil.');
+    }
+
+    console.log(`Product: ${product.name}, Stock: ${product.stock}, Requested: ${quantity}`);
+    if (product.stock < quantity) {
+      throw new BadRequestException(`${product.name} için yeterli stok yok, Mevcut:${product.stock}`)
+    }
+
+    if (!product.isActive) {
+      throw new BadRequestException(
+        `${product.name} şu anda satışta değil.`
+      );
     }
 
     // 3. Cart'ı bul veya oluştur
@@ -49,11 +60,19 @@ export abstract class CartService {
     });
 
     if (existingItem) {
+      // Stock kontrolü (mevcut + yeni quantity)
+      const newTotalQuantity = existingItem.quantity + quantity;
+      if (newTotalQuantity > product.stock) {
+        throw new BadRequestException(
+          `${product.name} için yeterli stok yok. Mevcut: ${product.stock}, Toplam istenilen: ${newTotalQuantity}`
+        );
+      }
+
       // Varsa quantity'yi artır
       await prisma.cartItem.update({
         where: { id: existingItem.id },
         data: {
-          quantity: existingItem.quantity + quantity,
+          quantity: newTotalQuantity,
         },
       });
     } else {
@@ -185,35 +204,35 @@ export abstract class CartService {
     try {
       const { customer_id } = params.customer_id;
 
-      const cart=await prisma.cart.findUnique({
-        where:{
-          userId:customer_id
+      const cart = await prisma.cart.findUnique({
+        where: {
+          userId: customer_id
         }
       })
-      
-      if(!cart){
+
+      if (!cart) {
         throw new NotFoundError("Sepet bulunamadı")
       }
 
       await prisma.cartItem.deleteMany({
-        where:{
-          cartId:cart.id
+        where: {
+          cartId: cart.id
         }
       })
 
-      const updatedCart=await prisma.cart.findUnique({
-        where:{
-          id:cart.id
+      const updatedCart = await prisma.cart.findUnique({
+        where: {
+          id: cart.id
         },
-        include:{
-          items:{
-            orderBy:{createdAt:'desc'},
-            include:{
-              product:true,
-              productVariant:true
+        include: {
+          items: {
+            orderBy: { createdAt: 'desc' },
+            include: {
+              product: true,
+              productVariant: true
             }
           },
-          user:true        
+          user: true
         }
       })
       return updatedCart;
