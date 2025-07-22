@@ -15,6 +15,7 @@ export default function ProductDetail() {
   const { productId } = useParams({ from: "/_authenticated/products/$productId" });
   const { addToRecentlyViewed } = useRecentlyViewed();
   
+  
   // Find product by ID
   const product = mockProducts.find(p => p.id === productId);
   
