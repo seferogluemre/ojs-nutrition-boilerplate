@@ -1,7 +1,7 @@
-import { Role, User } from "#prisma/client";
-import { PermissionIdentifier, PermissionKey } from "./types";
-import { ForbiddenException } from "../../../utils";
 import { cache, prisma } from "#core";
+import { Role, User } from "#prisma/client";
+import { ForbiddenException } from "../../../utils";
+import { PermissionIdentifier, PermissionKey } from "./types";
 
 const ROLE_CACHE_KEY = (slug: string) => `role:${slug}`;
 

@@ -1,7 +1,7 @@
 import { ControllerHook, dtoWithMiddlewares, UnauthorizedException } from "../../../utils";
-import { PermissionIdentifier } from "./types";
-import { isPermissionGrantedToUser } from "./helpers";
 import { AuthContext } from "../authentication/types";
+import { isPermissionGrantedToUser } from "./helpers";
+import { PermissionIdentifier } from "./types";
 
 export function withPermission(permission?: PermissionIdentifier) {
     return {

@@ -76,7 +76,7 @@ export abstract class ProductVariantService {
 
       return variant;
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'product-variant', 'create');
+      throw HandleError.handlePrismaError(error, 'product-variant', 'create');
     }
   }
 
@@ -114,7 +114,7 @@ export abstract class ProductVariantService {
 
       return updatedVariant;
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'product-variant', 'update');
+      throw HandleError.handlePrismaError(error, 'product-variant', 'update');
     }
   }
 
@@ -140,7 +140,7 @@ export abstract class ProductVariantService {
       }
 
       const cartItemsWithVariant = await prisma.cartItem.findFirst({
-        where: { productVariantId: variant.id },
+        where: { productVariantId: variant.product.id },
       });
 
       if (cartItemsWithVariant) {
@@ -153,7 +153,7 @@ export abstract class ProductVariantService {
 
       return { message: 'Varyant başarıyla silindi.' };
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'product-variant', 'delete');
+      throw HandleError.handlePrismaError(error, 'product-variant', 'delete');
     }
   }
 }

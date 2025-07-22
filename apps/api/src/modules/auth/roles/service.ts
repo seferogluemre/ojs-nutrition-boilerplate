@@ -1,11 +1,11 @@
 
-import { ConflictException, NotFoundException, BadRequestException } from '../../../utils';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { RoleCreatePayload, RoleIndexQuery, RoleUpdatePayload } from './types';
-import slugify from 'slugify';
-import { Role } from '#prisma/client';
-import { filterRoles } from './dtos';
 import { cache, prisma } from '#core';
+import { Role } from '#prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import slugify from 'slugify';
+import { BadRequestException, ConflictException, NotFoundException } from '../../../utils';
+import { filterRoles } from './dtos';
+import { RoleCreatePayload, RoleIndexQuery, RoleUpdatePayload } from './types';
 
 const ROLES_CACHE_KEY = 'roles';
 const ROLE_CACHE_KEY = (slugOrUuid: string) => `role:${slugOrUuid}`;

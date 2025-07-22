@@ -1,44 +1,13 @@
 import { prisma } from '#core';
-import { UserAddress } from '#prisma/index';
+import { Prisma, UserAddress } from '#prisma/index';
 import { HandleError } from '#shared/error/handle-error';
 import { InternalServerErrorException, NotFoundException } from '#utils';
-import { Prisma } from '@prisma/client';
 
 import { getUserAddressFilters } from './dtos';
 import { UserAddressCreatePayload, UserAddressIndexQuery, UserAddressUpdatePayload } from './types';
 
 
 export abstract class UserAddressesService {
-  private static async prepareUserAddressPayload(
-    payloadRaw: UserAddressUpdatePayload,
-  ): Promise<UserAddressUpdatePayload> {
-    const {
-      title,
-      recipientName,
-      phone,
-      addressLine1,
-      addressLine2,
-      postalCode,
-      isDefault,
-      cityId,
-    } = payloadRaw;
-
-    const userAddressPayload = {
-      title,
-      recipientName,
-      phone,
-      addressLine1,
-      addressLine2,
-      postalCode,
-      isDefault,
-      cityId,
-    };
-
-    return Object.fromEntries(
-      Object.entries(userAddressPayload).filter(([_, value]) => value !== undefined),
-    ) as UserAddressUpdatePayload;
-  }
-
   static async index(query?: UserAddressIndexQuery): Promise<UserAddress[]> {
     try {
       const filterQuery = query
@@ -95,10 +64,8 @@ export abstract class UserAddressesService {
 
   static async store(payload: UserAddressCreatePayload & { userId: string }): Promise<UserAddress> {
     try {
-      const userAddressPayload = await this.prepareUserAddressPayload(payload);
-
       const userAddress = await prisma.userAddress.create({
-        data: userAddressPayload,
+        data: payload,
       });
 
       return userAddress;
@@ -111,20 +78,16 @@ export abstract class UserAddressesService {
   static async update(id: string, payload: UserAddressUpdatePayload): Promise<UserAddress> {
     try {
       const userAddress = await prisma.userAddress.findUnique({
-        where: { id },
+        where: {uuid: id },
       });
 
       if (!userAddress) {
         throw new NotFoundException('Kullanıcı bulunamadı');
       }
 
-      const userAddressPayload = await this.prepareUserAddressPayload(payload);
-
-      const updates: Prisma.UserAddressUpdateInput = { ...userAddressPayload };
-
       const updatedUserAddress = await prisma.userAddress.update({
-        where: { id },
-        data: updates,
+        where: { uuid: id },
+        data: payload,
       });
 
       if (!updatedUserAddress) {
@@ -141,7 +104,7 @@ export abstract class UserAddressesService {
   static async destroy(id: string): Promise<void> {
     try {
       await prisma.userAddress.delete({
-        where: { id },
+        where: { uuid: id },
       });
     } catch (error) {
       await HandleError.handlePrismaError(error, 'userAddress', 'delete');
@@ -152,7 +115,7 @@ export abstract class UserAddressesService {
   static async restore(id: string) {
     try {
       const userAddress = await prisma.userAddress.findFirst({
-        where: { id, deletedAt: { not: null } },
+        where: { uuid: id, deletedAt: { not: null } },
       });
 
       if (!userAddress) {
@@ -160,7 +123,7 @@ export abstract class UserAddressesService {
       }
 
       return await prisma.userAddress.update({
-        where: { id },
+        where: { uuid: id },
         data: { deletedAt: null },
       });
     } catch (error) {

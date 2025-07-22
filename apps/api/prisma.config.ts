@@ -1,5 +1,5 @@
-import { loadEnv } from './src/config/env'
-import type { PrismaConfig } from 'prisma'
+import type { PrismaConfig } from 'prisma';
+import { loadEnv } from './src/config/env';
 
 loadEnv();
 

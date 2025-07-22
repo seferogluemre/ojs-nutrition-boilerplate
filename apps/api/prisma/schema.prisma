@@ -780,6 +780,7 @@ model UserAddress {
   isDefault Boolean @default(false) @map("is_default")
 
   createdAt DateTime @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("user_addresses")

@@ -1,8 +1,8 @@
-import { AuditLogService } from "./service";
-import { dtoWithMiddlewares, ExtractBody, Middleware, ControllerHook, HttpError } from "../../utils";
+import { ControllerHook, dtoWithMiddlewares, ExtractBody, HttpError, Middleware } from "../../utils";
 import { AuthContext } from "../auth";
-import { AuditLogEntityType } from "./types";
 import { AuditLogAction } from "./constants";
+import { AuditLogService } from "./service";
+import { AuditLogEntityType } from "./types";
 
 type AuditLogContext<Hook extends ControllerHook> = AuthContext & { body: ExtractBody<Hook> };
 

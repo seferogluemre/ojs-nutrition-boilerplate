@@ -1,13 +1,13 @@
 import { Elysia } from 'elysia';
-import { roleDestroyDto, roleIndexDto, roleShowDto, roleStoreDto, roleUpdateDto } from './dtos';
-import { RolesService } from './service';
-import { RoleFormatter } from './formatters';
-import { auth, authSwagger } from '../authentication/plugin';
-import { PERMISSIONS } from './constants';
 import { dtoWithPermission } from '../';
 import { dtoWithMiddlewares } from '../../../utils';
+import { AuditLogAction, AuditLogEntity, withAuditLog } from '../../audit-logs';
+import { auth, authSwagger } from '../authentication/plugin';
 import { withPermission } from '../roles/middleware';
-import { withAuditLog, AuditLogAction, AuditLogEntity } from '../../audit-logs';
+import { PERMISSIONS } from './constants';
+import { roleDestroyDto, roleIndexDto, roleShowDto, roleStoreDto, roleUpdateDto } from './dtos';
+import { RoleFormatter } from './formatters';
+import { RolesService } from './service';
 
 const app = new Elysia({
     prefix: '/roles',

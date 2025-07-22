@@ -1,8 +1,9 @@
 import { FileLibraryAssetsService } from '#modules/file-library-assets';
 
-import { Gender } from '#prisma/index';
+import { prisma } from '#core';
+import { FileLibraryAssetType, Gender, Prisma, User } from '#prisma/index';
+import { UserWhereUnique } from '#prismabox/User';
 import { HandleError } from '#shared/error/handle-error';
-import { User } from '@prisma/client';
 import { InternalServerErrorException, NotFoundException } from '../../utils';
 import { betterAuth } from '../auth/authentication/instance';
 import { getUserFilters } from './dtos';

@@ -1,7 +1,7 @@
-import { t } from 'elysia';
-import { ControllerHook, errorResponseDto, prepareFilters, uuidValidation } from "#utils";
-import { PERMISSION_KEYS } from './constants';
 import { RolePlain } from '#prismabox/Role';
+import { ControllerHook, errorResponseDto, prepareFilters, uuidValidation } from "#utils";
+import { t } from 'elysia';
+import { PERMISSION_KEYS } from './constants';
 
 export const [roleFiltersDto, , filterRoles] = prepareFilters(RolePlain, {
     search: ['name', 'slug'],

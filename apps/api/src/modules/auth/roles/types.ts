@@ -1,6 +1,6 @@
 import { Static } from 'elysia';
-import { roleIndexDto, roleShowDto, roleShowResponseDto, roleStoreDto, roleUpdateDto } from './dtos';
 import { Simplify, ValueOf } from 'type-fest';
+import { roleIndexDto, roleShowDto, roleShowResponseDto, roleStoreDto, roleUpdateDto } from './dtos';
 
 import { PERMISSIONS } from './constants';
 
