@@ -54,16 +54,16 @@ const app = new Elysia({
     app
       .use(auth())
       .post(
-        '', 
+        '',
         async ({ body }) => {
           // File upload handle
           const { fileUrl } = await FileUploadUtil.uploadProductPhoto(body.primaryPhotoUrl);
-          
+
           const productData = {
             ...body,
             primaryPhotoUrl: fileUrl,
           };
-          
+
           const product = await ProductsService.store(productData);
           return ProductFormatter.response(product);
         },
@@ -82,7 +82,7 @@ const app = new Elysia({
         ),
       )
       .patch(
-        '/:id', 
+        '/:id',
         async ({ params, body }) => {
           const product = await ProductsService.update(params.id, body);
           return ProductFormatter.response(product);
