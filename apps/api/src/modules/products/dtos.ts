@@ -1,7 +1,4 @@
-import { CategoryPlain } from '#prismabox/Category';
 import { ProductPlain } from '#prismabox/Product';
-import { ProductPhotoPlain } from '#prismabox/ProductPhoto';
-import { ProductVariantPlain } from '#prismabox/ProductVariant';
 import { t } from 'elysia';
 
 import { headers } from '../../utils';
@@ -17,31 +14,10 @@ export const productResponseSchema = t.Object({
   variant: ProductPlain.properties.variant,
   isActive: ProductPlain.properties.isActive,
   shortDescription: ProductPlain.properties.shortDescription,
-  longDescription: ProductPlain.properties.longDescription,
   price: ProductPlain.properties.price,
   primaryPhotoUrl: ProductPlain.properties.primaryPhotoUrl,
   reviewCount: ProductPlain.properties.reviewCount,
   averageRating: ProductPlain.properties.averageRating,
-  category: t.Object({
-    id: CategoryPlain.properties.uuid,
-    name: CategoryPlain.properties.name,
-    slug: CategoryPlain.properties.slug,
-  }),
-  photos: t.Array(
-    t.Object({
-      id: ProductPhotoPlain.properties.uuid,
-      url: ProductPhotoPlain.properties.url,
-      isPrimaryPhoto: ProductPhotoPlain.properties.isPrimaryPhoto,
-      order: ProductPhotoPlain.properties.order,
-      fileSize: ProductPhotoPlain.properties.fileSize,
-    }),
-  ),
-  variants: t.Array(
-    t.Object({
-      id: ProductVariantPlain.properties.uuid,
-      name: ProductVariantPlain.properties.name,
-    }),
-  ),
   createdAt: t.Date(),
   updatedAt: t.Date(),
 });
