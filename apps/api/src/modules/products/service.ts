@@ -169,7 +169,7 @@ export abstract class ProductsService {
       return {
         ...product,
         photos: [],
-        productVariants: [],
+        variants: [],
         comments: [],
       } as unknown as ProductWithRelations;
     } catch (error) {

@@ -12,8 +12,8 @@ import {
 export type ProductWithRelations = Product & {
   category: Category;
   photos: ProductPhoto[];
-  productVariants: ProductVariant[];
   comments: ProductComments[];
+  variants: ProductVariant[];
 };
 
 // DTO Response tipleri
