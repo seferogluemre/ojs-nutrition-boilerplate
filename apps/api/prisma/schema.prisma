@@ -507,6 +507,10 @@ model Category {
   /// @prismabox.options{minLength:2,maxLength:100}
   name String @unique
 
+  parentId Int?       @map("parent_id")
+  parent   Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children Category[] @relation("SubCategories")
+
   /// @prismabox.options{minLength:2,maxLength:100}
   slug String @unique
 
@@ -528,11 +532,17 @@ model Product {
   /// @prismabox.hide
   categoryId Int @map("category_id")
 
+  mainCategoryId String? @map("main_category_id")
+  subCategoryId  String? @map("sub_category_id")
+
   /// @prismabox.options{minLength:2,maxLength:100}
   name String
 
   /// @prismabox.options{minLength:2,maxLength:100}
   slug String @unique
+
+  explanation Json?    @db.JsonB
+  tags        String[] @default([]) @map("tags")
 
   /// @prismabox.options{minimum:0}
   stock Int @default(0)
@@ -582,6 +592,12 @@ model ProductVariant {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   name String
+
+  size        Json?   @db.JsonB // { pieces: number, total_services: number }
+  aroma       String?
+  price       Json?    @db.JsonB // { profit, total_price, discounted_price, price_per_servings, discount_percentage }
+  photoSrc    String? @map("photo_src")
+  isAvailable Boolean @default(true) @map("is_available")
 
   cartItems CartItem[] @relation("CartItemToProductVariant")
 
@@ -779,9 +795,9 @@ model UserAddress {
 
   isDefault Boolean @default(false) @map("is_default")
 
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
   deletedAt DateTime? @map("deleted_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
   @@map("user_addresses")
 }

@@ -81,6 +81,20 @@ export abstract class ProductsService {
               select: {
                 uuid: true,
                 name: true,
+                size: true,
+                aroma: true,
+                price: true,
+                photoSrc: true,
+                isAvailable: true,
+              },
+            },
+            photos: {
+              select: {
+                uuid: true,
+                url: true,
+                isPrimaryPhoto: true,
+                order: true,
+                fileSize: true,
               },
             },
           },
@@ -125,6 +139,26 @@ export abstract class ProductsService {
               slug: true,
             },
           },
+          productVariants: {
+            select: {
+              uuid: true,
+              name: true,
+              size: true,
+              aroma: true,
+              price: true,
+              photoSrc: true,
+              isAvailable: true,
+            },
+          },
+          photos: {
+            select: {
+              uuid: true,
+              url: true,
+              isPrimaryPhoto: true,
+              order: true,
+              fileSize: true,
+            },
+          },
         },
       });
 
@@ -156,6 +190,26 @@ export abstract class ProductsService {
               slug: true,
             },
           },
+          productVariants: {
+            select: {
+              uuid: true,
+              name: true,
+              size: true,
+              aroma: true,
+              price: true,
+              photoSrc: true,
+              isAvailable: true,
+            },
+          },
+          photos: {
+            select: {
+              uuid: true,
+              url: true,
+              isPrimaryPhoto: true,
+              order: true,
+              fileSize: true,
+            },
+          },
         },
       });
 
@@ -182,6 +236,26 @@ export abstract class ProductsService {
               uuid: true,
               name: true,
               slug: true,
+            },
+          },
+          productVariants: {
+            select: {
+              uuid: true,
+              name: true,
+              size: true,
+              aroma: true,
+              price: true,
+              photoSrc: true,
+              isAvailable: true,
+            },
+          },
+          photos: {
+            select: {
+              uuid: true,
+              url: true,
+              isPrimaryPhoto: true,
+              order: true,
+              fileSize: true,
             },
           },
         },

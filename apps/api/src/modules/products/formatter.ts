@@ -1,30 +1,68 @@
-import { BaseFormatter } from '../../utils';
-import { productResponseSchema } from './dtos';
 import { ProductResponse, ProductWithRelations } from './types';
 
 export abstract class ProductFormatter {
   static response(data: ProductWithRelations): ProductResponse {
-    // Manuel mapping yerine BaseFormatter.convertData kullan
-    const convertedData = BaseFormatter.convertData<ProductResponse>(
-      {
-        id: data.uuid,
-        name: data.name,
-        slug: data.slug,
-        stock: data.stock,
-        variant: data.variant,
-        isActive: data.isActive,
-        shortDescription: data.shortDescription,
-        price: data.price,
-        primaryPhotoUrl: data.primaryPhotoUrl,
-        reviewCount: data.reviewCount,
-        averageRating: data.averageRating,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
+    return {
+      id: data.uuid,
+      name: data.name,
+      slug: data.slug,
+      
+      // 🔥 YENİ ALANLAR:
+      short_explanation: data.shortDescription,
+      explanation: data.explanation as any || undefined,
+      main_category_id: data.mainCategoryId || undefined,
+      sub_category_id: data.subCategoryId || undefined,
+      tags: data.tags || [],
+      
+      // Mevcut alanlar
+      stock: data.stock,
+      variant: data.variant,
+      isActive: data.isActive,
+      shortDescription: data.shortDescription,
+      longDescription: data.longDescription,
+      price: data.price,
+      primaryPhotoUrl: data.primaryPhotoUrl,
+      reviewCount: data.reviewCount,
+      averageRating: data.averageRating,
+      
+      category: {
+        id: data.category.uuid,
+        name: data.category.name,
+        slug: data.category.slug,
       },
-      productResponseSchema,
-    );
-
-    return convertedData;
+      
+      photos: data.photos?.map(photo => ({
+        id: photo.uuid,
+        url: photo.url,
+        isPrimaryPhoto: photo.isPrimaryPhoto,
+        order: photo.order,
+        fileSize: photo.fileSize,
+      })) || [],
+      
+      // 🔥 YENİ VARIANTS MAPPING:
+      variants: data.productVariants?.map(variant => ({
+        id: variant.uuid,
+        name: variant.name,
+        size: (variant.size as any) || { pieces: 1, total_services: 30 },
+        aroma: variant.aroma || "Aromasız",
+        price: (variant.price as any) || {
+          profit: null,
+          total_price: data.price,
+          discounted_price: null,
+          price_per_servings: Math.round((data.price / 30) * 100) / 100,
+          discount_percentage: null
+        },
+        photo_src: variant.photoSrc || data.primaryPhotoUrl,
+        is_available: variant.isAvailable ?? true
+      })) || [],
+      
+      // Comments
+      comment_count: data.reviewCount,
+      average_star: data.averageRating,
+      
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
   }
 
   // Minimal ürün response'u (listeleme için)

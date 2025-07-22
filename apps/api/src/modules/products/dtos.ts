@@ -1,6 +1,8 @@
 import { ProductPlain } from '#prismabox/Product';
 import { t } from 'elysia';
 
+import { CategoryPlain } from '#prismabox/Category';
+import { ProductPhotoPlain } from '#prismabox/ProductPhoto';
 import { headers } from '../../utils';
 import { errorResponseDto } from '../../utils/common-dtos';
 import { type ControllerHook } from '../../utils/elysia-types';
@@ -10,14 +12,70 @@ export const productResponseSchema = t.Object({
   id: ProductPlain.properties.uuid,
   name: ProductPlain.properties.name,
   slug: ProductPlain.properties.slug,
+  short_explanation: ProductPlain.properties.shortDescription,
+  explanation: t.Optional(t.Object({
+    usage: t.Optional(t.String()),
+    features: t.Optional(t.String()),
+    description: t.Optional(t.String()),
+    nutritional_content: t.Optional(t.Object({
+      ingredients: t.Optional(t.Array(t.Object({
+        aroma: t.Union([t.String(), t.Null()]),
+        value: t.String()
+      }))),
+      nutrition_facts: t.Optional(t.Object({
+        ingredients: t.Array(t.Object({
+          name: t.String(),
+          amounts: t.Array(t.String())
+        })),
+        portion_sizes: t.Array(t.String())
+      })),
+      amino_acid_facts: t.Optional(t.Any())
+    }))
+  })),
+  main_category_id: t.Optional(t.String()),
+  sub_category_id: t.Optional(t.String()),
+  tags: t.Array(t.String()),
   stock: ProductPlain.properties.stock,
   variant: ProductPlain.properties.variant,
   isActive: ProductPlain.properties.isActive,
   shortDescription: ProductPlain.properties.shortDescription,
+  longDescription: ProductPlain.properties.longDescription,
   price: ProductPlain.properties.price,
   primaryPhotoUrl: ProductPlain.properties.primaryPhotoUrl,
   reviewCount: ProductPlain.properties.reviewCount,
   averageRating: ProductPlain.properties.averageRating,
+  category: t.Object({
+    id: CategoryPlain.properties.uuid,
+    name: CategoryPlain.properties.name,
+    slug: CategoryPlain.properties.slug,
+  }),
+  photos: t.Array(t.Object({
+    id: ProductPhotoPlain.properties.uuid,
+    url: ProductPhotoPlain.properties.url,
+    isPrimaryPhoto: ProductPhotoPlain.properties.isPrimaryPhoto,
+    order: ProductPhotoPlain.properties.order,
+    fileSize: ProductPhotoPlain.properties.fileSize,
+  })),
+  variants: t.Array(t.Object({
+    id: t.String(),
+    name: t.String(),
+    size: t.Optional(t.Object({
+      pieces: t.Number(),
+      total_services: t.Number()
+    })),
+    aroma: t.Optional(t.String()),
+    price: t.Optional(t.Object({
+      profit: t.Union([t.Number(), t.Null()]),
+      total_price: t.Number(),
+      discounted_price: t.Union([t.Number(), t.Null()]),
+      price_per_servings: t.Number(),
+      discount_percentage: t.Union([t.Number(), t.Null()]),
+    })),
+    photo_src: t.Optional(t.String()),
+    is_available: t.Boolean(),
+  })),
+  comment_count: t.Number(),
+  average_star: t.Number(),
   createdAt: t.Date(),
   updatedAt: t.Date(),
 });
