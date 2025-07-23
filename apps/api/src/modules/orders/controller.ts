@@ -24,7 +24,7 @@ export const app = new Elysia({
   )
   .get(
     '/:id',
-    async ({ user, params, set }) => {
+    async ({ user, params }) => {
       const order = await OrderService.getOrderDetail({
         user_id: user.id,
         order_id: params.id,

@@ -137,7 +137,7 @@ export abstract class CartService {
 
       return cart;
     } catch (error) {
-      await HandleError.handlePrismaError(
+      throw HandleError.handlePrismaError(
         error as Prisma.PrismaClientKnownRequestError,
         'cart',
         'find',
@@ -192,7 +192,7 @@ export abstract class CartService {
 
       return updatedCart;
     } catch (error) {
-      await HandleError.handlePrismaError(
+      throw HandleError.handlePrismaError(
         error as Prisma.PrismaClientKnownRequestError,
         'cart',
         'delete',
@@ -202,7 +202,7 @@ export abstract class CartService {
 
   static async clear(params: { customer_id: string }) {
     try {
-      const { customer_id } = params.customer_id;
+      const { customer_id } = params;
 
       const cart = await prisma.cart.findUnique({
         where: {
@@ -237,7 +237,7 @@ export abstract class CartService {
       })
       return updatedCart;
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'cart', 'delete');
+      throw HandleError.handlePrismaError(error, 'cart', 'delete');
     }
   }
 }

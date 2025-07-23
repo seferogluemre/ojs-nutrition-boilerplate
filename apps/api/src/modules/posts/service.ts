@@ -1,4 +1,5 @@
 
+import { prisma } from '#core';
 import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NotFoundException } from '../../utils';

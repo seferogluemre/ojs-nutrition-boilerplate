@@ -4,14 +4,13 @@ import { Button } from "#components/ui/button";
 import { BestSellers } from "#features/home/components/best-sellers.js";
 import { useRecentlyViewed } from "#hooks";
 import { cn } from "#lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { Award, Check, Minus, Plus, Shield, ShoppingCart, Star, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { mockProducts, ProductBadge, ProductFlavor, ProductSize } from "../data/mock-products";
 import { ProductReviews } from "./components/product-reviews";
 import { RecentlyViewedProducts } from "./components/recently-viewed-products";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "#lib/api.js";
 
 export default function ProductDetail() {
   const { productId } = useParams({ from: "/_authenticated/products/$productId" });
@@ -19,9 +18,11 @@ export default function ProductDetail() {
 
   const { data } = useQuery({
     queryKey: ["products", productId],
-    queryFn: () => api.products.index.get({  })
+    queryFn:async () => {
+      const response = await fetch(`http://localhost:3000/api/products/${productId}`)
+      return response.data
+    }
   })
-
 
   // Find product by ID
   const product = mockProducts.find(p => p.id === productId);

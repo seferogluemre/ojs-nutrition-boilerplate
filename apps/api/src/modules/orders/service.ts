@@ -28,7 +28,7 @@ export abstract class OrderService {
 
       return orders;
     } catch (error) {
-      await HandleError.handlePrismaError(
+      throw HandleError.handlePrismaError(
         error,
         'order',
         'find',
@@ -61,7 +61,7 @@ export abstract class OrderService {
 
       return order;
     } catch (error) {
-      await HandleError.handlePrismaError(
+      throw HandleError.handlePrismaError(
         error,
         'order',
         'find',
@@ -209,7 +209,7 @@ export abstract class OrderService {
 
       return order;
     } catch (error) {
-      await HandleError.handlePrismaError(
+      throw HandleError.handlePrismaError(
         error,
         'order',
         'create',

@@ -24,13 +24,13 @@ export abstract class CategoriesService {
                 ? {
                     OR: [
                         {
-                            title: {
+                            name: {
                                 contains: search,
                                 mode: Prisma.QueryMode.insensitive,
                             },
                         },
                         {
-                            content: {
+                            slug: {
                                 contains: search,
                                 mode: Prisma.QueryMode.insensitive,
                             },

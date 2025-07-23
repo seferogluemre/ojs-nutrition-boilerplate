@@ -1,7 +1,7 @@
 import type { OrderService } from './service';
 
-type OrderPayload = Awaited<ReturnType<typeof OrderService.getOrderDetail>>;
-type OrdersListPayload = Awaited<ReturnType<typeof OrderService.getUserOrders>>;
+type OrderPayload = NonNullable<Awaited<ReturnType<typeof OrderService.getOrderDetail>>>;
+type OrdersListPayload = NonNullable<Awaited<ReturnType<typeof OrderService.getUserOrders>>>;
 
 type OrderItemPayload = OrderPayload['items'][0];
 
@@ -38,14 +38,14 @@ export abstract class OrderFormatter {
    */
   static format(order: OrderPayload) {
     return {
-      id: order.uuid,
-      orderNumber: order.orderNumber,
-      status: order.status,
-      subtotal: order.subtotal,
-      shippingAddress: order.shippingAddress,
-      items: order.items.map(OrderFormatter.formatItem),
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
+      id: order?.uuid,
+      orderNumber: order?.orderNumber,
+      status: order?.status,
+      subtotal: order?.subtotal,
+      shippingAddress: order?.shippingAddress,
+      items: order?.items.map(OrderFormatter.formatItem),
+      createdAt: order?.createdAt,
+      updatedAt: order?.updatedAt,
     };
   }
 
@@ -55,7 +55,7 @@ export abstract class OrderFormatter {
    * @returns İstemci dostu formatlanmış sipariş listesi.
    */
   static formatList(orders: OrdersListPayload) {
-    return orders.map((order) => ({
+    return orders?.map((order) => ({
       id: order.uuid,
       orderNumber: order.orderNumber,
       status: order.status,

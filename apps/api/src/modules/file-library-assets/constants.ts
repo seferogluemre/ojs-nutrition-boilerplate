@@ -1,3 +1,4 @@
+import { FileLibraryAssetMimeType } from "#prisma/index";
 import { FileLibraryAssetFileType } from "#prismabox/FileLibraryAssetFileType";
 import { FileLibraryAssetType } from "#prismabox/FileLibraryAssetType";
 
