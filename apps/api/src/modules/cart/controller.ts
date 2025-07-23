@@ -15,7 +15,7 @@ export const app = new Elysia({
     async ({ body, user, set }) => {
       const cart = await CartService.create({
         ...body,
-        customer_id: +user.id,
+        customer_id: user.id.toString(),
       });
       set.status = 201;
       return CartFormatter.format(cart!);
