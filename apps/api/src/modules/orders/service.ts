@@ -28,11 +28,7 @@ export abstract class OrderService {
 
       return orders;
     } catch (error) {
-      await HandleError.handlePrismaError(
-        error,
-        'order',
-        'find',
-      );
+      await HandleError.handlePrismaError(error, 'order', 'find');
     }
   }
 
@@ -61,11 +57,7 @@ export abstract class OrderService {
 
       return order;
     } catch (error) {
-      await HandleError.handlePrismaError(
-        error,
-        'order',
-        'find',
-      );
+      await HandleError.handlePrismaError(error, 'order', 'find');
     }
   }
 
@@ -94,11 +86,13 @@ export abstract class OrderService {
 
       for (const item of cart.items) {
         if (item.quantity > item.product.stock) {
-          throw new BadRequestException(`${item.product.name} için yeterli stok bulunmamaktadır. Mevcut:${item.product.stock}, İstenen:${item.quantity}`)
-        };
+          throw new BadRequestException(
+            `${item.product.name} için yeterli stok bulunmamaktadır. Mevcut:${item.product.stock}, İstenen:${item.quantity}`,
+          );
+        }
 
         if (item.product.stock <= 0 || !item.product.isActive) {
-          throw new BadRequestException(`${item.product.name} stokta yok veya aktif degil`)
+          throw new BadRequestException(`${item.product.name} stokta yok veya aktif degil`);
         }
       }
 
@@ -188,8 +182,7 @@ export abstract class OrderService {
 
       for (const item of cart.items) {
         const newStock = item.product.stock - item.quantity;
-        
-        
+
         await prisma.product.update({
           where: { id: item.productId },
           data: {
@@ -197,7 +190,6 @@ export abstract class OrderService {
             isActive: newStock > 0 ? item.product.isActive : false,
           },
         });
-        
       }
 
       // 7. Sepeti temizle
@@ -209,19 +201,17 @@ export abstract class OrderService {
 
       return order;
     } catch (error) {
-      await HandleError.handlePrismaError(
-        error,
-        'order',
-        'create',
-      );
+      await HandleError.handlePrismaError(error, 'order', 'create');
     }
   }
 
   private static async generateOrderNumber(): Promise<string> {
     const prefix = 'ORD';
     const timestamp = Date.now().toString();
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const random = Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0');
 
     return `${prefix}${timestamp}${random}`;
   }
-} 
+}

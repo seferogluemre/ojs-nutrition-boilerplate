@@ -1,7 +1,7 @@
 import { prisma } from '#core';
 import { HandleError } from '#shared/error/handle-error';
 import { BadRequestException } from '#utils';
-import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NotFoundError } from 'elysia';
 
 import { AddToCartParams, GetCartParams, RemoveFromCartParams } from './types';
@@ -19,7 +19,7 @@ export abstract class CartService {
     // 2. Product variant'ı kontrol et
     const productVariant = await prisma.productVariant.findUnique({
       where: { uuid: product_variant_id },
-      select: { id: true, productId: true, },
+      select: { id: true, productId: true },
     });
 
     if (!product || !productVariant) {
@@ -30,23 +30,22 @@ export abstract class CartService {
       throw new BadRequestException('Ürün varyantı, belirtilen ürüne ait değil.');
     }
 
-    console.log(`Product: ${product.name}, Stock: ${product.stock}, Requested: ${quantity}`);
     if (product.stock < quantity) {
-      throw new BadRequestException(`${product.name} için yeterli stok yok, Mevcut:${product.stock}`)
+      throw new BadRequestException(
+        `${product.name} için yeterli stok yok, Mevcut:${product.stock}`,
+      );
     }
 
     if (!product.isActive) {
-      throw new BadRequestException(
-        `${product.name} şu anda satışta değil.`
-      );
+      throw new BadRequestException(`${product.name} şu anda satışta değil.`);
     }
 
     // 3. Cart'ı bul veya oluştur
     const cart = await prisma.cart.upsert({
-      where: { userId: customer_id },
+      where: { userId: customer_id.toString() },
       update: {},
       create: {
-        userId: customer_id,
+        userId: customer_id.toString(),
       },
       select: { id: true },
     });
@@ -64,7 +63,7 @@ export abstract class CartService {
       const newTotalQuantity = existingItem.quantity + quantity;
       if (newTotalQuantity > product.stock) {
         throw new BadRequestException(
-          `${product.name} için yeterli stok yok. Mevcut: ${product.stock}, Toplam istenilen: ${newTotalQuantity}`
+          `${product.name} için yeterli stok yok. Mevcut: ${product.stock}, Toplam istenilen: ${newTotalQuantity}`,
         );
       }
 
@@ -137,11 +136,7 @@ export abstract class CartService {
 
       return cart;
     } catch (error) {
-      await HandleError.handlePrismaError(
-        error as Prisma.PrismaClientKnownRequestError,
-        'cart',
-        'find',
-      );
+      throw HandleError.handlePrismaError(error as PrismaClientKnownRequestError, 'cart', 'find');
     }
   }
 
@@ -192,8 +187,8 @@ export abstract class CartService {
 
       return updatedCart;
     } catch (error) {
-      await HandleError.handlePrismaError(
-        error as Prisma.PrismaClientKnownRequestError,
+      throw await HandleError.handlePrismaError(
+        error as PrismaClientKnownRequestError,
         'cart',
         'delete',
       );
@@ -202,42 +197,42 @@ export abstract class CartService {
 
   static async clear(params: { customer_id: string }) {
     try {
-      const { customer_id } = params.customer_id;
+      const { customer_id } = params;
 
       const cart = await prisma.cart.findUnique({
         where: {
-          userId: customer_id
-        }
-      })
+          userId: customer_id,
+        },
+      });
 
       if (!cart) {
-        throw new NotFoundError("Sepet bulunamadı")
+        throw new NotFoundError('Sepet bulunamadı');
       }
 
       await prisma.cartItem.deleteMany({
         where: {
-          cartId: cart.id
-        }
-      })
+          cartId: cart.id,
+        },
+      });
 
       const updatedCart = await prisma.cart.findUnique({
         where: {
-          id: cart.id
+          id: cart.id,
         },
         include: {
           items: {
             orderBy: { createdAt: 'desc' },
             include: {
               product: true,
-              productVariant: true
-            }
+              productVariant: true,
+            },
           },
-          user: true
-        }
-      })
+          user: true,
+        },
+      });
       return updatedCart;
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'cart', 'delete');
+      throw await HandleError.handlePrismaError(error, 'cart', 'delete');
     }
   }
 }

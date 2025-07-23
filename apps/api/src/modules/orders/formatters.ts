@@ -64,4 +64,4 @@ export abstract class OrderFormatter {
       createdAt: order.createdAt,
     }));
   }
-} 
+}

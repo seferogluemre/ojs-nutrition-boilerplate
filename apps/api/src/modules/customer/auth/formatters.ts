@@ -1,6 +1,5 @@
 import { BaseFormatter } from '../../../utils';
-import { AuthResponse, TokenResponse } from './dtos';
-import { AuthResponseType } from './types';
+import { TokenResponse } from './dtos';
 
 export abstract class CustomerAuthFormatter {
   // Format auth response (signup/login)

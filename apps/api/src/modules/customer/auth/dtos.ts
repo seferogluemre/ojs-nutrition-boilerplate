@@ -1,4 +1,3 @@
-import { CustomerPlain, CustomerPlainInputCreate } from '#prismabox/Customer';
 import { t } from 'elysia';
 
 import { ControllerHook, errorResponseDto } from '../../../utils';

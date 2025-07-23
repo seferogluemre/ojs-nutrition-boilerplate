@@ -1,6 +1,6 @@
 import Elysia from 'elysia';
-import { auth } from '../auth/authentication/plugin';
 
+import { auth } from '../auth/authentication/plugin';
 import { completeShoppingDto, getOrderDetailDto, getOrdersDto } from './dtos';
 import { OrderFormatter } from './formatters';
 import { OrderService } from './service';
@@ -24,7 +24,7 @@ export const app = new Elysia({
   )
   .get(
     '/:id',
-    async ({ user, params, set }) => {
+    async ({ user, params }) => {
       const order = await OrderService.getOrderDetail({
         user_id: user.id,
         order_id: params.id,
@@ -50,4 +50,4 @@ export const app = new Elysia({
     },
   );
 
-export default app; 
+export default app;

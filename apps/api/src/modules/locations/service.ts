@@ -1,6 +1,7 @@
+import { prisma } from '#core';
+import { Prisma } from '#prisma/index';
 import { HandleError } from '#shared/error/handle-error';
 import { NotFoundException, PaginationQuery } from '#utils';
-import { Prisma } from '@prisma/client';
 
 export abstract class LocationsService {
   // Country Methods
