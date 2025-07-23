@@ -1,18 +1,41 @@
-import { CategoryPlain, CategoryPlainInputCreate, CategoryPlainInputUpdate } from '#prismabox/Category';
+import { CategoryPlainInputCreate, CategoryPlainInputUpdate } from '#prismabox/Category';
 import { t } from 'elysia';
 import { ControllerHook, errorResponseDto, uuidValidation } from '../../utils';
 import { paginationQueryDto, paginationResponseDto } from '../../utils/pagination';
 
+// Sub-child category schema (3rd level)
+const subChildCategorySchema = t.Object({
+    name: t.String(),
+    slug: t.String(),
+    order: t.Number(),
+});
 
-export const categoryResponseDto = t.Composite([
-    CategoryPlain,
-    t.Object({
-        products: t.Array(t.Object({
-            id: t.String(),
-            name: t.String(),
-        })),
-    }),
-]);
+// Child category schema (2nd level)
+const childCategorySchema = t.Object({
+    id: t.String(),
+    name: t.String(),
+    slug: t.String(),
+    order: t.Number(),
+    sub_children: t.Array(subChildCategorySchema),
+});
+
+// Top seller product schema
+const topSellerSchema = t.Object({
+    name: t.String(),
+    slug: t.String(),
+    description: t.String(),
+    picture_src: t.String(),
+});
+
+// Main category response schema (1st level)
+export const categoryResponseDto = t.Object({
+    id: t.String(),
+    name: t.String(),
+    slug: t.String(),
+    order: t.Number(),
+    children: t.Array(childCategorySchema),
+    top_sellers: t.Array(topSellerSchema),
+});
 
 export const categoryIndexDto = {
     query: t.Object({
@@ -24,7 +47,7 @@ export const categoryIndexDto = {
     },
     detail: {
         summary: 'Index',
-        description: 'Kategorilerin listesini döndürür',
+        description: 'Kategorilerin hierarşik listesini döndürür',
     },
 } satisfies ControllerHook;
 

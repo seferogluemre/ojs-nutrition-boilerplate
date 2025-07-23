@@ -15,13 +15,42 @@ export abstract class CategoriesService {
         throw error;
     }
 
+    // Top sellers için helper method
+    private static async getTopSellersByCategory(categoryId: number) {
+        const topSellers = await prisma.product.findMany({
+            where: {
+                categoryId: categoryId,
+                isActive: true,
+            },
+            orderBy: [
+                { averageRating: 'desc' },
+                { reviewCount: 'desc' },
+            ],
+            take: 3,
+            select: {
+                name: true,
+                slug: true,
+                shortDescription: true,
+                primaryPhotoUrl: true,
+            },
+        });
+
+        return topSellers.map(product => ({
+            name: product.name,
+            slug: product.slug,
+            description: product.shortDescription,
+            picture_src: product.primaryPhotoUrl,
+        }));
+    }
+
     static async index(query: PaginationQuery & { search?: string }) {
         try {
             const { page = 1, perPage = 20, search } = query;
             const skip = (page - 1) * perPage;
 
-            const where: Prisma.CategoryWhereInput = search
-                ? {
+            const where: Prisma.CategoryWhereInput = {
+                parentId: null, // Sadece ana kategorileri getir
+                ...(search && {
                     OR: [
                         {
                             name: {
@@ -36,24 +65,25 @@ export abstract class CategoriesService {
                             },
                         },
                     ],
-                }
-                : {};
+                }),
+            };
 
             const [data, total] = await Promise.all([
                 prisma.category.findMany({
                     where,
                     skip,
                     take: perPage,
-                    orderBy: { createdAt: 'desc' },
+                    orderBy: { order: 'asc' },
                     include: {
-                        products: {
-                            select: {
-                                id: true,
-                                name: true,
-                                photos: {
+                        children: {
+                            orderBy: { order: 'asc' },
+                            include: {
+                                children: {
+                                    orderBy: { order: 'asc' },
                                     select: {
-                                        id: true,
-                                        url: true,
+                                        name: true,
+                                        slug: true,
+                                        order: true,
                                     },
                                 },
                             },
@@ -63,7 +93,18 @@ export abstract class CategoriesService {
                 prisma.category.count({ where }),
             ]);
 
-            return { data, total };
+            // Her ana kategori için top sellers'ı getir
+            const dataWithTopSellers = await Promise.all(
+                data.map(async (category) => {
+                    const topSellers = await this.getTopSellersByCategory(category.id);
+                    return {
+                        ...category,
+                        top_sellers: topSellers,
+                    };
+                })
+            );
+
+            return { data: dataWithTopSellers, total };
         } catch (error) {
             throw this.handlePrismaError(error, 'find');
         }
@@ -74,14 +115,15 @@ export abstract class CategoriesService {
             const category = await prisma.category.findUnique({
                 where: { uuid },
                 include: {
-                    products: {
-                        select: {
-                            id: true,
-                            name: true,
-                            photos: {
+                    children: {
+                        orderBy: { order: 'asc' },
+                        include: {
+                            children: {
+                                orderBy: { order: 'asc' },
                                 select: {
-                                    id: true,
-                                    url: true,
+                                    name: true,
+                                    slug: true,
+                                    order: true,
                                 },
                             },
                         },
@@ -93,7 +135,13 @@ export abstract class CategoriesService {
                 throw new NotFoundException('Kategori bulunamadı');
             }
 
-            return category;
+            // Top sellers'ı getir
+            const topSellers = await this.getTopSellersByCategory(category.id);
+
+            return {
+                ...category,
+                top_sellers: topSellers,
+            };
         } catch (error) {
             throw this.handlePrismaError(error, 'find');
         }
@@ -101,44 +149,20 @@ export abstract class CategoriesService {
 
     static async store(data: CategoryCreatePayload) {
         try {
-            return await prisma.category.create({
+            const category = await prisma.category.create({
                 data: {
                     ...data,
                 },
                 include: {
-                    products: {
-                        select: {
-                            id: true,
-                            name: true,
-                            photos: {
+                    children: {
+                        orderBy: { order: 'asc' },
+                        include: {
+                            children: {
+                                orderBy: { order: 'asc' },
                                 select: {
-                                    id: true,
-                                    url: true,
-                                },
-                            },
-                        }
-                    },
-                },
-            });
-        } catch (error) {
-            throw this.handlePrismaError(error, 'create');
-        }
-    }
-
-    static async update(uuid: string, data: CategoryUpdatePayload) {
-        try {
-            const post = await prisma.category.update({
-                where: { uuid },
-                data,
-                include: {
-                    products: {
-                        select: {
-                            id: true,
-                            name: true,
-                            photos: {
-                                select: {
-                                    id: true,
-                                    url: true,
+                                    name: true,
+                                    slug: true,
+                                    order: true,
                                 },
                             },
                         },
@@ -146,11 +170,51 @@ export abstract class CategoriesService {
                 },
             });
 
-            if (!post) {
-                throw new NotFoundException('Gönderi bulunamadı');
+            // Top sellers'ı getir
+            const topSellers = await this.getTopSellersByCategory(category.id);
+
+            return {
+                ...category,
+                top_sellers: topSellers,
+            };
+        } catch (error) {
+            throw this.handlePrismaError(error, 'create');
+        }
+    }
+
+    static async update(uuid: string, data: CategoryUpdatePayload) {
+        try {
+            const category = await prisma.category.update({
+                where: { uuid },
+                data,
+                include: {
+                    children: {
+                        orderBy: { order: 'asc' },
+                        include: {
+                            children: {
+                                orderBy: { order: 'asc' },
+                                select: {
+                                    name: true,
+                                    slug: true,
+                                    order: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            if (!category) {
+                throw new NotFoundException('Kategori bulunamadı');
             }
 
-            return post;
+            // Top sellers'ı getir
+            const topSellers = await this.getTopSellersByCategory(category.id);
+
+            return {
+                ...category,
+                top_sellers: topSellers,
+            };
         } catch (error) {
             throw this.handlePrismaError(error, 'update');
         }
@@ -161,14 +225,15 @@ export abstract class CategoriesService {
             const category = await prisma.category.delete({
                 where: { uuid },
                 include: {
-                    products: {
-                        select: {
-                            id: true,
-                            name: true,
-                            photos: {
+                    children: {
+                        orderBy: { order: 'asc' },
+                        include: {
+                            children: {
+                                orderBy: { order: 'asc' },
                                 select: {
-                                    id: true,
-                                    url: true,
+                                    name: true,
+                                    slug: true,
+                                    order: true,
                                 },
                             },
                         },
@@ -180,7 +245,13 @@ export abstract class CategoriesService {
                 throw new NotFoundException('Kategori bulunamadı');
             }
 
-            return category;
+            // Top sellers'ı getir (silinen kategori için)
+            const topSellers = await this.getTopSellersByCategory(category.id);
+
+            return {
+                ...category,
+                top_sellers: topSellers,
+            };
         } catch (error) {
             throw this.handlePrismaError(error, 'delete');
         }
