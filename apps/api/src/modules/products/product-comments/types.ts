@@ -1,8 +1,8 @@
-import { Customer, ProductComments } from '#prisma/client';
+import { ProductComments, User } from '#prisma/client';
 
 // Database types
-export type ProductCommentWithRelations = ProductComments & {
-  Customer: Customer;
+export type ProductCommentsWithUser = ProductComments & {
+  user: User;
 };
 
 // DTO types
@@ -22,7 +22,7 @@ export interface CommentResponse {
   title: string | null;
   content: string | null;
   rating: number;
-  customer: {
+  user: {
     id: string;
     name: string;
   };
@@ -39,6 +39,6 @@ export interface GetCommentsParams {
 
 export interface CreateCommentParams {
   productId: string;
-  customerId: string;
+  userId: string;
   data: CommentCreatePayload;
 }

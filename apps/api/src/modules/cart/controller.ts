@@ -15,7 +15,7 @@ export const app = new Elysia({
     async ({ body, user, set }) => {
       const cart = await CartService.create({
         ...body,
-        customer_id: user.id.toString(),
+        user_id: user.id.toString(),
       });
       set.status = 201;
       return CartFormatter.format(cart!);
@@ -28,7 +28,7 @@ export const app = new Elysia({
     '/:item_uuid',
     async ({ user, set, params }) => {
       const cart = await CartService.delete({
-        customer_id: user.id,
+        user_id: user.id,
         item_uuid: params.item_uuid,
       });
       set.status = 200;
@@ -42,7 +42,7 @@ export const app = new Elysia({
     '/',
     async ({ user, set }) => {
       const cart = await CartService.get({
-        customer_id: user.id,
+        user_id: user.id,
       });
       return CartFormatter.format(cart!);
     },

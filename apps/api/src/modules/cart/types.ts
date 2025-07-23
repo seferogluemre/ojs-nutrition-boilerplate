@@ -1,15 +1,15 @@
-export type AddToCartParams = {
-  customer_id: string;
-  product_id:string;
-  product_variant_id:string;
-  quantity:number;
-};
+export interface AddToCartParams {
+  user_id: string;  
+  product_id: string;
+  product_variant_id?: string;
+  quantity: number;
+}
 
-export type GetCartParams = {
-  customer_id: string;
-};
+export interface GetCartParams {
+  user_id: string;  
+}
 
-export type RemoveFromCartParams = {
-  customer_id: string; // number değil string
+export interface RemoveFromCartParams {
+  user_id: string;  
   item_uuid: string;
-};
+}

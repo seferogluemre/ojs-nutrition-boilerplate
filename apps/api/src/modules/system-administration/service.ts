@@ -13,7 +13,6 @@ export class SystemAdministrationService {
             );
         }
 
-        // Admin rolünü oluştur veya mevcut olanı getir
         let adminRole = await prisma.role.findFirst({
             where: { name: 'Admin' }
         });
@@ -26,20 +25,20 @@ export class SystemAdministrationService {
             });
         }
 
-        // Basic rolünü oluştur veya mevcut olanı getir
         let basicRole = await prisma.role.findFirst({
-            where: { name: 'Basic' }
+            where: { name: 'Moderator' }
         });
 
         if (!basicRole) {
             basicRole = await RolesService.store({
-                name: 'Basic',
-                description: 'Temel kullanıcı',
-                permissions: [],
+                name: 'Moderator',
+                description: 'İçerik moderatörü',
+                permissions: [
+                    "products:create","products:update","products:index","products:show","products:destroy","categories:create","categories:destroy","categories:update","categories:index"
+                ],
             });
         }
 
-        // Admin kullanıcısını oluştur
         const signUpResult = await betterAuth.api.signUpEmail({
             body: {
                 email: 'admin@example.com',
@@ -50,7 +49,6 @@ export class SystemAdministrationService {
             },
         });
 
-        // Kullanıcıyı gender ve role bilgileri ile güncelleyelim
         const user = await prisma.user.update({
             where: { id: signUpResult.user.id },
             data: {

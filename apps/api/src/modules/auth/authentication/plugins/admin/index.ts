@@ -208,7 +208,7 @@ export const admin = <O extends AdminOptions>(options?: O) => {
                 async before(user) {
                   if (options?.defaultRole === false) return;
                   const adapter = getAdminAdapter(ctx);
-                  const defaultRole = await adapter.findRoleBySlug(options?.defaultRole ?? 'basic');
+                  const defaultRole = await adapter.findRoleBySlug(options?.defaultRole ?? 'user');
                   if (!defaultRole) {
                     throw new APIError('BAD_REQUEST', {
                       message: ERROR_CODES.ROLE_NOT_FOUND,
@@ -535,7 +535,7 @@ export const admin = <O extends AdminOptions>(options?: O) => {
           await checkPermission(ctx, opts.permissions.stopImpersonating);
           const session = await getSessionFromCtx<
             // biome-ignore lint/complexity/noBannedTypes: <explanation>
-            // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+             
             {},
             {
               impersonatedById: string;

@@ -1,20 +1,21 @@
-import prisma from '#core/prisma';
+import { prisma } from '#core';
 import { HandleError } from '#shared/error/handle-error';
-
 import { NotFoundException } from '../../../utils';
-import { CreateCommentParams, GetCommentsParams, ProductCommentWithRelations } from './types';
+import { CreateCommentParams, ProductCommentsWithUser } from './types';
 
 export abstract class ProductCommentService {
-  static async getCommentsByProduct(
-    params: GetCommentsParams,
-  ): Promise<{ data: ProductCommentWithRelations[]; meta: any }> {
+  static async getComments(params: { productId: string; page?: number; limit?: number }): Promise<{ data: ProductCommentsWithUser[]; total: number }> {
     try {
-      const { productId, limit = 10, offset = 0 } = params;
+      const { productId, page = 1, limit = 10 } = params;
+      
+      if (!productId) {
+        throw new NotFoundException('Product ID eksik');
+      }
 
-      // Product exists kontrolü
+      const skip = (page - 1) * limit;
+
       const product = await prisma.product.findUnique({
-        where: { uuid: productId },
-        select: { id: true },
+        where: { uuid: productId }, // UUID field kullan
       });
 
       if (!product) {
@@ -24,12 +25,12 @@ export abstract class ProductCommentService {
       const [data, total] = await Promise.all([
         prisma.productComments.findMany({
           where: {
-            productId: product.id,
+            productId: product.id, // Integer ID kullan
           },
           include: {
-            Customer: {
+            user: {
               select: {
-                uuid: true,
+                id: true,
                 name: true,
               },
             },
@@ -37,99 +38,69 @@ export abstract class ProductCommentService {
           orderBy: {
             createdAt: 'desc',
           },
-          skip: offset,
+          skip,
           take: limit,
         }),
         prisma.productComments.count({
           where: {
-            productId: product.id,
+            productId: product.id, // Integer ID kullan
           },
         }),
       ]);
 
-      return {
-        data: data as ProductCommentWithRelations[],
-        meta: {
-          total,
-          limit,
-          offset,
-          hasNext: offset + limit < total,
-        },
-      };
+      return { data: data as ProductCommentsWithUser[], total };
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'product-comment', 'find');
+      await HandleError.handlePrismaError(error, 'productComments', 'find');
       throw error;
     }
   }
 
-  static async createComment(params: CreateCommentParams): Promise<ProductCommentWithRelations> {
+  static async createComment(params: CreateCommentParams): Promise<ProductCommentsWithUser> {
     try {
-      const { productId, customerId, data } = params;
+      const { productId, userId, data } = params;
+      
+      if (!productId) {
+        throw new NotFoundException('Product ID eksik');
+      }
 
       const product = await prisma.product.findUnique({
-        where: { uuid: productId },
-        select: { id: true },
+        where: { uuid: productId }, // UUID field kullan
       });
 
       if (!product) {
         throw new NotFoundException('Ürün bulunamadı');
       }
 
-      const customer = await prisma.customer.findUnique({
-        where: { id: Number(customerId) },
-        select: { id: true },
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
       });
 
-      if (!customer) {
-        throw new NotFoundException('Müşteri bulunamadı');
+      if (!user) {
+        throw new NotFoundException('Kullanıcı bulunamadı');
       }
 
       const comment = await prisma.productComments.create({
         data: {
-          productId: product.id,
-          customerId: customer.id,
-          title: data.title,
+          productId: product.id, // Integer ID kullan
+          userId: user.id,
+          title: data.title || '',
           content: data.content,
           rating: data.rating,
         },
         include: {
-          Customer: {
+          user: {
             select: {
-              uuid: true,
+              id: true,
               name: true,
             },
           },
         },
       });
 
-      // Product'ın rating bilgilerini güncelle
-      await this.updateProductRating(product.id);
-
-      return comment as ProductCommentWithRelations;
+      return comment as ProductCommentsWithUser;
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'product-comment', 'create');
+      await HandleError.handlePrismaError(error, 'productComments', 'create');
       throw error;
-    }
-  }
-
-  private static async updateProductRating(productId: number) {
-    try {
-      const stats = await prisma.productComments.aggregate({
-        where: { productId },
-        _avg: { rating: true },
-        _count: { rating: true },
-      });
-
-      await prisma.product.update({
-        where: { id: productId },
-        data: {
-          averageRating: Math.round(stats._avg.rating || 0),
-          reviewCount: stats._count.rating,
-        },
-      });
-    } catch (error) {
-      console.error('Error updating product rating:', error);
-      // Rating güncelleme hatası comment oluşturmayı engellemez
     }
   }
 }

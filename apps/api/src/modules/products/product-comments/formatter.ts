@@ -1,22 +1,22 @@
-import { CommentResponse, ProductCommentWithRelations } from './types';
+import { CommentResponse, ProductCommentsWithUser } from './types';
 
 export abstract class ProductCommentFormatter {
-  static response(data: ProductCommentWithRelations): CommentResponse {
+  static response(data: ProductCommentsWithUser): CommentResponse {
     return {
       id: data.uuid,
       title: data.title || null,
       content: data.content || null,
       rating: data.rating,
-      customer: {
-        id: data.Customer.uuid,
-        name: data.Customer.name,
+      user: {
+        id: data.user.id,
+        name: data.user.name,
       },
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     };
   }
 
-  static list(data: ProductCommentWithRelations[]): CommentResponse[] {
+  static list(data: ProductCommentsWithUser[]): CommentResponse[] {
     return data.map(this.response);
   }
 }

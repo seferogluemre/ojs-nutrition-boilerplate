@@ -109,6 +109,23 @@ export const userDestroyDto = {
   },
 } satisfies ControllerHook;
 
+export const userSignupDto = {
+  body: t.Object({
+    email: t.String(),
+    password: t.String(),
+    firstName: t.String(),
+    lastName: t.String(),
+  }),
+  response: {
+    200: userResponseSchema,
+    422: errorResponseDto[422],
+  },
+  detail: {
+    summary: 'User Signup',
+    description: 'Yeni kullanıcı kaydı',
+  },
+} satisfies ControllerHook;
+
 export const userCreateDto = {
   body: t.Object({
     email: t.String({ minLength: 3, maxLength: 255 }),

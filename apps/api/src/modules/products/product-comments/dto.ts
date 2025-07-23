@@ -11,7 +11,7 @@ export const commentResponseSchema = t.Object({
   title: t.Union([t.String(), t.Null()]),
   content: t.Union([t.String(), t.Null()]),
   rating: ProductCommentsPlain.properties.rating,
-  customer: t.Object({
+  user: t.Object({
     id: t.String(),
     name: t.String(),
   }),

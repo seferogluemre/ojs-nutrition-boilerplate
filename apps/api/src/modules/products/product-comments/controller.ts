@@ -1,28 +1,9 @@
 import { Elysia } from 'elysia';
 
-import { UnauthorizedException } from '../../../utils';
-import { verifyCustomerAccessToken } from '../../../utils/jwt';
+import { auth } from '#modules/auth/authentication/plugin';
 import { commentCreateDto, commentIndexDto } from './dto';
 import { ProductCommentFormatter } from './formatter';
 import { ProductCommentService } from './service';
-
-// Customer authentication helper
-const authenticateCustomer = (headers: any): string => {
-  const authHeader = headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new UnauthorizedException('Authorization header required');
-  }
-
-  const token = authHeader.split(' ')[1];
-
-  try {
-    const decoded = verifyCustomerAccessToken(token);
-    return decoded.id;
-  } catch (error) {
-    throw new UnauthorizedException('Invalid access token');
-  }
-};
 
 export const app = new Elysia({
   prefix: '/products/:id/comments',
@@ -30,33 +11,40 @@ export const app = new Elysia({
     tags: ['Product Comments'],
   },
 })
+  .use(auth()) 
   .get(
     '',
     async ({ params, query }) => {
-      const { data, meta } = await ProductCommentService.getCommentsByProduct({
+      const offset = query.offset || 0;
+      const limit = query.limit || 10;
+      const page = Math.floor(offset / limit) + 1;
+      
+      const { data, total } = await ProductCommentService.getComments({
         productId: params.id,
-        limit: query.limit || 10,
-        offset: query.offset || 0,
+        page,
+        limit,
       });
 
       return {
         data: ProductCommentFormatter.list(data),
-        meta,
+        meta: {
+          limit,
+          total,
+          offset,
+          hasNext: offset + limit < total,
+        },
       };
     },
     commentIndexDto,
   )
   .post(
     '',
-    async ({ params, body, headers, set }) => {
-      // Customer authentication
-      const customerId = authenticateCustomer(headers);
+    async ({ params, body, user, set }) => {
       const comment = await ProductCommentService.createComment({
         productId: params.id,
-        customerId,
+        userId: user.id,
         data: body,
       });
-
       set.status = 201;
       return ProductCommentFormatter.response(comment);
     },

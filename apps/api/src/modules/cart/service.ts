@@ -9,7 +9,7 @@ import { AddToCartParams, GetCartParams, RemoveFromCartParams } from './types';
 
 export abstract class CartService {
   static async create(params: AddToCartParams) {
-    const { customer_id, product_id, product_variant_id, quantity } = params;
+    const { user_id, product_id, product_variant_id, quantity } = params;
 
     // 1. Product'ı kontrol et
     const product = await prisma.product.findUnique({
@@ -43,10 +43,10 @@ export abstract class CartService {
 
     // 3. Cart'ı bul veya oluştur
     const cart = await prisma.cart.upsert({
-      where: { userId: customer_id.toString() },
+      where: { userId: user_id.toString() },
       update: {},
       create: {
-        userId: customer_id.toString(),
+        userId: user_id.toString(),
       },
       select: { id: true },
     });
@@ -114,11 +114,11 @@ export abstract class CartService {
 
   static async get(params: GetCartParams) {
     try {
-      const { customer_id } = params;
+      const { user_id } = params;
 
       const cart = await prisma.cart.findUnique({
         where: {
-          userId: customer_id,
+          userId: user_id,
         },
         include: {
           items: {
@@ -143,11 +143,11 @@ export abstract class CartService {
 
   static async delete(params: RemoveFromCartParams) {
     try {
-      const { customer_id, item_uuid } = params;
+      const { user_id, item_uuid } = params;
 
       // 1. Cart'ı bul
       const cart = await prisma.cart.findUnique({
-        where: { userId: customer_id },
+        where: { userId: user_id },
       });
 
       if (!cart) {
@@ -196,13 +196,13 @@ export abstract class CartService {
     }
   }
 
-  static async clear(params: { customer_id: string }) {
+  static async clear(params: { user_id: string }) {
     try {
-      const { customer_id } = params;
+      const { user_id } = params;
 
       const cart = await prisma.cart.findUnique({
         where: {
-          userId: customer_id,
+          userId: user_id,
         },
       });
 
