@@ -1,6 +1,8 @@
-import { FileLibraryAssetMimeType } from '#prisma/index';
-import { FileLibraryAssetFileType } from '#prismabox/FileLibraryAssetFileType';
-import { FileLibraryAssetType } from '#prismabox/FileLibraryAssetType';
+import {
+  FileLibraryAssetFileType,
+  FileLibraryAssetMimeType,
+  FileLibraryAssetType,
+} from '#prisma/index';
 
 export const FILE_LIBRARY_ASSET_IMAGE_RULES = {
   allowedMimeTypes: [

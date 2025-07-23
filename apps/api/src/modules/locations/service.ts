@@ -10,7 +10,7 @@ export abstract class LocationsService {
       const { page = 1, perPage = 20, search } = query;
       const skip = (page - 1) * perPage;
 
-      const where: Prisma.CountryWhereInput = search
+      const where: any = search
         ? {
             name: {
               contains: search,
@@ -59,7 +59,7 @@ export abstract class LocationsService {
       const { page = 1, perPage = 20, search, countryId } = query;
       const skip = (page - 1) * perPage;
 
-      const where: Prisma.StateWhereInput = {
+      const where: any = {
         ...(search
           ? {
               name: {
@@ -119,7 +119,7 @@ export abstract class LocationsService {
       const { page = 1, perPage = 20, search, countryId, stateId } = query;
       const skip = (page - 1) * perPage;
 
-      const where: Prisma.CityWhereInput = {
+      const where: any = {
         ...(search
           ? {
               name: {
@@ -180,7 +180,7 @@ export abstract class LocationsService {
       const { page = 1, perPage = 20, search } = query;
       const skip = (page - 1) * perPage;
 
-      const where: Prisma.RegionWhereInput = {
+      const where: any = {
         ...(search
           ? {
               name: {
@@ -231,7 +231,7 @@ export abstract class LocationsService {
       const { page = 1, perPage = 20, search, regionId } = query;
       const skip = (page - 1) * perPage;
 
-      const where: Prisma.SubregionWhereInput = {
+      const where: any = {
         ...(search
           ? {
               name: {

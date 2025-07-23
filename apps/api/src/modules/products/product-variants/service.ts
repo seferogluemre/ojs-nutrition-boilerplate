@@ -37,7 +37,7 @@ export abstract class ProductVariantService {
 
       return variants;
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'product-variant', 'find');
+      throw HandleError.handlePrismaError(error, 'product-variant', 'find');
     }
   }
 

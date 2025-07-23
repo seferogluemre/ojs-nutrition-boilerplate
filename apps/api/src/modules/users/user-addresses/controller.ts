@@ -1,7 +1,7 @@
 import { Elysia } from 'elysia';
 
 import { AuditLogAction, AuditLogEntity, withAuditLog } from '#modules/audit-logs';
-import { authSwagger } from '#modules/auth/authentication/plugin';
+import { auth, authSwagger } from '#modules/auth/authentication/plugin';
 import { dtoWithMiddlewares } from '#utils';
 import {
   userAddressCreateDto,
@@ -21,7 +21,7 @@ const app = new Elysia({
 })
   .guard(authSwagger, (app) =>
     app
-      // .use(auth())
+      .use(auth())
       .post(
         '', // create user address
         async ({ body, user }) => {

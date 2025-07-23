@@ -1,4 +1,5 @@
 import { prisma } from '#core';
+import { Prisma } from '#prisma/index';
 import { HandleError } from '#shared/error/handle-error';
 import { BadRequestException } from '#utils';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -187,8 +188,8 @@ export abstract class CartService {
 
       return updatedCart;
     } catch (error) {
-      throw await HandleError.handlePrismaError(
-        error as PrismaClientKnownRequestError,
+      throw HandleError.handlePrismaError(
+        error as Prisma.PrismaClientKnownRequestError,
         'cart',
         'delete',
       );
@@ -232,7 +233,7 @@ export abstract class CartService {
       });
       return updatedCart;
     } catch (error) {
-      throw await HandleError.handlePrismaError(error, 'cart', 'delete');
+      throw HandleError.handlePrismaError(error, 'cart', 'delete');
     }
   }
 }

@@ -1,5 +1,5 @@
 export type AddToCartParams = {
-  customer_id: number;
+  customer_id: string;
   product_id:string;
   product_variant_id:string;
   quantity:number;

@@ -40,7 +40,7 @@ export abstract class ProductFormatter {
       })) || [],
       
       // 🔥 YENİ VARIANTS MAPPING:
-      variants: data.productVariants?.map(variant => ({
+      variants: data.variants?.map(variant => ({
         id: variant.uuid,
         name: variant.name,
         size: (variant.size as any) || { pieces: 1, total_services: 30 },
