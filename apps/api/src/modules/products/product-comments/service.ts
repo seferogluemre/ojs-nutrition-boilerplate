@@ -66,7 +66,6 @@ export abstract class ProductCommentService {
     try {
       const { productId, customerId, data } = params;
 
-      // Product exists kontrolü
       const product = await prisma.product.findUnique({
         where: { uuid: productId },
         select: { id: true },
@@ -76,9 +75,8 @@ export abstract class ProductCommentService {
         throw new NotFoundException('Ürün bulunamadı');
       }
 
-      // Customer exists kontrolü
       const customer = await prisma.customer.findUnique({
-        where: { uuid: customerId },
+        where: { id: Number(customerId) },
         select: { id: true },
       });
 
@@ -86,7 +84,6 @@ export abstract class ProductCommentService {
         throw new NotFoundException('Müşteri bulunamadı');
       }
 
-      // Comment oluştur
       const comment = await prisma.productComments.create({
         data: {
           productId: product.id,

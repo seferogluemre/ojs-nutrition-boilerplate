@@ -10,7 +10,7 @@ import { locationsController } from './locations';
 import { ordersController } from './orders';
 import { postsController } from './posts';
 import productsController from './products';
-import { productCommentController } from './products/comment';
+import { productCommentController } from './products/product-comments';
 import { productVariantController } from './products/product-variants';
 import { systemAdministrationController } from './system-administration';
 import { usersController } from './users';

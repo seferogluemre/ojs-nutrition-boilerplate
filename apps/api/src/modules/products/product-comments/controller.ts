@@ -51,7 +51,6 @@ export const app = new Elysia({
     async ({ params, body, headers, set }) => {
       // Customer authentication
       const customerId = authenticateCustomer(headers);
-
       const comment = await ProductCommentService.createComment({
         productId: params.id,
         customerId,
