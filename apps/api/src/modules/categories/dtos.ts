@@ -1,16 +1,13 @@
-import { CategoryPlainInputCreate, CategoryPlainInputUpdate } from '#prismabox/Category';
 import { t } from 'elysia';
 import { ControllerHook, errorResponseDto, uuidValidation } from '../../utils';
 import { paginationQueryDto, paginationResponseDto } from '../../utils/pagination';
 
-// Sub-child category schema (3rd level)
 const subChildCategorySchema = t.Object({
     name: t.String(),
     slug: t.String(),
     order: t.Number(),
 });
 
-// Child category schema (2nd level)
 const childCategorySchema = t.Object({
     id: t.String(),
     name: t.String(),
@@ -19,7 +16,6 @@ const childCategorySchema = t.Object({
     sub_children: t.Array(subChildCategorySchema),
 });
 
-// Top seller product schema
 const topSellerSchema = t.Object({
     name: t.String(),
     slug: t.String(),
@@ -52,11 +48,30 @@ export const categoryIndexDto = {
 } satisfies ControllerHook;
 
 export const categoryCreateDto = {
-    body: CategoryPlainInputCreate,
+    body: t.Object({
+        name: t.String({
+            minLength: 2,
+            maxLength: 100,
+            error: 'Kategori adı 2-100 karakter arasında olmalıdır.'
+        }),
+        slug: t.String({
+            minLength: 2,
+            maxLength: 100,
+            error: 'Slug 2-100 karakter arasında olmalıdır.'
+        }),
+        parentId: t.Optional(t.String({
+            format: 'uuid',
+            error: 'Parent ID geçerli bir UUID olmalıdır.'
+        })),
+        order: t.Optional(t.Number({
+            minimum: 0,
+            error: 'Sıra numarası 0 veya pozitif olmalıdır.'
+        }))
+    }),
     response: { 200: categoryResponseDto, 422: errorResponseDto[422] },
     detail: {
         summary: 'Create',
-        description: 'Yeni kategori oluşturur',
+        description: 'Yeni kategori oluşturur (parent belirtilerek hiyerarşik yapı desteklenir)',
     },
 } satisfies ControllerHook;
 
@@ -64,11 +79,30 @@ export const categoryUpdateDto = {
     params: t.Object({
         uuid: uuidValidation,
     }),
-    body: CategoryPlainInputUpdate,
+    body: t.Object({
+        name: t.Optional(t.String({
+            minLength: 2,
+            maxLength: 100,
+            error: 'Kategori adı 2-100 karakter arasında olmalıdır.'
+        })),
+        slug: t.Optional(t.String({
+            minLength: 2,
+            maxLength: 100,
+            error: 'Slug 2-100 karakter arasında olmalıdır.'
+        })),
+        parentId: t.Optional(t.String({
+            format: 'uuid',
+            error: 'Parent ID geçerli bir UUID olmalıdır.'
+        })),
+        order: t.Optional(t.Number({
+            minimum: 0,
+            error: 'Sıra numarası 0 veya pozitif olmalıdır.'
+        }))
+    }),
     response: { 200: categoryResponseDto, 404: errorResponseDto[404], 422: errorResponseDto[422] },
     detail: {
         summary: 'Update',
-        description: 'Kategoriyi günceller',
+        description: 'Kategoriyi günceller (parent değiştirilerek hiyerarşi değiştirilebilir)',
     },
 } satisfies ControllerHook;
 
