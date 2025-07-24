@@ -40,21 +40,30 @@ export abstract class ProductFormatter {
       })) || [],
 
       // 🔥 YENİ VARIANTS MAPPING:
-      variants: data.variants?.map(variant => ({
-        id: variant.uuid,
-        name: variant.name,
-        size: (variant.size as any) || { pieces: 1, total_services: 30 },
-        aroma: variant.aroma || "Aromasız",
-        price: (variant.price as any) || {
-          profit: null,
-          total_price: data.price,
-          discounted_price: null,
-          price_per_servings: Math.round((data.price / 30) * 100) / 100,
-          discount_percentage: null
-        },
-        photo_src: variant.photoSrc || data.primaryPhotoUrl,
-        is_available: variant.isAvailable ?? true
-      })) || [],
+      variants: data.variants?.map(variant => {
+        const variantPrice = variant.price as any;
+        return {
+          id: variant.uuid,
+          name: variant.name,
+          size: (variant.size as any) || { pieces: 1, total_services: 30 },
+          aroma: variant.aroma || "Aromasız",
+          price: variantPrice ? {
+            profit: variantPrice.profit || null,
+            total_price: variantPrice.total_price || data.price,
+            discounted_price: variantPrice.discounted_price || null,
+            price_per_servings: variantPrice.price_per_servings || Math.round((variantPrice.total_price || data.price) / 30 * 100) / 100,
+            discount_percentage: variantPrice.discount_percentage || null
+          } : {
+            profit: null,
+            total_price: data.price,
+            discounted_price: null,
+            price_per_servings: Math.round((data.price / 30) * 100) / 100,
+            discount_percentage: null
+          },
+          photo_src: variant.photoSrc || data.primaryPhotoUrl,
+          is_available: variant.isAvailable ?? true
+        }
+      }) || [],
 
       // Comments
       comment_count: data.commentsCount,

@@ -97,6 +97,11 @@ export abstract class ProductsService {
                 fileSize: true,
               },
             },
+            comments: {
+              select: {
+                id: true,
+              },
+            },
           },
         }),
         prisma.product.count({ where }),
@@ -108,6 +113,7 @@ export abstract class ProductsService {
         photos: [],
         comments: [],
         variants: product.productVariants,
+        commentsCount: product.comments.length,
       })) as unknown as ProductWithRelations[];
 
       return {
@@ -163,7 +169,7 @@ export abstract class ProductsService {
             select: {
               id: true,
             },
-          },
+          }
         },
       });
 
@@ -173,7 +179,7 @@ export abstract class ProductsService {
       return {
         ...product,
         photos: [],
-        variants: [],
+        variants: product.productVariants,
         comments: [],
         commentsCount: product.comments.length,
       } as unknown as ProductWithRelations;

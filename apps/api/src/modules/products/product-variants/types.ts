@@ -5,6 +5,8 @@ export type GetProductVariantParams = {
 export type CreateVariantParams = {
     product_id: string;
     name: string;
+    aroma: string;
+    price?: any;
 }
 
 export type UpdateVariantParams = {

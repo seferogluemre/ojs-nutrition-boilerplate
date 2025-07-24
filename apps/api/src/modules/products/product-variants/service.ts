@@ -60,6 +60,7 @@ export abstract class ProductVariantService {
         where: {
           productId: product.id,
           name: params.name,
+          aroma: params.aroma,
         },
       });
 
@@ -71,6 +72,16 @@ export abstract class ProductVariantService {
         data: {
           productId: product.id,
           name: params.name,
+          aroma: params.aroma,
+          ...(params.price && {
+            price: {
+              profit: null,
+              total_price: Number(params.price),
+              discounted_price: null,
+              price_per_servings: null,
+              discount_percentage: null
+            }
+          }),
         },
       });
 

@@ -7,6 +7,8 @@ import { t } from "elysia";
 const variantResponseSchema = t.Object({
     id: t.String(),
     name: ProductVariantPlain.properties.name,
+    aroma: ProductVariantPlain.properties.aroma,
+    price: t.Optional(ProductVariantPlain.properties.price),
     createdAt: t.Date(),
     updatedAt: t.Date(),
 })
@@ -45,6 +47,14 @@ export const createVariantDto = {
             maxLength: 100,
             error: 'Varyant adı 1-100 karakter arası olmalıdır.',
         }),
+        aroma: t.String({
+          minLength: 1,
+          maxLength: 100,
+          error: 'Aroma adı 1-100 karakter arası olmalıdır.',
+        }),
+        price: t.Optional(t.Any({
+          description: 'Price information as JSON object'
+        })),
     }),
     response: {
         201: variantResponseSchema,

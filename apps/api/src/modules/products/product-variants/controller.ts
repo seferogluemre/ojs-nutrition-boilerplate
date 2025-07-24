@@ -26,6 +26,8 @@ export const app = new Elysia({
             const variant = await ProductVariantService.create({
                 product_id: params.id,
                 name: body.name,
+                aroma: body.aroma,
+                price: body.price,
             });
             set.status = 201;
             return ProductVariantFormatter.format(variant);
