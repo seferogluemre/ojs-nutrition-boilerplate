@@ -5,7 +5,7 @@ import { t } from "elysia";
 
 
 const variantResponseSchema = t.Object({
-    id: ProductVariantPlain.properties.id,
+    id: t.String(),
     name: ProductVariantPlain.properties.name,
     createdAt: t.Date(),
     updatedAt: t.Date(),

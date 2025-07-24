@@ -1,4 +1,5 @@
 import type { OrderService } from './service';
+import { ShippingAddress } from './types';
 
 type OrderPayload = NonNullable<Awaited<ReturnType<typeof OrderService.getOrderDetail>>>;
 type OrdersListPayload = NonNullable<Awaited<ReturnType<typeof OrderService.getUserOrders>>>;
@@ -42,7 +43,7 @@ export abstract class OrderFormatter {
       orderNumber: order?.orderNumber,
       status: order?.status,
       subtotal: order?.subtotal,
-      shippingAddress: order?.shippingAddress,
+      shippingAddress: order?.shippingAddress as ShippingAddress,
       items: order?.items.map(OrderFormatter.formatItem),
       createdAt: order?.createdAt,
       updatedAt: order?.updatedAt,

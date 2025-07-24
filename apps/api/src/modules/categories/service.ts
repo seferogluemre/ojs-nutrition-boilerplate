@@ -47,7 +47,7 @@ export abstract class CategoriesService {
 
             if (!parent) break;
             depth++;
-            currentParentId = parent.parent?.uuid;
+            currentParentId = parent.parent?.uuid ?? '';
         }
 
         if (depth >= 3) {
@@ -156,11 +156,6 @@ export abstract class CategoriesService {
                             include: {
                                 children: {
                                     orderBy: { order: 'asc' },
-                                    select: {
-                                        name: true,
-                                        slug: true,
-                                        order: true,
-                                    },
                                 },
                             },
                         },
@@ -196,11 +191,6 @@ export abstract class CategoriesService {
                         include: {
                             children: {
                                 orderBy: { order: 'asc' },
-                                select: {
-                                    name: true,
-                                    slug: true,
-                                    order: true,
-                                },
                             },
                         },
                     },
@@ -244,11 +234,6 @@ export abstract class CategoriesService {
                         include: {
                             children: {
                                 orderBy: { order: 'asc' },
-                                select: {
-                                    name: true,
-                                    slug: true,
-                                    order: true,
-                                },
                             },
                         },
                     },
@@ -301,11 +286,6 @@ export abstract class CategoriesService {
                         include: {
                             children: {
                                 orderBy: { order: 'asc' },
-                                select: {
-                                    name: true,
-                                    slug: true,
-                                    order: true,
-                                },
                             },
                         },
                     },
@@ -334,11 +314,6 @@ export abstract class CategoriesService {
                         include: {
                             children: {
                                 orderBy: { order: 'asc' },
-                                select: {
-                                    name: true,
-                                    slug: true,
-                                    order: true,
-                                },
                             },
                         },
                     },

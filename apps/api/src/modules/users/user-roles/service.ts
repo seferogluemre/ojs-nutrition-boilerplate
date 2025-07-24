@@ -1,11 +1,10 @@
 import prisma from '#core/prisma';
-import { User } from '@prisma/client';
 import { NotFoundException } from '../../../utils';
 import { UserRoleUpdatePayload } from './types';
 
 
 export abstract class UserRolesService {
-    static async update(id: string, payload: UserRoleUpdatePayload["rolesSlugs"]): Promise<User> {
+    static async update(id: string, payload: UserRoleUpdatePayload["rolesSlugs"]) {
         return await prisma.$transaction(async (tx) => {
             const user = await tx.user.findUnique({
                 where: { id },
@@ -60,6 +59,13 @@ export abstract class UserRolesService {
                 where: { id },
                 data: {
                     rolesSlugs: uniqueSlugs,
+                },
+                include: {
+                    userRoles: {
+                        include: {
+                            role: true,
+                        },
+                    },
                 },
             });
 

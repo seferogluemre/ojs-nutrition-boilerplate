@@ -9,4 +9,4 @@ const ip = t.String({
     error: 'Geçersiz IP adresi formatı',
 });
 
-export { uuid as uuidValidation, ip as ipValidation };
+export { ip as ipValidation, uuid as uuidValidation };

@@ -15,7 +15,7 @@ export abstract class ProductVariantService {
     try {
       const { product_id } = params;
 
-      const product = await prisma.product.findMany({
+      const product = await prisma.product.findUnique({
         where: {
           uuid: product_id,
         },
@@ -28,7 +28,7 @@ export abstract class ProductVariantService {
 
       const variants = await prisma.productVariant.findMany({
         where: {
-          productId: parseInt(product.id),
+          productId: product.id,
         },
         orderBy: {
           createdAt: 'asc',
@@ -98,7 +98,7 @@ export abstract class ProductVariantService {
       const existingVariant = await prisma.productVariant.findFirst({
         where: {
           productId: variant.product.id,
-          name: this.name,
+          name: name,
           uuid: { not: variant_id },
         },
       });

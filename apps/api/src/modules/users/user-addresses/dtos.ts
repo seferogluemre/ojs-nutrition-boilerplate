@@ -9,7 +9,7 @@ export function getUserAddressFilters(query?: { id?: string; userId?: string }) 
     return [false, [], undefined] as const;
   }
 
-  const filters: Prisma.UserAddressWhereInput[] = [];
+  const filters: Prisma.UserWhereInput[] = [];
   const { id, userId } = query;
 
   if (id) {
@@ -17,7 +17,7 @@ export function getUserAddressFilters(query?: { id?: string; userId?: string }) 
   }
 
   if (userId) {
-    filters.push({ userId });
+    filters.push({id: userId });
   }
 
   return [filters.length > 0, filters, undefined] as const;

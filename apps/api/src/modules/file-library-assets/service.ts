@@ -65,7 +65,7 @@ export abstract class FileLibraryAssetsService {
     try {
       const { file, type } = data;
 
-      const validationRules = FILE_LIBRARY_ASSET_TYPE_RULES[type];
+      const validationRules = FILE_LIBRARY_ASSET_TYPE_RULES[type as keyof typeof FILE_LIBRARY_ASSET_TYPE_RULES];
 
       const { allowedMimeTypes, maxSize } = validationRules.validationRules;
       const { pathPrefix, fileType } = validationRules;

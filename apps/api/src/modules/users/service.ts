@@ -35,8 +35,6 @@ interface UserPayload {
 }
 
 export abstract class UsersService {
-  
-
   private static async prepareUserPayload(payloadRaw: UserUpdatePayload): Promise<UserPayload> {
     const email = payloadRaw.email?.toLowerCase();
 
@@ -168,8 +166,8 @@ export abstract class UsersService {
 
       return updatedUser;
     } catch (error) {
-        await HandleError.handlePrismaError(error, 'user', 'create');
-        throw error;
+        throw HandleError.handlePrismaError(error, 'user', 'create');
+  
     }
   }
 
@@ -251,8 +249,7 @@ export abstract class UsersService {
         data: { deletedAt: null },
       });
     } catch (error) {
-      await HandleError.handlePrismaError(error, 'user', 'update');
-      throw error;
+      throw HandleError.handlePrismaError(error, 'user', 'update');
     }
   }
 }

@@ -57,7 +57,7 @@ const app = new Elysia({
         '',
         async ({ body }) => {
           // File upload handle
-          const { fileUrl } = await FileUploadUtil.uploadProductPhoto(body.primaryPhotoUrl);
+          const { fileUrl } = await FileUploadUtil.uploadProductPhoto(body.primaryPhotoUrl as unknown as File);
 
           const productData = {
             ...body,

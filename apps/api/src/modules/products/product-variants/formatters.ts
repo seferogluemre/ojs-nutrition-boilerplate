@@ -17,7 +17,7 @@ export abstract class ProductVariantFormatter {
 
     static formatList(variants: VariantListPayload) {
         return variants?.map((variant) => ({
-            id: variant.id,
+            id: variant.uuid,
             name: variant.name,
             createdAt: variant.createdAt,
             updatedAt: variant.updatedAt

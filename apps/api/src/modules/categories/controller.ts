@@ -50,7 +50,7 @@ const app = new Elysia({ prefix: '/categories', tags: ['Category'] })
         async ({ params }) => {
             const category = await CategoriesService.destroy(params.uuid);
             if (!category) throw new NotFoundException('Kategori bulunamadı');
-            return CategoryFormatter.response(category);
+            return { message: 'Kategori başarıyla silindi' };
         },
         categoryDestroyDto,
     );
