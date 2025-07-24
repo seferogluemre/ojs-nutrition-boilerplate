@@ -3,6 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "#c
 import { Button } from "#components/ui/button";
 import { BestSellers } from "#features/home/components/best-sellers.js";
 import { useRecentlyViewed } from "#hooks";
+import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
@@ -18,12 +19,10 @@ export default function ProductDetail() {
 
   const { data } = useQuery({
     queryKey: ["products", productId],
-    queryFn:async () => {
-      const response = await fetch(`http://localhost:3000/api/products/${productId}`)
-      return response.data
-    }
+    queryFn: () => api.products({productId})
   })
 
+  console.log("gelen data",data)
   // Find product by ID
   const product = mockProducts.find(p => p.id === productId);
 
