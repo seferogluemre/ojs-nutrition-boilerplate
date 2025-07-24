@@ -18,10 +18,10 @@ export abstract class UserAddressesService {
         : undefined;
 
       const [hasFilters, filters] = getUserAddressFilters(filterQuery);
-      const where: Prisma.UserAddressWhereInput = {};
+      const where: Prisma.UserAddressWhereInput  = {};
 
       if (hasFilters) {
-        where.OR = filters;
+        where.id = filters[0]?.id as number;
       }
 
       return prisma.userAddress.findMany({

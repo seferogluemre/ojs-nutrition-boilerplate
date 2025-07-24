@@ -1,21 +1,4 @@
 import { prisma } from '#core';
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { openAPI } from 'better-auth/plugins';
-
-// Initialize Better Auth with Prisma adapter
-const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: 'postgresql',
-  }),
-  secret: process.env.BETTER_AUTH_SECRET!,
-  basePath: '/auth',
-  baseURL: process.env.APP_URL ?? 'http://localhost:3000',
-  url: process.env.APP_URL,
-  trustedOrigins: [process.env.APP_URL!, process.env.API_URL!],
-  domain: process.env.APP_DOMAIN,
-  plugins: [openAPI()],
-});
 
 // Auth Payload interfaces
 export interface AccessTokenPayload {
@@ -35,11 +18,6 @@ interface SessionResponse {
     [key: string]: any;
   };
 }
-
-// JWT secrets
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-for-customer-access-token';
-const JWT_REFRESH_SECRET =
-  process.env.JWT_REFRESH_SECRET || 'your-secret-key-for-customer-refresh-token';
 
 // Token generation
 export const generateAccessToken = async (payload: AccessTokenPayload): Promise<string> => {

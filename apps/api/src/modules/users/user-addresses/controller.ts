@@ -13,6 +13,7 @@ import {
 import { UserAddressFormatter } from './formatters';
 import { UserAddressesService } from './service';
 
+// @ts-ignore - Complex middleware composition causes deep type instantiation
 const app = new Elysia({
   prefix: '/user-addresses',
   detail: {
@@ -29,6 +30,7 @@ const app = new Elysia({
       });
       return UserAddressFormatter.response(userAddress);
     },
+    // @ts-ignore - Complex middleware composition
     dtoWithMiddlewares(
       userAddressCreateDto,
       withAuditLog({
@@ -60,7 +62,7 @@ const app = new Elysia({
     async ({ params: { id }, user }) => {
       const userAddress = await UserAddressesService.show({ 
         id: parseInt(id.toString()),
-        userId: user.id, // Kullanıcı sadece kendi adresini görebilir
+        userId: user.id, 
       });
       const response = UserAddressFormatter.response(userAddress);
       return response;
@@ -80,6 +82,7 @@ const app = new Elysia({
       const response = UserAddressFormatter.response(updatedUserAddress);
       return response;
     },
+    // @ts-ignore - Complex middleware composition
     dtoWithMiddlewares(
       userAddressUpdateDto,
       withAuditLog({
@@ -102,6 +105,7 @@ const app = new Elysia({
       await UserAddressesService.destroy(id.toString());
       return { message: 'Kullanıcı adresi silindi' };
     },
+    // @ts-ignore - Complex middleware composition
     dtoWithMiddlewares(
       userAddressDestroyDto,
       withAuditLog({
