@@ -40,9 +40,9 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
 
         {/* Products Grid */}
         <div className="mx-auto grid max-w-7xl grid-cols-2 justify-items-center gap-4 md:grid-cols-3 lg:grid-cols-6 lg:gap-6">
-          {data?.data?.slice(0, 6).map((product: BestSellerProduct) => (
+          {data?.data?.slice(0, 6).map((product: BestSellerProduct,index:number) => (
             <div
-              key={product.id}
+              key={index}
               className="relative h-[368px] w-[200px] cursor-pointer rounded-lg bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl md:h-[389.66px] md:w-[272.66px] lg:h-[375px] lg:w-[200px]"
             >
               {/* Discount Badge */}

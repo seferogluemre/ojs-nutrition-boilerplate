@@ -10,7 +10,6 @@ export default function Products() {
     queryFn: () => api.products.get(),
   });
 
-
   return (
     <Main>
       <div className="mx-auto max-w-7xl px-4 py-8">

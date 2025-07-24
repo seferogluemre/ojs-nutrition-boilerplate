@@ -1,0 +1,109 @@
+import { cn } from "#lib/utils";
+import { Check } from "lucide-react";
+import { ProductVariant } from "../../types";
+
+interface ProductVariantsProps {
+  variants: ProductVariant[];
+  selectedFlavor: ProductVariant | null;
+  selectedSize: ProductVariant | null;
+  onFlavorSelect: (flavor: ProductVariant) => void;
+  onSizeSelect: (size: ProductVariant) => void;
+}
+
+export function ProductVariants({ 
+  variants, 
+  selectedFlavor, 
+  selectedSize, 
+  onFlavorSelect, 
+  onSizeSelect 
+}: ProductVariantsProps) {
+  const getFlavorStyle = (flavor: ProductVariant, isSelected: boolean) => {
+    return {
+      backgroundColor: '#ffffff',
+      borderColor: isSelected ? '#3b82f6' : '#d1d5db',
+      color: '#374151',
+    };
+  };
+
+  const flavorsWithAroma = variants.filter(v => v.aroma);
+  const variantsWithSize = variants.filter(v => v.size);
+
+  return (
+    <div className="space-y-6">
+      {/* Flavors Section - Only show if variants exist and have aroma */}
+      {flavorsWithAroma.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">AROMA:</h3>
+          <div className="flex flex-wrap gap-3">
+            {flavorsWithAroma.map((flavor) => (
+              <button
+                key={flavor.id}
+                onClick={() => onFlavorSelect(flavor)}
+                disabled={!flavor.is_available}
+                className={cn(
+                  "relative ps-2 rounded-lg border-2 text-sm font-medium transition-all duration-200",
+                  "h-[35px] md:h-[40px] flex items-center justify-between min-w-[120px] md:min-w-[130px]",
+                  selectedFlavor?.id === flavor.id
+                    ? "border-blue-500 ring-2 ring-blue-200"
+                    : "border-gray-300 hover:border-gray-400",
+                  !flavor.is_available && "opacity-50 cursor-not-allowed"
+                )}
+                style={getFlavorStyle(flavor, selectedFlavor?.id === flavor.id)}
+              >
+                <span className="flex-1 text-xs md:text-sm text-center pr-1 md:pr-2">{flavor.aroma}</span>
+                {selectedFlavor?.id === flavor.id && (
+                  <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-1">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Sizes Section - Only show if variants exist and have size */}
+      {variantsWithSize.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">BOYUT:</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {variantsWithSize.map((variant) => (
+              <button
+                key={variant.id}
+                onClick={() => onSizeSelect(variant)}
+                className={cn(
+                  "relative p-3 md:p-4 rounded-lg border-2 text-center transition-all duration-200",
+                  selectedSize?.id === variant.id
+                    ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
+                    : "border-gray-300 hover:border-gray-400"
+                )}
+              >
+                {/* Discount Badge - Middle Top */}
+                {variant.price?.discount_percentage && (
+                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold z-10">
+                    %{variant.price.discount_percentage}
+                    <div className="text-[8px] font-normal">İNDİRİM</div>
+                  </div>
+                )}
+
+                <div className="font-bold text-gray-900 text-sm md:text-base">{variant.size?.pieces} adet</div>
+                <div className="text-xs md:text-sm text-gray-600">{variant.size?.total_services} servis</div>
+
+                <div className="mt-2">
+                  {variant.price?.discounted_price && (
+                    <div className="text-xs text-gray-500 line-through">
+                      {variant.price.total_price} TL
+                    </div>
+                  )}
+                  <div className="font-bold text-gray-900 text-sm md:text-base">
+                    {variant.price?.discounted_price || variant.price?.total_price} TL
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+} 
