@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { Award, Check, Minus, Plus, Shield, ShoppingCart, Star, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
-import { mockProducts, ProductBadge, ProductFlavor, ProductSize } from "../data/mock-products";
+import { ProductBadge, ProductFlavor } from "../data/mock-products";
 import { ProductReviews } from "./components/product-reviews";
 import { RecentlyViewedProducts } from "./components/recently-viewed-products";
 
@@ -19,23 +19,17 @@ export default function ProductDetail() {
 
   const { data } = useQuery({
     queryKey: ["products", productId],
-    queryFn: () => api.products({productId})
+    queryFn: () => api.products({ id: productId }).get()
   })
 
-  console.log("gelen data",data)
-  // Find product by ID
-  const product = mockProducts.find(p => p.id === productId);
+  console.log("gelen data",data?.data)
+  const product = data?.data;
 
   // State management
-  const [selectedFlavor, setSelectedFlavor] = useState<ProductFlavor | null>(
-    product?.flavors?.[0] || null
-  );
-  const [selectedSize, setSelectedSize] = useState<ProductSize | null>(
-    product?.sizes?.find(s => s.isRecommended) || product?.sizes?.[0] || null
-  );
+  const [selectedFlavor, setSelectedFlavor] = useState<any>(null);
+  const [selectedSize, setSelectedSize] = useState<any>(null);  
   const [quantity, setQuantity] = useState(1);
 
-  // Ürün görüntülendiğinde localStorage'a ekle
   useEffect(() => {
     if (product) {
       addToRecentlyViewed(product);
@@ -105,16 +99,16 @@ export default function ProductDetail() {
   };
 
   const getCurrentPrice = () => {
-    return selectedSize?.price || product.price;
+    return selectedSize?.price?.discounted_price || selectedSize?.price?.total_price || product.price;
   };
 
   const getOldPrice = () => {
-    return selectedSize?.oldPrice || product.oldPrice;
+    return selectedSize?.price?.discounted_price ? selectedSize?.price?.total_price : null;
   };
 
   const getServingPrice = () => {
     const price = getCurrentPrice();
-    const servings = selectedSize?.servings || 16;
+    const servings = selectedSize?.size?.total_services || 16;
     return (price / servings).toFixed(2);
   };
 
@@ -141,7 +135,7 @@ export default function ProductDetail() {
           <div className="flex justify-center">
             <div className="w-full max-w-md lg:max-w-lg">
               <img
-                src={product.image}
+                src={product.primaryPhotoUrl === "null" ? "/images/collagen.jpg" : product.primaryPhotoUrl}
                 alt={product.name}
                 className="w-full h-auto object-cover rounded-lg shadow-lg"
               />
@@ -158,62 +152,75 @@ export default function ProductDetail() {
 
             {/* Short Description */}
             <h2 className="text-lg lg:text-xl text-gray-600 font-medium">
-              {product.shortDescription}
+              {product.short_explanation}
             </h2>
 
             {/* Rating & Reviews */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
-                {renderStars(product.rating)}
+                {renderStars(product.averageRating)}
               </div>
               <span className="text-gray-600 font-medium">
-                {product.reviewCount} Yorum
+                {product.comment_count} Yorum
               </span>
             </div>
 
             {/* Product Badges */}
             <div className="flex flex-wrap gap-3">
-              {product.badges.map((badge) => (
-                <span
-                  key={badge.id}
-                  className={cn(
-                    "px-3 py-1 rounded-md text-sm font-medium border",
-                    getBadgeColor(badge.color)
-                  )}
-                >
-                  {badge.text}
-                </span>
-              ))}
+              {product.tags.map((tagString: string, index: number) => {
+                try {
+                  const parsedTags = JSON.parse(tagString);
+                  return Array.isArray(parsedTags) ? parsedTags.map((tag: string, tagIndex: number) => (
+                    <span
+                      key={`${index}-${tagIndex}`}
+                      className={cn(
+                        "px-3 py-1 rounded-md text-sm font-medium border",
+                        "bg-gray-100 text-gray-700 border-gray-200"
+                      )}
+                    >
+                      {tag}
+                    </span>
+                  )) : null;
+                } catch {
+                  return (
+                    <span
+                      key={index}
+                      className={cn(
+                        "px-3 py-1 rounded-md text-sm font-medium border",
+                        "bg-gray-100 text-gray-700 border-gray-200"
+                      )}
+                    >
+                      {tagString}
+                    </span>
+                  );
+                }
+              })}
             </div>
 
             {/* HR Divider */}
             <hr className="border-gray-200" />
 
-            {/* Flavors Section */}
-            {product.flavors && product.flavors.length > 0 && (
+            {/* Flavors Section - Only show if variants exist and have aroma */}
+            {product.variants && product.variants.length > 0 && product.variants.some((v: any) => v.aroma) && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">AROMA:</h3>
                 <div className="flex flex-wrap gap-3">
-                  {product.flavors.map((flavor) => (
+                  {product.variants.filter((v: any) => v.aroma).map((flavor: any) => (
                     <button
                       key={flavor.id}
                       onClick={() => setSelectedFlavor(flavor)}
-                      disabled={!flavor.available}
+                      disabled={!flavor.is_available}
                       className={cn(
                         "relative ps-2 rounded-lg border-2 text-sm font-medium transition-all duration-200",
                         "h-[35px] md:h-[40px] flex items-center justify-between min-w-[120px] md:min-w-[130px]",
                         selectedFlavor?.id === flavor.id
                           ? "border-blue-500 ring-2 ring-blue-200"
                           : "border-gray-300 hover:border-gray-400",
-                        !flavor.available && "opacity-50 cursor-not-allowed"
+                        !flavor.is_available && "opacity-50 cursor-not-allowed"
                       )}
                       style={getFlavorStyle(flavor, selectedFlavor?.id === flavor.id)}
                     >
-                      <span className="flex-1 text-xs md:text-sm text-center pr-1 md:pr-2">{flavor.name}</span>
-                      <div
-                        className="w-6 md:w-8 h-full rounded-r-md flex-shrink-0"
-                        style={{ backgroundColor: flavor.color }}
-                      ></div>
+                      <span className="flex-1 text-xs md:text-sm text-center pr-1 md:pr-2">{flavor.aroma}</span>
                       {selectedFlavor?.id === flavor.id && (
                         <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-1">
                           <Check className="w-3 h-3 text-white" />
@@ -225,41 +232,41 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* Sizes Section */}
-            {product.sizes && product.sizes.length > 0 && (
+            {/* Sizes Section - Only show if variants exist and have size */}
+            {product.variants && product.variants.length > 0 && product.variants.some((v: any) => v.size) && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">BOYUT:</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {product.sizes.map((size) => (
+                  {product.variants.filter((v: any) => v.size).map((variant: any) => (
                     <button
-                      key={size.id}
-                      onClick={() => setSelectedSize(size)}
+                      key={variant.id}
+                      onClick={() => setSelectedSize(variant)}
                       className={cn(
                         "relative p-3 md:p-4 rounded-lg border-2 text-center transition-all duration-200",
-                        selectedSize?.id === size.id
+                        selectedSize?.id === variant.id
                           ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
                           : "border-gray-300 hover:border-gray-400"
                       )}
                     >
                       {/* Discount Badge - Middle Top */}
-                      {size.discountPercentage && (
+                      {variant.price?.discount_percentage && (
                         <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold z-10">
-                          %{size.discountPercentage}
+                          %{variant.price.discount_percentage}
                           <div className="text-[8px] font-normal">İNDİRİM</div>
                         </div>
                       )}
 
-                      <div className="font-bold text-gray-900 text-sm md:text-base">{size.weight}</div>
-                      <div className="text-xs md:text-sm text-gray-600">{size.servings} servis</div>
+                      <div className="font-bold text-gray-900 text-sm md:text-base">{variant.size.pieces} adet</div>
+                      <div className="text-xs md:text-sm text-gray-600">{variant.size.total_services} servis</div>
 
                       <div className="mt-2">
-                        {size.oldPrice && (
+                        {variant.price?.discounted_price && (
                           <div className="text-xs text-gray-500 line-through">
-                            {size.oldPrice} TL
+                            {variant.price.total_price} TL
                           </div>
                         )}
                         <div className="font-bold text-gray-900 text-sm md:text-base">
-                          {size.price} TL
+                          {variant.price?.discounted_price || variant.price?.total_price} TL
                         </div>
                       </div>
                     </button>
@@ -316,9 +323,13 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Benefits Section */}
+            {/* Benefits Section - Default benefits since API doesn't provide them */}
             <div className="grid grid-cols-3 gap-4 pt-2">
-              {product.benefits.map((benefit, index) => (
+              {[
+                { icon: "truck", title: "Ücretsiz Kargo", description: "250 TL üzeri" },
+                { icon: "shield", title: "Güvenli Ödeme", description: "SSL sertifikası" },
+                { icon: "award", title: "Kalite Garantisi", description: "100% orjinal" }
+              ].map((benefit: any, index: number) => (
                 <div key={index} className="text-center">
                   <div className="flex justify-center mb-2 text-gray-600">
                     {getBenefitIcon(benefit.icon)}
