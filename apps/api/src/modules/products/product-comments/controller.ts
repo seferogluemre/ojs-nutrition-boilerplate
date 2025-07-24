@@ -11,14 +11,14 @@ export const app = new Elysia({
     tags: ['Product Comments'],
   },
 })
-  .use(auth()) 
+
   .get(
     '',
     async ({ params, query }) => {
       const offset = query.offset || 0;
       const limit = query.limit || 10;
       const page = Math.floor(offset / limit) + 1;
-      
+
       const { data, total } = await ProductCommentService.getComments({
         productId: params.id,
         page,
@@ -37,6 +37,7 @@ export const app = new Elysia({
     },
     commentIndexDto,
   )
+  .use(auth())
   .post(
     '',
     async ({ params, body, user, set }) => {

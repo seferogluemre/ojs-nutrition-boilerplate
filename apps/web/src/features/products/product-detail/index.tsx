@@ -28,7 +28,7 @@ export default function ProductDetail() {
   });
 
   const product = data?.data as Product;
-
+console.log("product",product)
   // State management
   const [selectedFlavor, setSelectedFlavor] = useState<ProductVariant | null>(null);
   const [selectedSize, setSelectedSize] = useState<ProductVariant | null>(null);
@@ -110,7 +110,7 @@ export default function ProductDetail() {
 
       {/* Product Reviews Section */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <ProductReviews />
+        <ProductReviews  productId={productId}/>
       </div>
 
       {/* Best Sellers Section */}

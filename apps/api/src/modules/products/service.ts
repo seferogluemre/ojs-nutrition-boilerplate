@@ -159,18 +159,23 @@ export abstract class ProductsService {
               fileSize: true,
             },
           },
+          comments: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
 
       if (!product) {
         throw new NotFoundException('Ürün bulunamadı');
       }
-
       return {
         ...product,
         photos: [],
         variants: [],
         comments: [],
+        commentsCount: product.comments.length,
       } as unknown as ProductWithRelations;
     } catch (error) {
       throw this.handlePrismaError(error, 'find');

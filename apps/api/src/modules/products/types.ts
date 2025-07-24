@@ -14,6 +14,7 @@ export type ProductWithRelations = Product & {
   photos: ProductPhoto[];
   comments: ProductComments[];
   variants: ProductVariant[];
+  commentsCount: number;
 };
 
 // DTO Response tipleri

@@ -6,14 +6,14 @@ export abstract class ProductFormatter {
       id: data.uuid,
       name: data.name,
       slug: data.slug,
-      
+
       // 🔥 YENİ ALANLAR:
       short_explanation: data.shortDescription,
       explanation: data.explanation as any || undefined,
       main_category_id: data.mainCategoryId || undefined,
       sub_category_id: data.subCategoryId || undefined,
       tags: data.tags || [],
-      
+
       // Mevcut alanlar
       stock: data.stock,
       variant: data.variant,
@@ -22,15 +22,15 @@ export abstract class ProductFormatter {
       longDescription: data.longDescription,
       price: data.price,
       primaryPhotoUrl: data.primaryPhotoUrl,
-      reviewCount: data.reviewCount,
+      reviewCount: data.commentsCount,
       averageRating: data.averageRating,
-      
+
       category: {
         id: data.category.uuid,
         name: data.category.name,
         slug: data.category.slug,
       },
-      
+
       photos: data.photos?.map(photo => ({
         id: photo.uuid,
         url: photo.url,
@@ -38,7 +38,7 @@ export abstract class ProductFormatter {
         order: photo.order,
         fileSize: photo.fileSize,
       })) || [],
-      
+
       // 🔥 YENİ VARIANTS MAPPING:
       variants: data.variants?.map(variant => ({
         id: variant.uuid,
@@ -55,14 +55,15 @@ export abstract class ProductFormatter {
         photo_src: variant.photoSrc || data.primaryPhotoUrl,
         is_available: variant.isAvailable ?? true
       })) || [],
-      
+
       // Comments
-      comment_count: data.reviewCount,
+      comment_count: data.commentsCount,
       average_star: data.averageRating,
-      
+
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     };
+    
   }
 
   // Minimal ürün response'u (listeleme için)
