@@ -30,7 +30,6 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     enabled: !!auth.user, // Sadece user varsa çalıştır
   });
 
-
   // Calculate total - gerçek data ile
   const totalAmount = cartItems.reduce((total: number, item: any) => {
     return total + (item.product.price * item.quantity);

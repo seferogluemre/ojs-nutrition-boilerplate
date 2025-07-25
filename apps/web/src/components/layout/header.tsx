@@ -10,6 +10,7 @@ import {
 import { Input } from "#components/ui/input";
 import { cn } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
+import { useCartStore } from "#stores/cartStore.js";
 import { useRouter } from "@tanstack/react-router";
 import { ChevronDown, Menu, Search, ShoppingCart, User } from "lucide-react";
 import React, { useState } from "react";
@@ -28,7 +29,10 @@ export const Header = ({
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
   const { auth } = useAuthStore();
   const router = useRouter();
-
+  const { items } = useCartStore();
+  console.log("items",items)
+  const cartItemCount = items.length;
+  console.log("cartItemCount",cartItemCount)
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -155,7 +159,7 @@ export const Header = ({
             <span className="font-medium">SEPET</span>
             {/* Cart Badge */}
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
-              2
+              {cartItemCount}
             </span>
           </Button>
         </div>
@@ -258,7 +262,7 @@ export const Header = ({
             <span className="font-medium text-sm">SEPET</span>
             {/* Cart Badge */}
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-              2
+              {cartItemCount}
             </span>
           </Button>
         </div>
@@ -277,7 +281,7 @@ export const Header = ({
         <Button variant="ghost" size="sm" className="relative" onClick={toggleCartSidebar}>
           <ShoppingCart className="w-7 h-7 stroke-2" />
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-black">
-            2
+            {cartItemCount}
           </span>
         </Button>
       </div>

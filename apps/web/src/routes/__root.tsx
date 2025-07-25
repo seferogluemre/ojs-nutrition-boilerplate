@@ -2,6 +2,7 @@ import { Toaster } from "#components/ui/toaster";
 import GeneralError from "#features/errors/general-error";
 import NotFoundError from "#features/errors/not-found-error";
 import { useAuthStore } from "#stores/authStore.js";
+import { useCartStore } from "#stores/cartStore.js";
 import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
@@ -13,10 +14,15 @@ export const Route = createRootRouteWithContext<{
 }>()({
   component: () => {
     const { auth } = useAuthStore();
+    const { fetchCartItems } = useCartStore();
+    
     useEffect(() => {
-      auth.checkAuth();
+      auth.checkAuth().then(() => {
+        if (auth.user) {
+          fetchCartItems();
+        }
+      });
     }, []);
-
     
     return (
       <>
