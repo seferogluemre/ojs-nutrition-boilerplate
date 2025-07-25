@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 import { create } from "zustand";
 
-const ACCESS_TOKEN = "thisisjustarandomstring";
+const ACCESS_TOKEN = "Iyc0kTb8t3anRpXTjx3O9BE9psC3Lg8g.zEAppO4pKTqZgKYhRi%2F%2FJwDEdApXRb7jq7KSLHHPK4Q%3D";
 
 interface AuthUser {
   accountNo: string;
