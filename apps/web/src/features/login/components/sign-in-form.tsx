@@ -26,6 +26,9 @@ export default function SignInForm() {
     onSuccess: (data) => {
       console.log("Login response:", data);
       
+      // Önce token'ı kaydet
+      auth.setAccessToken(data.token);
+      // Sonra user'ı set et
       auth.setUser(data.user);
       
       setTimeout(() => {

@@ -8,7 +8,10 @@ export default function Products() {
 
   const { data } = useQuery({
     queryKey: ["products"],
-    queryFn: () => api.products.get(),
+    queryFn: async () => {
+      const response = await api.products.get();
+      return response.data;
+    },
   });
 
   return (
@@ -18,7 +21,7 @@ export default function Products() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-          {data?.data?.data.map((product:Product) => (
+          {data?.data?.map((product:Product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

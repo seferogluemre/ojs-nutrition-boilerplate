@@ -1,7 +1,9 @@
 import { Button } from "#components/ui/button";
+import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import React, { useEffect } from "react";
 
@@ -12,34 +14,79 @@ interface CartSidebarProps {
 
 export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   const { auth } = useAuthStore();
+  const { items: cartItems, setItems, clearCart } = useCartStore();
+  const queryClient = useQueryClient();
 
-  const token=auth.accessToken;
+  const { data: cartData } = useQuery({
+    queryKey: ["cart-items"],
+    queryFn: async () => {
+      if (!auth.accessToken) return { items: [] };
 
-  // const { data: cartItems = [] } = useQuery({
-  //   queryKey: ["cart-items"],
-  //   queryFn: async() => {
-  //     const response = await api["cart-items"].index.get({
-  //       credentials: 'include',
-  //       headers: {
-  //         "Authorization": `onlyjs-session-token=${token}`
-  //       }
-  //     });
-  //     return response.data.items || [];
-  //   },
-  // });
+      const response = await api["cart-items"].get({
+        headers: {
+          authorization: `Bearer ${auth.accessToken}`,
+        },
+      });
+      return response.data;
+    },
+    enabled: !!auth.accessToken,
+  });
 
-
-  const {fetchCartItems}=useCartStore();
   useEffect(() => {
-    fetchCartItems();
-  }, []);
+    if (cartData?.items) {
+      setItems(cartData.items);
+    } else if (!auth.accessToken) {
+      clearCart();
+    }
+  }, [cartData, auth.accessToken, setItems, clearCart]);
 
-  const { items: cartItems } = useCartStore();
+  // Add item mutation
+  const addItemMutation = useMutation({
+    mutationFn: async ({
+      productId,
+      variantId,
+      quantity,
+    }: {
+      productId: string;
+      variantId: string;
+      quantity: number;
+    }) => {
+      return await api["cart-items"].post(
+        {
+          product_id: productId,
+          product_variant_id: variantId,
+          quantity,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${auth.accessToken}`,
+          },
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart-items"] });
+    },
+  });
 
+  // Remove item mutation
+  const removeItemMutation = useMutation({
+    mutationFn: async (itemId: string) => {
+      return await api["cart-items"]({ itemId }).delete({}, {
+        headers: {
+          authorization: `Bearer ${auth.accessToken}`,
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart-items"] });
+    },
+  });
 
   // Calculate total - gerçek data ile
   const totalAmount = cartItems.reduce((total: number, item: any) => {
-    return total + (item.product.price * item.quantity);
+    return total + item.product.price * item.quantity;
   }, 0);
 
   // Backdrop click handler
@@ -50,19 +97,28 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   };
 
   // Quantity handlers
-  const increaseQuantity = (id: string) => {
-    // TODO: Implement increase quantity logic
-    console.log("Increase quantity for:", id);
+  const increaseQuantity = async (item: any) => {
+    await removeItemMutation.mutateAsync(item.id);
+    await addItemMutation.mutateAsync({
+      productId: item.product.id,
+      variantId: item.variant.id,
+      quantity: item.quantity + 1,
+    });
   };
 
-  const decreaseQuantity = (id: string) => {
-    // TODO: Implement decrease quantity logic
-    console.log("Decrease quantity for:", id);
+  const decreaseQuantity = async (item: any) => {
+    if (item.quantity > 1) {
+      await removeItemMutation.mutateAsync(item.id);
+      await addItemMutation.mutateAsync({
+        productId: item.product.id,
+        variantId: item.variant.id,
+        quantity: item.quantity - 1,
+      });
+    }
   };
 
-  const removeItem = (id: string) => {
-    // TODO: Implement remove item logic
-    console.log("Remove item:", id);
+  const handleRemoveItem = async (id: string) => {
+    removeItemMutation.mutate(id);
   };
 
   return (
@@ -70,7 +126,7 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 z-40 bg-black bg-opacity-50"
           onClick={handleBackdropClick}
         />
       )}
@@ -78,42 +134,41 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed top-0 right-0 h-full w-96 bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-xl",
-          isOpen ? "translate-x-0" : "translate-x-full"
+          "fixed right-0 top-0 z-50 h-full w-96 transform bg-white shadow-xl transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between border-b border-gray-200 p-4">
           <h2 className="text-lg font-bold text-gray-900">SEPETİM</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="p-2"
-          >
-            <X className="w-5 h-5" />
+          <Button variant="ghost" size="sm" onClick={onClose} className="p-2">
+            <X className="h-5 w-5" />
           </Button>
         </div>
 
         {/* Cart Content */}
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           {/* Items List */}
           <div className="flex-1 overflow-y-auto p-4">
             {cartItems.length === 0 ? (
-              <div className="text-center text-gray-500 mt-8">
+              <div className="mt-8 text-center text-gray-500">
                 <p>Sepetiniz boş</p>
               </div>
             ) : (
               cartItems.map((item: any) => (
-                <div key={item.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg mb-3">
+                <div
+                  key={item.id}
+                  className="mb-3 flex items-start space-x-3 rounded-lg bg-gray-50 p-3"
+                >
                   {/* Product Image */}
                   <div className="flex-shrink-0">
-                    <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
-                      {item.product.primary_photo_url && item.product.primary_photo_url !== "null" ? (
-                        <img 
-                          src={item.product.primary_photo_url} 
-                          alt={item.product.name} 
-                          className="w-full h-full object-cover rounded-md" 
+                    <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
+                      {item.product.primary_photo_url &&
+                      item.product.primary_photo_url !== "null" ? (
+                        <img
+                          src={item.product.primary_photo_url}
+                          alt={item.product.name}
+                          className="h-full w-full rounded-md object-cover"
                         />
                       ) : (
                         <span className="text-xs text-gray-400">No Image</span>
@@ -122,17 +177,25 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                   </div>
 
                   {/* Product Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start mb-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex items-start justify-between">
                       <div>
-                        <h3 className="text-sm font-semibold text-gray-900 truncate">{item.product.name}</h3>
-                        <p className="text-xs text-gray-600">{item.variant.name}</p>
-                        <p className="text-xs text-gray-500">Birim: {item.product.price} TL</p>
+                        <h3 className="truncate text-sm font-semibold text-gray-900">
+                          {item.product.name}
+                        </h3>
+                        <p className="text-xs text-gray-600">
+                          {item.variant.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Birim: {item.product.price} TL
+                        </p>
                       </div>
-                      
+
                       {/* Price */}
                       <div className="text-right">
-                        <p className="text-sm font-bold text-gray-900">{item.product.price * item.quantity} TL</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          {item.product.price * item.quantity} TL
+                        </p>
                       </div>
                     </div>
 
@@ -143,25 +206,31 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => item.quantity === 1 ? removeItem(item.id) : decreaseQuantity(item.id)}
-                          className="p-1 h-7 w-7"
+                          onClick={() =>
+                            item.quantity === 1
+                              ? handleRemoveItem(item.id)
+                              : decreaseQuantity(item)
+                          }
+                          className="h-7 w-7 p-1"
                         >
                           {item.quantity === 1 ? (
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="h-3 w-3" />
                           ) : (
-                            <Minus className="w-3 h-3" />
+                            <Minus className="h-3 w-3" />
                           )}
                         </Button>
-                        
-                        <span className="text-sm font-medium px-2">{item.quantity}</span>
-                        
+
+                        <span className="px-2 text-sm font-medium">
+                          {item.quantity}
+                        </span>
+
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => increaseQuantity(item.id)}
-                          className="p-1 h-7 w-7"
+                          onClick={() => increaseQuantity(item)}
+                          className="h-7 w-7 p-1"
                         >
-                          <Plus className="w-3 h-3" />
+                          <Plus className="h-3 w-3" />
                         </Button>
                       </div>
                     </div>
@@ -172,15 +241,17 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
           </div>
 
           {/* Footer */}
-          <div className="border-t p-4 pb-20 space-y-3 mt-auto">
+          <div className="mt-auto space-y-3 border-t p-4 pb-20">
             {/* Total */}
             <div className="text-center">
-              <p className="text-lg text-end font-bold text-gray-900">TOPLAM {totalAmount} TL</p>
+              <p className="text-end text-lg font-bold text-gray-900">
+                TOPLAM {totalAmount} TL
+              </p>
             </div>
 
             {/* Continue Button */}
-            <Button 
-              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 text-base"
+            <Button
+              className="w-full bg-black py-3 text-base font-semibold text-white hover:bg-gray-800"
               onClick={() => {
                 // TODO: Handle checkout process
               }}
@@ -194,5 +265,3 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     </>
   );
 };
-
- 

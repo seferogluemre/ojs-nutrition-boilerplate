@@ -90,6 +90,7 @@ export default function ProductDetail() {
             <ProductPricing
               product={product}
               selectedSize={selectedSize}
+              selectedFlavor={selectedFlavor}
               quantity={quantity}
               onQuantityIncrease={increaseQuantity}
               onQuantityDecrease={decreaseQuantity}

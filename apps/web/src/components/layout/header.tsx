@@ -8,9 +8,11 @@ import {
   DropdownMenuTrigger,
 } from "#components/ui/dropdown-menu";
 import { Input } from "#components/ui/input";
+import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ChevronDown, Menu, Search, ShoppingCart, User } from "lucide-react";
 import React, { useState } from "react";
@@ -28,8 +30,32 @@ export const Header = ({
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
   const { auth } = useAuthStore();
+  const { items, clearCart } = useCartStore();
   const router = useRouter();
-  const { items } = useCartStore();
+  const queryClient = useQueryClient();
+
+
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      return await api.auth["sign-out"].post();
+    },
+    onSuccess: () => {
+      // Reset auth and cart
+      auth.reset();
+      clearCart();
+      queryClient.clear();
+      router.navigate({ to: "/login" });
+    },
+    onError: (error) => {
+      console.error("Logout request failed:", error);
+      // Even if logout fails, clear local state
+      auth.reset();
+      clearCart();
+      queryClient.clear();
+      router.navigate({ to: "/login" });
+    },
+  });
 
   const cartItemCount = items.length;
 
@@ -122,8 +148,7 @@ export const Header = ({
                   <DropdownMenuItem 
                     className="text-center"
                     onClick={() => {
-                      auth.logout();
-                      router.navigate({ to: "/login" });
+                      logoutMutation.mutate();
                     }}
                   >
                     <span className="w-full cursor-pointer">
@@ -225,8 +250,7 @@ export const Header = ({
                   <DropdownMenuItem 
                     className="text-center"
                     onClick={() => {
-                      auth.logout();
-                     router.navigate({ to: "/login" });
+                      logoutMutation.mutate();
                     }}
                   >
                     <span className="w-full cursor-pointer text-sm">
