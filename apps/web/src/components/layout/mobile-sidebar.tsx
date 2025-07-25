@@ -1,6 +1,11 @@
 import { Button } from "#components/ui/button";
+import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
-import { ChevronRight, X } from "lucide-react";
+import { useAuthStore } from "#stores/authStore.js";
+import { useCartStore } from "#stores/cartStore.js";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
+import { ChevronRight, LogOut, User, X } from "lucide-react";
 import React from "react";
 
 interface MobileSidebarProps {
@@ -24,6 +29,38 @@ const accountLinks = [
 ];
 
 export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
+  const { auth } = useAuthStore();
+  const { clearCart } = useCartStore();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  // Eden treaty type fix
+  const apiAuth = (api as any).auth;
+
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      return await apiAuth["sign-out"].post();
+    },
+    onSuccess: () => {
+      // Reset auth and cart
+      auth.reset();
+      clearCart();
+      queryClient.clear();
+      onClose(); // Sidebar'ı kapat
+      router.navigate({ to: "/login" });
+    },
+    onError: (error) => {
+      console.error("Logout request failed:", error);
+      // Even if logout fails, clear local state
+      auth.reset();
+      clearCart();
+      queryClient.clear();
+      onClose(); // Sidebar'ı kapat
+      router.navigate({ to: "/login" });
+    },
+  });
+
   // Backdrop click handler
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -62,7 +99,7 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
         </div>
 
         {/* Content */}
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full relative">
           {/* Categories Section - White Background */}
           <div className="bg-white">
             {categories.map((category, index) => (
@@ -87,7 +124,7 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
           </div>
 
           {/* Account Links Section - Gray Background */}
-          <div className="bg-gray-100 mt-4">
+          <div className="bg-gray-100">
             {accountLinks.map((link, index) => (
               <div key={link}>
                 <a
@@ -107,6 +144,71 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
               </div>
             ))}
           </div>
+
+          {/* Spacer to push user section towards bottom but keep it visible */}
+          <div className="flex-1"></div>
+
+          {/* User Section - Bottom but visible */}
+          <div className="mb-24 px-3">
+            {auth.user ? (
+              /* Logged in user */
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3 flex-1">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                      <User className="w-6 h-6 text-gray-600" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      Hoşgeldin!
+                    </p>
+                    <p className="text-sm text-gray-600 truncate">
+                      {auth.user.firstName} {auth.user.lastName}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {auth.user.email}
+                    </p>
+                  </div>
+                </div>
+                {/* Logout Icon - Right side of user info */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => logoutMutation.mutate()}
+                  className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-full ml-2"
+                  disabled={logoutMutation.isPending}
+                >
+                  <LogOut className="w-5 h-5" />
+                </Button>
+              </div>
+            ) : (
+              /* Not logged in */
+              <div className="space-y-2">
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => {
+                    router.navigate({ to: "/login" });
+                    onClose();
+                  }}
+                >
+                  Üye Girişi
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-gray-300"
+                  onClick={() => {
+                    router.navigate({ to: "/login" });
+                    onClose();
+                  }}
+                >
+                  Üye Ol
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Remove absolute positioned logout icon */}
         </div>
       </div>
     </>
