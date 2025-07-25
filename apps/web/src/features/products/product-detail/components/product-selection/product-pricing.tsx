@@ -68,6 +68,32 @@ export function ProductPricing({
     return (price / servings).toFixed(2);
   };
 
+  // Stok kontrolü fonksiyonları
+  const getCurrentStock = () => {
+    // Önce seçilen variant'ın stok bilgisini al, yoksa product'ın genel stok bilgisini kullan
+    return product.stock || 0;
+  };
+
+  const isStockLimitReached = () => {
+    const currentStock = getCurrentStock();
+    return quantity >= currentStock;
+  };
+
+  // Override quantity increase with stock control
+  const handleQuantityIncrease = () => {
+    const currentStock = getCurrentStock();
+    
+    if (quantity >= currentStock) {
+      toast({
+        title: "Stok Sınırı ⚠️",
+        description: `Stok değerinden fazla eklenemez. Mevcut stok: ${currentStock}`,
+      });
+      return;
+    }
+    
+    onQuantityIncrease();
+  };
+
   const handleAddToCart = async () => {
     if (!selectedFlavor) {
       toast({
@@ -116,22 +142,34 @@ export function ProductPricing({
       {/* Quantity and Add to Cart */}
       <div className="flex items-center gap-4">
         {/* Quantity Selector */}
-        <div className="flex items-center border border-gray-300 rounded-lg">
-          <button
-            onClick={onQuantityDecrease}
-            className="p-2 hover:bg-gray-100 transition-colors"
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-          <span className="px-4 py-2 font-semibold min-w-[50px] text-center">
-            {quantity}
-          </span>
-          <button
-            onClick={onQuantityIncrease}
-            className="p-2 hover:bg-gray-100 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
+        <div className="flex flex-col">
+          <div className="flex items-center border border-gray-300 rounded-lg">
+            <button
+              onClick={onQuantityDecrease}
+              className="p-2 hover:bg-gray-100 transition-colors"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <span className="px-4 py-2 font-semibold min-w-[50px] text-center">
+              {quantity}
+            </span>
+            <button
+              onClick={handleQuantityIncrease}
+              className={`p-2 transition-colors ${
+                isStockLimitReached() 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  : 'hover:bg-gray-100'
+              }`}
+              disabled={isStockLimitReached()}
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+          
+          {/* Stock info */}
+          <div className="text-xs text-gray-500 mt-1 text-center">
+            Stok: {getCurrentStock()}
+          </div>
         </div>
 
         {/* Add to Cart Button */}
