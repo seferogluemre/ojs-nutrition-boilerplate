@@ -1,5 +1,5 @@
-import { AxiosError } from "axios";
 import { toast } from "#hooks/use-toast";
+import { AxiosError } from "axios";
 
 export function handleServerError(error: unknown) {
   console.log(error);

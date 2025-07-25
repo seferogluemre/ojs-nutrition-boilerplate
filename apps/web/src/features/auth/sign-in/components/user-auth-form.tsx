@@ -1,12 +1,12 @@
 import { PasswordInput } from "#components/password-input";
 import { Button } from "#components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "#components/ui/form";
 import { Input } from "#components/ui/input";
 import { cn } from "#lib/utils";
@@ -35,7 +35,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   function onSubmit(data: LoginFormData) {
     setIsLoading(true);
 
-    console.log(data);
 
     setTimeout(() => {
       setIsLoading(false);

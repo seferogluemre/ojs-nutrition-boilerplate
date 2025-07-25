@@ -1,5 +1,8 @@
 import { Button } from "#components/ui/button";
+import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
+import { useAuthStore } from "#stores/authStore.js";
+import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import React from "react";
 
@@ -8,32 +11,30 @@ interface CartSidebarProps {
   onClose: () => void;
 }
 
-// Mock cart data - Bu daha sonra gerçek data ile değiştirilecek
-const cartItems = [
-  {
-    id: 1,
-    name: "COLLAGEN",
-    flavor: "Ahududu",
-    weight: "250g",
-    price: 499,
-    quantity: 1,
-    image: "/images/collagen.jpg" // Placeholder image
-  },
-  // İkinci ürün örneği
-  {
-    id: 2,
-    name: "WHEY PROTEIN",
-    flavor: "Çikolata",
-    weight: "1000g", 
-    price: 299,
-    quantity: 2,
-    image: "/images/collagen.jpg" // Placeholder image
-  }
-];
-
 export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
-  // Calculate total
-  const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const { auth } = useAuthStore();
+
+  const token=auth.accessToken;
+
+  const { data: cartItems = [] } = useQuery({
+    queryKey: ["cart-items"],
+    queryFn: async() => {
+      const response = await api["cart-items"].index.get({
+        credentials: 'include',
+        headers: {
+          "Authorization": `onlyjs-session-token=${token}`
+        }
+      });
+      return response.data.items || [];
+    },
+    enabled: !!auth.user, // Sadece user varsa çalıştır
+  });
+
+
+  // Calculate total - gerçek data ile
+  const totalAmount = cartItems.reduce((total: number, item: any) => {
+    return total + (item.product.price * item.quantity);
+  }, 0);
 
   // Backdrop click handler
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -42,20 +43,20 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     }
   };
 
-  // Quantity handlers (mock functions)
-  const increaseQuantity = (id: number) => {
+  // Quantity handlers
+  const increaseQuantity = (id: string) => {
     // TODO: Implement increase quantity logic
-    void id;
+    console.log("Increase quantity for:", id);
   };
 
-  const decreaseQuantity = (id: number) => {
+  const decreaseQuantity = (id: string) => {
     // TODO: Implement decrease quantity logic
-    void id;
+    console.log("Decrease quantity for:", id);
   };
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: string) => {
     // TODO: Implement remove item logic
-    void id;
+    console.log("Remove item:", id);
   };
 
   return (
@@ -92,66 +93,80 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
         <div className="flex flex-col h-full">
           {/* Items List */}
           <div className="flex-1 overflow-y-auto p-4">
-            {cartItems.map((item) => (
-              <div key={item.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                {/* Product Image */}
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
-                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                  </div>
-                </div>
-
-                {/* Product Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-900 truncate">{item.name}</h3>
-                      <p className="text-xs text-gray-600">{item.flavor}</p>
-                      <p className="text-xs text-gray-600">{item.weight}</p>
-                    </div>
-                    
-                    {/* Price */}
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-gray-900">{item.price * item.quantity} TL</p>
-                    </div>
-                  </div>
-
-                  {/* Quantity Controls */}
-                  <div className="flex items-center justify-end">
-                    <div className="flex items-center space-x-2">
-                      {/* Sol taraf: çöp kutusu (adet=1) veya minus (adet>1) */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => item.quantity === 1 ? removeItem(item.id) : decreaseQuantity(item.id)}
-                        className="p-1 h-7 w-7"
-                      >
-                        {item.quantity === 1 ? (
-                          <Trash2 className="w-3 h-3" />
-                        ) : (
-                          <Minus className="w-3 h-3" />
-                        )}
-                      </Button>
-                      
-                      <span className="text-sm font-medium px-2">{item.quantity}</span>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => increaseQuantity(item.id)}
-                        className="p-1 h-7 w-7"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+            {cartItems.length === 0 ? (
+              <div className="text-center text-gray-500 mt-8">
+                <p>Sepetiniz boş</p>
               </div>
-            ))}
+            ) : (
+              cartItems.map((item: any) => (
+                <div key={item.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg mb-3">
+                  {/* Product Image */}
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+                      {item.product.primary_photo_url && item.product.primary_photo_url !== "null" ? (
+                        <img 
+                          src={item.product.primary_photo_url} 
+                          alt={item.product.name} 
+                          className="w-full h-full object-cover rounded-md" 
+                        />
+                      ) : (
+                        <span className="text-xs text-gray-400">No Image</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-900 truncate">{item.product.name}</h3>
+                        <p className="text-xs text-gray-600">{item.variant.name}</p>
+                        <p className="text-xs text-gray-500">Birim: {item.product.price} TL</p>
+                      </div>
+                      
+                      {/* Price */}
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-gray-900">{item.product.price * item.quantity} TL</p>
+                      </div>
+                    </div>
+
+                    {/* Quantity Controls */}
+                    <div className="flex items-center justify-end">
+                      <div className="flex items-center space-x-2">
+                        {/* Sol taraf: çöp kutusu (adet=1) veya minus (adet>1) */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => item.quantity === 1 ? removeItem(item.id) : decreaseQuantity(item.id)}
+                          className="p-1 h-7 w-7"
+                        >
+                          {item.quantity === 1 ? (
+                            <Trash2 className="w-3 h-3" />
+                          ) : (
+                            <Minus className="w-3 h-3" />
+                          )}
+                        </Button>
+                        
+                        <span className="text-sm font-medium px-2">{item.quantity}</span>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => increaseQuantity(item.id)}
+                          className="p-1 h-7 w-7"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           {/* Footer */}
-          <div className="border-t  p-4 pb-20 space-y-3 mt-auto">
+          <div className="border-t p-4 pb-20 space-y-3 mt-auto">
             {/* Total */}
             <div className="text-center">
               <p className="text-lg text-end font-bold text-gray-900">TOPLAM {totalAmount} TL</p>
@@ -163,6 +178,7 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
               onClick={() => {
                 // TODO: Handle checkout process
               }}
+              disabled={cartItems.length === 0}
             >
               DEVAM ET ▶
             </Button>
@@ -173,4 +189,4 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   );
 };
 
-CartSidebar.displayName = "CartSidebar"; 
+ 

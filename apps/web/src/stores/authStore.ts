@@ -30,7 +30,6 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()((set, get) => {
   // localStorage'dan token'ı al
   const initToken = localStorage.getItem(ACCESS_TOKEN_KEY) || "";
-  console.log("localStorage'dan gelen token:", initToken);
   
   return {
     auth: {
@@ -40,9 +39,7 @@ export const useAuthStore = create<AuthState>()((set, get) => {
       accessToken: initToken,
       setAccessToken: (accessToken) =>
         set((state) => {
-          console.log("Token localStorage'a kaydediliyor:", accessToken);
           localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-          console.log("localStorage'a kaydedildi");
           return { ...state, auth: { ...state.auth, accessToken } };
         }),
       resetAccessToken: () =>
@@ -72,17 +69,14 @@ export const useAuthStore = create<AuthState>()((set, get) => {
             credentials: 'include', // Cookie'yi otomatik gönder
           });
 
-          console.log("API response status:", response.status);
 
           if (response.ok) {
             const userData = await response.json();
-            console.log("User data alındı:", userData);
             set((state) => ({
               ...state,
               auth: { ...state.auth, user: userData as AuthUser },
             }));
           } else {
-            console.log("Session geçersiz, logout yapılıyor");
             get().auth.logout();
           }
         } catch (error) {

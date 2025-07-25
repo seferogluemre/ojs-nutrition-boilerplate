@@ -28,7 +28,6 @@ export default function ProductDetail() {
   });
 
   const product = data?.data as Product;
-console.log("product",product)
   // State management
   const [selectedFlavor, setSelectedFlavor] = useState<ProductVariant | null>(null);
   const [selectedSize, setSelectedSize] = useState<ProductVariant | null>(null);
