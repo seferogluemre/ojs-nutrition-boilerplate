@@ -96,12 +96,12 @@ export const Header = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40 z-[9999]" sideOffset={5}>
               <DropdownMenuItem className="text-center border-b border-gray-300">
-                <a href="/sign-in" className="w-full">
+                <a href="/login" className="w-full">
                   Üye girişi
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem className="text-center">
-                <a href="/sign-up" className="w-full">
+                <a href="/login" className="w-full">
                   Üye ol
                 </a>
               </DropdownMenuItem>

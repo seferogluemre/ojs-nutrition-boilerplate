@@ -48,7 +48,6 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
     mutation.mutate();
   };
 
-
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-4">
