@@ -112,7 +112,6 @@ export const userAddressCreateDto = {
     addressLine2: UserAddressPlain.properties.addressLine2,
     postalCode: UserAddressPlain.properties.postalCode,
     isDefault: UserAddressPlain.properties.isDefault,
-    cityId: CityPlain.properties.id,
   }),
   response: {
     200: userAddressResponseSchema,

@@ -20,7 +20,7 @@ const app = new Elysia({
     tags: ['UserAddress'],
   },
 })
-  .use(auth())
+  .use(auth()) 
   .post(
     '', // create user address
     async ({ body, user }) => {
