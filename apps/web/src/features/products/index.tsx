@@ -5,6 +5,7 @@ import { ProductCard } from "./components/product-card";
 import { Product } from "./data/mock-products";
 
 export default function Products() {
+
   const { data } = useQuery({
     queryKey: ["products"],
     queryFn: () => api.products.get(),

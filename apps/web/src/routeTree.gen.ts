@@ -19,6 +19,7 @@ import { Route as authSignInImport } from './routes/(auth)/sign-in'
 import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as auth500Import } from './routes/(auth)/500'
 import { Route as AuthenticatedSssIndexImport } from './routes/_authenticated/sss/index'
+import { Route as AuthenticatedLoginIndexImport } from './routes/_authenticated/login/index'
 import { Route as AuthenticatedContactIndexImport } from './routes/_authenticated/contact/index'
 import { Route as AuthenticatedAboutIndexImport } from './routes/_authenticated/about/index'
 
@@ -252,6 +253,12 @@ const AuthenticatedSssIndexRoute = AuthenticatedSssIndexImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
+const AuthenticatedLoginIndexRoute = AuthenticatedLoginIndexImport.update({
+  id: '/login/',
+  path: '/login/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+
 const AuthenticatedContactIndexRoute = AuthenticatedContactIndexImport.update({
   id: '/contact/',
   path: '/contact/',
@@ -470,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedContactIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/login/': {
+      id: '/_authenticated/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthenticatedLoginIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/sss/': {
       id: '/_authenticated/sss/'
       path: '/sss'
@@ -563,6 +577,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProductsProductIdLazyRoute: typeof AuthenticatedProductsProductIdLazyRoute
   AuthenticatedAboutIndexRoute: typeof AuthenticatedAboutIndexRoute
   AuthenticatedContactIndexRoute: typeof AuthenticatedContactIndexRoute
+  AuthenticatedLoginIndexRoute: typeof AuthenticatedLoginIndexRoute
   AuthenticatedSssIndexRoute: typeof AuthenticatedSssIndexRoute
   AuthenticatedAppsIndexLazyRoute: typeof AuthenticatedAppsIndexLazyRoute
   AuthenticatedChatsIndexLazyRoute: typeof AuthenticatedChatsIndexLazyRoute
@@ -580,6 +595,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedProductsProductIdLazyRoute,
   AuthenticatedAboutIndexRoute: AuthenticatedAboutIndexRoute,
   AuthenticatedContactIndexRoute: AuthenticatedContactIndexRoute,
+  AuthenticatedLoginIndexRoute: AuthenticatedLoginIndexRoute,
   AuthenticatedSssIndexRoute: AuthenticatedSssIndexRoute,
   AuthenticatedAppsIndexLazyRoute: AuthenticatedAppsIndexLazyRoute,
   AuthenticatedChatsIndexLazyRoute: AuthenticatedChatsIndexLazyRoute,
@@ -613,6 +629,7 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
   '/about': typeof AuthenticatedAboutIndexRoute
   '/contact': typeof AuthenticatedContactIndexRoute
+  '/login': typeof AuthenticatedLoginIndexRoute
   '/sss': typeof AuthenticatedSssIndexRoute
   '/apps': typeof AuthenticatedAppsIndexLazyRoute
   '/chats': typeof AuthenticatedChatsIndexLazyRoute
@@ -642,6 +659,7 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
   '/about': typeof AuthenticatedAboutIndexRoute
   '/contact': typeof AuthenticatedContactIndexRoute
+  '/login': typeof AuthenticatedLoginIndexRoute
   '/sss': typeof AuthenticatedSssIndexRoute
   '/apps': typeof AuthenticatedAppsIndexLazyRoute
   '/chats': typeof AuthenticatedChatsIndexLazyRoute
@@ -675,6 +693,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
   '/_authenticated/about/': typeof AuthenticatedAboutIndexRoute
   '/_authenticated/contact/': typeof AuthenticatedContactIndexRoute
+  '/_authenticated/login/': typeof AuthenticatedLoginIndexRoute
   '/_authenticated/sss/': typeof AuthenticatedSssIndexRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexLazyRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexLazyRoute
@@ -708,6 +727,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/about'
     | '/contact'
+    | '/login'
     | '/sss'
     | '/apps'
     | '/chats'
@@ -736,6 +756,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/about'
     | '/contact'
+    | '/login'
     | '/sss'
     | '/apps'
     | '/chats'
@@ -767,6 +788,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/notifications'
     | '/_authenticated/about/'
     | '/_authenticated/contact/'
+    | '/_authenticated/login/'
     | '/_authenticated/sss/'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
@@ -840,6 +862,7 @@ export const routeTree = rootRoute
         "/_authenticated/products/$productId",
         "/_authenticated/about/",
         "/_authenticated/contact/",
+        "/_authenticated/login/",
         "/_authenticated/sss/",
         "/_authenticated/apps/",
         "/_authenticated/chats/",
@@ -923,6 +946,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/contact/": {
       "filePath": "_authenticated/contact/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/login/": {
+      "filePath": "_authenticated/login/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/sss/": {
