@@ -9,6 +9,8 @@ import {
 } from "#components/ui/dropdown-menu";
 import { Input } from "#components/ui/input";
 import { cn } from "#lib/utils";
+import { useAuthStore } from "#stores/authStore.js";
+import { useRouter } from "@tanstack/react-router";
 import { ChevronDown, Menu, Search, ShoppingCart, User } from "lucide-react";
 import React, { useState } from "react";
 
@@ -24,6 +26,9 @@ export const Header = ({
 }: HeaderProps) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
+  const { auth } = useAuthStore();
+  const router = useRouter();
+
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -90,21 +95,53 @@ export const Header = ({
                 className="flex items-center space-x-2 border-gray-300 hover:bg-gray-50 px-4 py-2 h-10"
               >
                 <User className="w-5 h-5 text-gray-600" />
-                <span className="text-gray-700 font-medium">HESAP</span>
+                <div className="flex flex-col items-start">
+                  {auth.user ? (
+                    <>
+                      <span className="text-xs text-gray-500">{auth.user.name}</span>
+                      
+                    </>
+                  ) : (
+                    <span className="text-gray-700 font-medium">HESAP</span>
+                  )}
+                </div>
                 <ChevronDown className="w-4 h-4 text-gray-600" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40 z-[9999]" sideOffset={5}>
-              <DropdownMenuItem className="text-center border-b border-gray-300">
-                <a href="/login" className="w-full">
-                  Üye girişi
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-center">
-                <a href="/login" className="w-full">
-                  Üye ol
-                </a>
-              </DropdownMenuItem>
+              {auth.user ? (
+                <>
+                  <DropdownMenuItem className="text-center border-b border-gray-300">
+                    <a href="/account" className="w-full">
+                      Hesabım
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="text-center"
+                    onClick={() => {
+                      auth.logout();
+                      router.navigate({ to: "/login" });
+                    }}
+                  >
+                    <span className="w-full cursor-pointer">
+                      Çıkış Yap
+                    </span>
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem className="text-center border-b border-gray-300">
+                    <a href="/login" className="w-full">
+                      Üye girişi
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-center">
+                    <a href="/login" className="w-full">
+                      Üye ol
+                    </a>
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
           
@@ -162,21 +199,53 @@ export const Header = ({
                 className="flex items-center space-x-1 border-gray-300 hover:bg-gray-50 px-3 py-2 h-9"
               >
                 <User className="w-4 h-4 text-gray-600" />
-                <span className="text-gray-700 font-medium text-sm">HESAP</span>
+                <div className="flex flex-col items-start">
+                  {auth.user ? (
+                    <>
+                      <span className="text-xs text-gray-500 text-xs">{auth.user.name}</span>
+                      <span className="text-gray-700 font-medium text-sm">HESAP</span>
+                    </>
+                  ) : (
+                    <span className="text-gray-700 font-medium text-sm">HESAP</span>
+                  )}
+                </div>
                 <ChevronDown className="w-3 h-3 text-gray-600" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40 z-[9999]" sideOffset={5}>
-              <DropdownMenuItem className="text-center border-b border-gray-300">
-                <a href="/sign-in" className="w-full text-sm">
-                  Üye girişi
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-center">
-                <a href="/sign-up" className="w-full text-sm">
-                  Üye ol
-                </a>
-              </DropdownMenuItem>
+              {auth.user ? (
+                <>
+                  <DropdownMenuItem className="text-center border-b border-gray-300">
+                    <a href="/account" className="w-full text-sm">
+                      Hesabım
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="text-center"
+                    onClick={() => {
+                      auth.logout();
+                     router.navigate({ to: "/login" });
+                    }}
+                  >
+                    <span className="w-full cursor-pointer text-sm">
+                      Çıkış Yap
+                    </span>
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem className="text-center border-b border-gray-300">
+                    <a href="/sign-in" className="w-full text-sm">
+                      Üye girişi
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-center">
+                    <a href="/sign-up" className="w-full text-sm">
+                      Üye ol
+                    </a>
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
           

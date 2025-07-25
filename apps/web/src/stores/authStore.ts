@@ -6,6 +6,7 @@ const ACCESS_TOKEN = "Iyc0kTb8t3anRpXTjx3O9BE9psC3Lg8g.zEAppO4pKTqZgKYhRi%2F%2FJ
 interface AuthUser {
   accountNo: string;
   email: string;
+  name: string; // Bu satırı ekle
   role: string[];
   exp: number;
 }
@@ -18,6 +19,7 @@ interface AuthState {
     setAccessToken: (accessToken: string) => void;
     resetAccessToken: () => void;
     reset: () => void;
+    logout: () => void; // Bu satırı ekle
   };
 }
 
@@ -41,6 +43,15 @@ export const useAuthStore = create<AuthState>()((set) => {
           return { ...state, auth: { ...state.auth, accessToken: "" } };
         }),
       reset: () =>
+        set((state) => {
+          Cookies.remove(ACCESS_TOKEN);
+          return {
+            ...state,
+            auth: { ...state.auth, user: null, accessToken: "" },
+          };
+        }),
+      // Bu logout fonksiyonunu ekle
+      logout: () =>
         set((state) => {
           Cookies.remove(ACCESS_TOKEN);
           return {

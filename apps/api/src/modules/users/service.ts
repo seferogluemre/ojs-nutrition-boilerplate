@@ -121,6 +121,10 @@ export abstract class UsersService {
         ...(deletedFilter || {}),
         ...(activeFilter || {}),
       },
+      include: {
+        addresses: true,
+        orders:true,
+      },
     });
 
     if (!user) {
