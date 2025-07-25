@@ -24,16 +24,9 @@ export default function SignInForm() {
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("Login response:", data);
       
-      // Önce token'ı kaydet
       auth.setAccessToken(data.token);
-      // Sonra user'ı set et
       auth.setUser(data.user);
-      
-      setTimeout(() => {
-        auth.checkAuth();
-      }, 100);
 
       toast({
         title: "Başarılı giriş ✅", 

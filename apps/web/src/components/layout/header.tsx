@@ -41,7 +41,6 @@ export const Header = ({
       return await api.auth["sign-out"].post();
     },
     onSuccess: () => {
-      // Reset auth and cart
       auth.reset();
       clearCart();
       queryClient.clear();
