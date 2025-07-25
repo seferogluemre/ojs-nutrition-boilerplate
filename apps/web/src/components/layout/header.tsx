@@ -98,7 +98,7 @@ export const Header = ({
                 <div className="flex flex-col items-start">
                   {auth.user ? (
                     <>
-                      <span className="text-xs text-gray-500">{auth.user.name}</span>
+                      <span className="text-xs text-gray-500">{auth.user.firstName} {auth.user.lastName}</span>
                       
                     </>
                   ) : (
@@ -202,8 +202,7 @@ export const Header = ({
                 <div className="flex flex-col items-start">
                   {auth.user ? (
                     <>
-                      <span className="text-xs text-gray-500 text-xs">{auth.user.name}</span>
-                      <span className="text-gray-700 font-medium text-sm">HESAP</span>
+                      <span className="text-xs text-gray-500 text-xs">{auth.user.firstName} {auth.user.lastName}</span>
                     </>
                   ) : (
                     <span className="text-gray-700 font-medium text-sm">HESAP</span>
