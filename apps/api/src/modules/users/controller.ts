@@ -7,7 +7,7 @@ import { auth, authSwagger } from '../auth/authentication/plugin';
 import { PERMISSIONS } from '../auth/roles/constants';
 import { ensureUserHasPermission } from '../auth/roles/helpers';
 import { withPermission } from '../auth/roles/middleware';
-import { userCreateDto, userDestroyDto, userIndexDto, userShowDto, userSignupDto, userUpdateDto } from './dtos';
+import { userCreateDto, userDestroyDto, userIndexDto, userShowDto, userUpdateDto } from './dtos';
 import { UserFormatter } from './formatters';
 import { UsersService } from './service';
 import { userRolesApp } from './user-roles';
@@ -19,30 +19,11 @@ const app = new Elysia({
   },
 })
   .use(userRolesApp)
-  .post(
-    '/signup', // public signup
-    async ({ body }) => {
-      // Varsayılan değerler ile kullanıcı oluştur
-      const userData = {
-        email: body.email,
-        password: body.password,
-        firstName: body.firstName,
-        lastName: body.lastName,
-        gender: 'MALE', 
-        rolesSlugs: ['user'], 
-        isActive: true,
-        imageFile: undefined,
-      };
-      const user = await UsersService.store(userData);
-      return UserFormatter.response(user);
-    },
-    userSignupDto,
-  )
   .guard(authSwagger, (app) =>
     app
       .use(auth())
       .post(
-        '', // admin user create
+        '', 
         async ({ body }) => {
           const user = await UsersService.store(body);
           return UserFormatter.response(user);

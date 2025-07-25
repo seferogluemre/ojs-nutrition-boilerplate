@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.url.protocol}//${app.server?.hostname}:${app.server?.port}`,
+  `🦊 Elysia is running at ${app.server?.url.protocol}//${app.server?.hostname}:${app.server?.port} ${process.env.NODE_ENV} mode`,
 );
 
 export type App = typeof app;
