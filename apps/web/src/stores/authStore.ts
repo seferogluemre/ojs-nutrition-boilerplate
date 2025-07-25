@@ -67,21 +67,9 @@ export const useAuthStore = create<AuthState>()((set, get) => {
           };
         }),
       checkAuth: async () => {
-        const { accessToken } = get().auth;
-        console.log("checkAuth - gelen token:", accessToken);
-        
-        if (!accessToken) {
-          console.log("Token yok, auth check atlanıyor");
-          return;
-        }
-
         try {
           const response = await fetch("http://localhost:3000/api/auth/me", {
-            headers: {
-              "Content-Type": "application/json",
-              "Cookie": `onlyjs-session-token=${accessToken}`
-            },
-            credentials: 'include',
+            credentials: 'include', // Cookie'yi otomatik gönder
           });
 
           console.log("API response status:", response.status);
@@ -94,7 +82,7 @@ export const useAuthStore = create<AuthState>()((set, get) => {
               auth: { ...state.auth, user: userData as AuthUser },
             }));
           } else {
-            console.log("Token geçersiz, logout yapılıyor");
+            console.log("Session geçersiz, logout yapılıyor");
             get().auth.logout();
           }
         } catch (error) {

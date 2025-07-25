@@ -24,14 +24,19 @@ export default function SignInForm() {
       return response.data;
     },
     onSuccess: (data) => {
-      auth.setAccessToken(data.token);
+      console.log("Login response:", data);
+      
       auth.setUser(data.user);
+      
+      setTimeout(() => {
+        auth.checkAuth();
+      }, 100);
 
       toast({
-        title: "Başarılı giriş ✅",
+        title: "Başarılı giriş ✅", 
         description: `Hoş geldin, ${data.user.name}!`,
       });
-      router.navigate({ to: "/" }); // anasayfa
+      router.navigate({ to: "/" });
     },
     onError: (error: any) => {
       const message =
