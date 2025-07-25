@@ -30,9 +30,8 @@ export const Header = ({
   const { auth } = useAuthStore();
   const router = useRouter();
   const { items } = useCartStore();
-  console.log("items",items)
+
   const cartItemCount = items.length;
-  console.log("cartItemCount",cartItemCount)
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);

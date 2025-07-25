@@ -24,28 +24,27 @@ interface CartState {
   fetchCartItems: () => Promise<void>;
   clearCart: () => void;
 }
-const token=useAuthStore.getState().auth.accessToken;
+
+const token = useAuthStore.getState().auth.accessToken;
 
 export const useCartStore = create<CartState>()((set, get) => ({
   items: [],
-  
+
   setItems: (items) => set({ items }),
-  
+
   fetchCartItems: async () => {
     try {
       const response = await fetch("http://localhost:3000/api/cart-items", {
-        credentials: 'include',
+        credentials: "include",
         headers: {
-          "Authorization": `onlyjs-session-token=${token}`
-        }
+          Authorization: `onlyjs-session-token=${token}`,
+        },
       });
-      console.log("response",response)
+      
       if (response.ok) {
-        const result = await response.json() as any;
-        console.log("Cart items loaded:", result.items || []);
+        const result = (await response.json());
         set({ items: result.items || [] });
       } else {
-        console.log("Cart fetch failed, clearing items");
         set({ items: [] });
       }
     } catch (error) {
@@ -53,6 +52,6 @@ export const useCartStore = create<CartState>()((set, get) => ({
       set({ items: [] });
     }
   },
-  
+
   clearCart: () => set({ items: [] }),
 }));

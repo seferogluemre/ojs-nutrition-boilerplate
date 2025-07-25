@@ -17,12 +17,11 @@ export const Route = createRootRouteWithContext<{
     const { fetchCartItems } = useCartStore();
     
     useEffect(() => {
-      auth.checkAuth().then(() => {
-        if (auth.user) {
-          fetchCartItems();
-        }
-      });
-    }, []);
+      auth.checkAuth(); 
+      if(auth.accessToken){
+        fetchCartItems();
+      }
+    }, [auth.accessToken]);
     
     return (
       <>

@@ -1,10 +1,9 @@
 import { Button } from "#components/ui/button";
-import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
-import { useQuery } from "@tanstack/react-query";
+import { useCartStore } from "#stores/cartStore.js";
 import { Minus, Plus, Trash2, X } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -16,19 +15,27 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
   const token=auth.accessToken;
 
-  const { data: cartItems = [] } = useQuery({
-    queryKey: ["cart-items"],
-    queryFn: async() => {
-      const response = await api["cart-items"].index.get({
-        credentials: 'include',
-        headers: {
-          "Authorization": `onlyjs-session-token=${token}`
-        }
-      });
-      return response.data.items || [];
-    },
-    enabled: !!auth.user, // Sadece user varsa çalıştır
-  });
+  // const { data: cartItems = [] } = useQuery({
+  //   queryKey: ["cart-items"],
+  //   queryFn: async() => {
+  //     const response = await api["cart-items"].index.get({
+  //       credentials: 'include',
+  //       headers: {
+  //         "Authorization": `onlyjs-session-token=${token}`
+  //       }
+  //     });
+  //     return response.data.items || [];
+  //   },
+  // });
+
+
+  const {fetchCartItems}=useCartStore();
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
+  const { items: cartItems } = useCartStore();
+
 
   // Calculate total - gerçek data ile
   const totalAmount = cartItems.reduce((total: number, item: any) => {

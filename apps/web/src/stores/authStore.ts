@@ -28,7 +28,6 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => {
-  // localStorage'dan token'ı al
   const initToken = localStorage.getItem(ACCESS_TOKEN_KEY) || "";
   
   return {
@@ -66,10 +65,8 @@ export const useAuthStore = create<AuthState>()((set, get) => {
       checkAuth: async () => {
         try {
           const response = await fetch("http://localhost:3000/api/auth/me", {
-            credentials: 'include', // Cookie'yi otomatik gönder
+            credentials: 'include', 
           });
-
-
           if (response.ok) {
             const userData = await response.json();
             set((state) => ({
