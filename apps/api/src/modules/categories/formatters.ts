@@ -34,6 +34,13 @@ export abstract class CategoryFormatter {
                         slug: subChild.slug,
                         order: subChild.order,
                     })) || [],
+                    products: (child as any).products?.map((product: any) => ({
+                        id: product.uuid,
+                        name: product.name,
+                        slug: product.slug,
+                        price: product.price,
+                        picture_src: product.primaryPhotoUrl,
+                    })) || [],
                 })) || [],
                 top_sellers: data.top_sellers || [],
             },

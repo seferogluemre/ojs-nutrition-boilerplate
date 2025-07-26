@@ -10,7 +10,7 @@ import {
   CategoryNavigationProps,
   ChildCategory,
   PanelData,
-  SubChildCategory,
+  SubChildCategory
 } from "./mobile-sidebar.types";
 
 export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
@@ -91,10 +91,31 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
   // Current panel is always the top of the stack
   const currentPanel = panelStack[panelStack.length - 1];
 
+  // Main categories that should be displayed
+  const allowedMainCategories = [
+    "PROTEİN",
+    "WHEY PROTEİN", 
+    "SPOR GIDALAR",
+    "SPOR GIDALARI",
+    "SAĞLIK",
+    "GIDA",
+    "VİTAMİN",
+    "VITAMIN"
+  ];
+
   // Render functions for different panel levels
-  const renderMainCategories = () => (
-    <div className="space-y-1">
-      {(currentPanel.items as Category[]).map((category) => (
+  const renderMainCategories = () => {
+    // Filter categories to show only allowed main categories
+    const filteredCategories = (currentPanel.items as Category[]).filter(category => 
+      allowedMainCategories.some(allowed => 
+        category.name.toUpperCase().includes(allowed.toUpperCase()) ||
+        allowed.toUpperCase().includes(category.name.toUpperCase())
+      )
+    );
+
+    return (
+      <div className="space-y-1">
+        {filteredCategories.map((category) => (
         <div key={category.id}>
           <button
             onClick={() => {
@@ -124,35 +145,104 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
         </div>
       ))}
     </div>
-  );
+    );
+  };
 
-  const renderSubCategories = () => (
-    <div className="space-y-1">
-      {(currentPanel.items as ChildCategory[]).map((childCategory) => (
-        <div key={childCategory.id}>
-          <button
-            onClick={() => {
-              if (childCategory.sub_children.length > 0) {
-                navigateToSubcategory(childCategory);
-              }
-              // No action for subcategories without children
-            }}
-            className="flex items-center justify-between w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors duration-200"
-          >
-            <span className="text-base font-medium text-gray-900">
-              {childCategory.name}
-            </span>
-            {childCategory.sub_children.length > 0 && (
-              <ChevronRight className="w-5 h-5 text-gray-400" />
+  const navigateToProducts = (categoryId: string, categoryName: string) => {
+    router.navigate({ 
+      to: '/products', 
+      search: { categoryId, categoryName }
+    });
+    onClose();
+  };
+
+  const renderSubCategories = () => {
+    const currentItems = currentPanel.items as ChildCategory[];
+    
+    return (
+      <div className="space-y-1">
+        {/* Render SubCategories and their products */}
+        {currentItems.map((childCategory) => (
+          <div key={childCategory.id}>
+            <button
+              onClick={() => {
+                if (childCategory.sub_children.length > 0) {
+                  navigateToSubcategory(childCategory);
+                } else {
+                  // If no sub-children, navigate to products for this category
+                  navigateToProducts(childCategory.id, childCategory.name);
+                }
+              }}
+              className="flex items-center justify-between w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors duration-200"
+            >
+              <span className="text-base font-medium text-gray-900">
+                {childCategory.name}
+              </span>
+              {childCategory.sub_children.length > 0 ? (
+                <ChevronRight className="w-5 h-5 text-gray-400" />
+              ) : (
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                  Ürünleri Gör
+                </span>
+              )}
+            </button>
+            
+            {/* Show products for this specific ChildCategory */}
+            {childCategory.products && childCategory.products.length > 0 && (
+              <div className="bg-blue-50 px-4 py-3 ml-6 mr-6 mb-2 rounded-lg">
+                <h4 className="text-xs font-semibold text-blue-600 mb-2 uppercase tracking-wider">
+                  {childCategory.name} Ürünleri
+                </h4>
+                <div className="space-y-2">
+                  {childCategory.products.slice(0, 3).map((product) => (
+                    <button
+                      key={product.id}
+                      onClick={() => navigateToProductDetail(product.id)}
+                      className="flex items-center space-x-3 w-full p-2 rounded-md hover:bg-white transition-colors duration-200"
+                    >
+                      <div className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
+                        {product.picture_src && product.picture_src !== "null" ? (
+                          <img 
+                            src={`/images/${product.picture_src}`} 
+                            alt={product.name}
+                            className="w-full h-full object-cover rounded"
+                          />
+                        ) : (
+                          <span className="text-xs font-medium text-gray-600">
+                            {product.name.charAt(0)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1 text-left min-w-0">
+                        <p className="text-xs font-medium text-gray-900 truncate">
+                          {product.name}
+                        </p>
+                        <p className="text-xs text-blue-600 font-semibold">
+                          ₺{product.price}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                  {childCategory.products.length > 3 && (
+                    <button
+                      onClick={() => navigateToProducts(childCategory.id, childCategory.name)}
+                      className="text-xs text-blue-600 hover:text-blue-800 underline pl-2"
+                    >
+                      +{childCategory.products.length - 3} ürün daha...
+                    </button>
+                  )}
+                </div>
+              </div>
             )}
-          </button>
-          <div className="border-b border-gray-100" />
-        </div>
-      ))}
-      
-      {renderTopSellers()}
-    </div>
-  );
+            
+            <div className="border-b border-gray-100" />
+          </div>
+        ))}
+        
+        {renderTopSellers()}
+      </div>
+    );
+  };
 
   const renderSubSubCategories = () => (
     <div className="space-y-1">
@@ -179,7 +269,7 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
     if (!parentData?.top_sellers?.length) return null;
 
     return (
-      <div className="bg-gray-50 px-6 py-4 mt-4">
+      <div className="bg-gray-50 px-6 py-2 mt-12">
         <h3 className="text-xs font-semibold text-gray-600 mb-3 uppercase tracking-wider">
           Çok Satanlar
         </h3>

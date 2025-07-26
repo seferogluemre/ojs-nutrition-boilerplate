@@ -159,6 +159,18 @@ export abstract class CategoriesService {
                                 children: {
                                     orderBy: { order: 'asc' },
                                 },
+                                products: {
+                                    where: { isActive: true },
+                                    orderBy: { name: 'asc' },
+                                    take: 10,
+                                    select: {
+                                        uuid: true,
+                                        name: true,
+                                        slug: true,
+                                        price: true,
+                                        primaryPhotoUrl: true,
+                                    },
+                                },
                             },
                         },
                     },
@@ -193,6 +205,18 @@ export abstract class CategoriesService {
                         include: {
                             children: {
                                 orderBy: { order: 'asc' },
+                            },
+                            products: {
+                                where: { isActive: true },
+                                orderBy: { name: 'asc' },
+                                take: 10,
+                                select: {
+                                    uuid: true,
+                                    name: true,
+                                    slug: true,
+                                    price: true,
+                                    primaryPhotoUrl: true,
+                                },
                             },
                         },
                     },

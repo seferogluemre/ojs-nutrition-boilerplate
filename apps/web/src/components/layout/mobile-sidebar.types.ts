@@ -5,12 +5,21 @@ export interface SubChildCategory {
   order: number;
 }
 
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  picture_src: string;
+}
+
 export interface ChildCategory {
   id: string;
   name: string;
   slug: string;
   order: number;
   sub_children: SubChildCategory[];
+  products: Product[];
 }
 
 export interface TopSeller {

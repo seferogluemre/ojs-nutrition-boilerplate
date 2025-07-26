@@ -15,6 +15,13 @@ const childCategorySchema = t.Object({
     slug: t.String(),
     order: t.Number(),
     sub_children: t.Array(subChildCategorySchema),
+    products: t.Array(t.Object({
+        id: t.String(),
+        name: t.String(),
+        slug: t.String(),
+        price: t.Number(),
+        picture_src: t.String(),
+    })),
 });
 
 const topSellerSchema = t.Object({
