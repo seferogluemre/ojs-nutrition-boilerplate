@@ -109,7 +109,6 @@ export const CategoryNav = ({
       )}
       {...props}
     >
-      {/* Desktop/Tablet Kategori Links - 768px üzeri */}
       <div className="hidden md:flex items-center justify-center">
         <div className="w-full max-w-7xl mx-auto">
           <ul className="flex items-center justify-between w-full px-6 lg:px-8 xl:px-12 2xl:px-16">
