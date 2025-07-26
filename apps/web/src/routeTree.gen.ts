@@ -59,6 +59,9 @@ const AuthenticatedChatsIndexLazyImport = createFileRoute(
 const AuthenticatedAppsIndexLazyImport = createFileRoute(
   '/_authenticated/apps/',
 )()
+const AuthenticatedAccountIndexLazyImport = createFileRoute(
+  '/_authenticated/account/',
+)()
 const AuthenticatedSettingsNotificationsLazyImport = createFileRoute(
   '/_authenticated/settings/notifications',
 )()
@@ -246,6 +249,15 @@ const AuthenticatedAppsIndexLazyRoute = AuthenticatedAppsIndexLazyImport.update(
 ).lazy(() =>
   import('./routes/_authenticated/apps/index.lazy').then((d) => d.Route),
 )
+
+const AuthenticatedAccountIndexLazyRoute =
+  AuthenticatedAccountIndexLazyImport.update({
+    id: '/account/',
+    path: '/account/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/account/index.lazy').then((d) => d.Route),
+  )
 
 const AuthenticatedSssIndexRoute = AuthenticatedSssIndexImport.update({
   id: '/sss/',
@@ -491,6 +503,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSssIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/account/': {
+      id: '/_authenticated/account/'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/apps/': {
       id: '/_authenticated/apps/'
       path: '/apps'
@@ -579,6 +598,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedContactIndexRoute: typeof AuthenticatedContactIndexRoute
   AuthenticatedLoginIndexRoute: typeof AuthenticatedLoginIndexRoute
   AuthenticatedSssIndexRoute: typeof AuthenticatedSssIndexRoute
+  AuthenticatedAccountIndexLazyRoute: typeof AuthenticatedAccountIndexLazyRoute
   AuthenticatedAppsIndexLazyRoute: typeof AuthenticatedAppsIndexLazyRoute
   AuthenticatedChatsIndexLazyRoute: typeof AuthenticatedChatsIndexLazyRoute
   AuthenticatedHelpCenterIndexLazyRoute: typeof AuthenticatedHelpCenterIndexLazyRoute
@@ -597,6 +617,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedContactIndexRoute: AuthenticatedContactIndexRoute,
   AuthenticatedLoginIndexRoute: AuthenticatedLoginIndexRoute,
   AuthenticatedSssIndexRoute: AuthenticatedSssIndexRoute,
+  AuthenticatedAccountIndexLazyRoute: AuthenticatedAccountIndexLazyRoute,
   AuthenticatedAppsIndexLazyRoute: AuthenticatedAppsIndexLazyRoute,
   AuthenticatedChatsIndexLazyRoute: AuthenticatedChatsIndexLazyRoute,
   AuthenticatedHelpCenterIndexLazyRoute: AuthenticatedHelpCenterIndexLazyRoute,
@@ -631,6 +652,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof AuthenticatedContactIndexRoute
   '/login': typeof AuthenticatedLoginIndexRoute
   '/sss': typeof AuthenticatedSssIndexRoute
+  '/account': typeof AuthenticatedAccountIndexLazyRoute
   '/apps': typeof AuthenticatedAppsIndexLazyRoute
   '/chats': typeof AuthenticatedChatsIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
@@ -661,6 +683,7 @@ export interface FileRoutesByTo {
   '/contact': typeof AuthenticatedContactIndexRoute
   '/login': typeof AuthenticatedLoginIndexRoute
   '/sss': typeof AuthenticatedSssIndexRoute
+  '/account': typeof AuthenticatedAccountIndexLazyRoute
   '/apps': typeof AuthenticatedAppsIndexLazyRoute
   '/chats': typeof AuthenticatedChatsIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
@@ -695,6 +718,7 @@ export interface FileRoutesById {
   '/_authenticated/contact/': typeof AuthenticatedContactIndexRoute
   '/_authenticated/login/': typeof AuthenticatedLoginIndexRoute
   '/_authenticated/sss/': typeof AuthenticatedSssIndexRoute
+  '/_authenticated/account/': typeof AuthenticatedAccountIndexLazyRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexLazyRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexLazyRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexLazyRoute
@@ -729,6 +753,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/login'
     | '/sss'
+    | '/account'
     | '/apps'
     | '/chats'
     | '/help-center'
@@ -758,6 +783,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/login'
     | '/sss'
+    | '/account'
     | '/apps'
     | '/chats'
     | '/help-center'
@@ -790,6 +816,7 @@ export interface FileRouteTypes {
     | '/_authenticated/contact/'
     | '/_authenticated/login/'
     | '/_authenticated/sss/'
+    | '/_authenticated/account/'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
     | '/_authenticated/help-center/'
@@ -864,6 +891,7 @@ export const routeTree = rootRoute
         "/_authenticated/contact/",
         "/_authenticated/login/",
         "/_authenticated/sss/",
+        "/_authenticated/account/",
         "/_authenticated/apps/",
         "/_authenticated/chats/",
         "/_authenticated/help-center/",
@@ -954,6 +982,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/sss/": {
       "filePath": "_authenticated/sss/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/account/": {
+      "filePath": "_authenticated/account/index.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/apps/": {
