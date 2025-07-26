@@ -50,30 +50,39 @@ const app = new Elysia({
     },
     productShowDto,
   )
-  .post(
-    '',
-    async ({ body }) => {
-      let productData = { ...body };
 
-      // File upload handle - sadece File gelirse upload yap
-      if (typeof body.primaryPhotoUrl === 'object' && body.primaryPhotoUrl instanceof File) {
-        const { fileUrl } = await FileUploadUtil.uploadProductPhoto(body.primaryPhotoUrl);
-        productData = {
-          ...productData,
-          primaryPhotoUrl: fileUrl,
-        };
-      }
-      // String gelirse direkt kullan (test için)
-
-      const product = await ProductsService.store(productData);
-      return ProductFormatter.response(product);
-    },
-    { ...productCreateDto },
-  )
   .guard(authSwagger, (app) =>
     app
       .use(auth())
+      .post(
+        '',
+        async ({ body }) => {
+          let productData = { ...body };
 
+          // File upload handle - sadece File gelirse upload yap
+          if (typeof body.primaryPhotoUrl === 'object' && body.primaryPhotoUrl instanceof File) {
+            const { fileUrl } = await FileUploadUtil.uploadProductPhoto(body.primaryPhotoUrl);
+            productData = {
+              ...productData,
+              primaryPhotoUrl: fileUrl,
+            };
+          }
+          // String gelirse direkt kullan (test için)
+
+          const product = await ProductsService.store(productData);
+          return ProductFormatter.response(product);
+        },
+        dtoWithMiddlewares(
+          productCreateDto,
+          withPermission(PERMISSIONS.PRODUCTS.CREATE),
+          withAuditLog<typeof productCreateDto>({
+            actionType: AuditLogAction.CREATE,
+            entityType: AuditLogEntity.PRODUCT,
+            getDescription: ({ body }) => `Ürün oluşturuldu: ${body.name}`,
+            getEntityUuid: ({ body }) => body.id,
+          }),
+        ),
+      )
       .patch(
         '/:id',
         async ({ params, body }) => {

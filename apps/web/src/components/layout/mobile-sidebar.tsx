@@ -5,22 +5,14 @@ import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { ChevronRight, LogOut, User, X } from "lucide-react";
+import { LogOut, User, X } from "lucide-react";
 import React from "react";
+import { CategoryNavigation } from "./category-navigation";
 
 interface MobileSidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-const categories = [
-  "PROTEİN",
-  "SPOR GIDALARI", 
-  "SAĞLIK",
-  "GIDA",
-  "VİTAMİN",
-  "TÜM ÜRÜNLER"
-];
 
 const accountLinks = [
   "HESABIM",
@@ -100,39 +92,19 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
 
         {/* Content */}
         <div className="flex flex-col h-full relative">
-          {/* Categories Section - White Background */}
-          <div className="bg-white">
-            {categories.map((category, index) => (
-              <div key={category}>
-                <a
-                  href="#"
-                  className="flex items-center justify-between px-6 py-4 text-gray-900 hover:bg-gray-50 transition-colors duration-200"
-                  onClick={() => {
-                    // Handle category click
-                    // TODO: Navigate to category page
-                  }}
-                >
-                  <span className="text-base font-medium">{category}</span>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
-                </a>
-                {/* Divider - except for last item */}
-                {index < categories.length - 1 && (
-                  <div className="border-b border-gray-100 mx-6" />
-                )}
-              </div>
-            ))}
+          {/* Categories Navigation Section */}
+          <div className="bg-white flex-1 overflow-hidden">
+            <CategoryNavigation onClose={onClose} />
           </div>
 
           {/* Account Links Section - Gray Background */}
-          <div className="bg-gray-100">
+          <div className="bg-gray-100 absolute bottom-0 w-full">
             {accountLinks.map((link, index) => (
               <div key={link}>
                 <a
                   href="#"
                   className="flex items-center px-6 py-4 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
                   onClick={() => {
-                    // Handle account link click
-                    // TODO: Navigate to account page
                   }}
                 >
                   <span className="text-base font-medium">{link}</span>
