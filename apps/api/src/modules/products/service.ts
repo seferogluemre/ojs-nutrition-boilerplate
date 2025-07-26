@@ -190,8 +190,21 @@ export abstract class ProductsService {
 
   static async store(data: ProductCreatePayload): Promise<ProductWithRelations> {
     try {
+      // UUID categoryId'yi numeric ID'ye çevir
+      const category = await prisma.category.findUnique({
+        where: { uuid: data.categoryId },
+        select: { id: true }
+      });
+
+      if (!category) {
+        throw new NotFoundException('Kategori bulunamadı');
+      }
+
       const product = await prisma.product.create({
-        data,
+        data: {
+          ...data,
+          categoryId: category.id, 
+        },
         include: {
           category: {
             select: {
@@ -237,9 +250,28 @@ export abstract class ProductsService {
 
   static async update(uuid: string, data: ProductUpdatePayload): Promise<ProductWithRelations> {
     try {
+      let updateData: any = { ...data };
+
+      // Eğer categoryId UUID olarak gelirse numeric ID'ye çevir
+      if (data.categoryId) {
+        const category = await prisma.category.findUnique({
+          where: { uuid: data.categoryId },
+          select: { id: true }
+        });
+
+        if (!category) {
+          throw new NotFoundException('Kategori bulunamadı');
+        }
+
+        updateData = {
+          ...updateData,
+          categoryId: category.id, // UUID yerine numeric ID kullan
+        };
+      }
+
       const product = await prisma.product.update({
         where: { uuid },
-        data,
+        data: updateData,
         include: {
           category: {
             select: {
@@ -272,12 +304,7 @@ export abstract class ProductsService {
         },
       });
 
-      return {
-        ...product,
-        photos: [],
-        productVariants: [],
-        comments: [],
-      } as unknown as ProductWithRelations;
+      return product as unknown as ProductWithRelations;
     } catch (error) {
       throw this.handlePrismaError(error, 'update');
     }

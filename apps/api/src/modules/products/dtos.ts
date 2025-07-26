@@ -130,9 +130,9 @@ export const bestSellersDto = {
 
 // Create product schema
 export const productCreateSchema = t.Object({
-  categoryId: t.Number({
-    minimum: 1,
-    error: 'Kategori ID geçerli bir sayı olmalıdır.',
+  categoryId: t.String({
+    format: 'uuid',
+    error: 'Kategori ID geçerli bir UUID olmalıdır.',
   }),
   name: t.String({
     minLength: 2,
@@ -176,9 +176,9 @@ export const productCreateSchema = t.Object({
 // Update product schema
 export const productUpdateSchema = t.Object({
   categoryId: t.Optional(
-    t.Number({
-      minimum: 1,
-      error: 'Kategori ID geçerli bir sayı olmalıdır.',
+    t.String({
+      format: 'uuid',
+      error: 'Kategori ID geçerli bir UUID olmalıdır.',
     }),
   ),
   name: t.Optional(
