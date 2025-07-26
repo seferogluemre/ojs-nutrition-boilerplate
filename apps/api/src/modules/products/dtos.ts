@@ -166,11 +166,35 @@ export const productCreateSchema = t.Object({
     minimum: 0,
     error: 'Fiyat sıfır veya pozitif bir sayı olmalıdır.',
   }),
-  primaryPhotoUrl: t.String({
+  primaryPhotoUrl: t.Optional(t.String({
     maxLength: 255,
     error: "Ana fotoğraf URL'si en fazla 255 karakter olmalıdır.",
-  }),
+  })),
   isActive: t.Optional(t.Boolean()),
+  
+  // YENİ ALANLAR
+  explanation: t.Optional(t.Object({
+    usage: t.Optional(t.String()),
+    features: t.Optional(t.String()),
+    description: t.Optional(t.String()),
+    nutritional_content: t.Optional(t.Object({
+      ingredients: t.Optional(t.Array(t.Object({
+        aroma: t.Union([t.String(), t.Null()]),
+        value: t.String()
+      }))),
+      nutrition_facts: t.Optional(t.Object({
+        ingredients: t.Array(t.Object({
+          name: t.String(),
+          amounts: t.Array(t.String())
+        })),
+        portion_sizes: t.Array(t.String())
+      })),
+      amino_acid_facts: t.Optional(t.Any())
+    }))
+  })),
+  mainCategoryId: t.Optional(t.String()),
+  subCategoryId: t.Optional(t.String()),
+  tags: t.Optional(t.Array(t.String()))
 });
 
 // Update product schema
@@ -232,6 +256,30 @@ export const productUpdateSchema = t.Object({
     }),
   ),
   isActive: t.Optional(t.Boolean()),
+  
+  // YENİ ALANLAR
+  explanation: t.Optional(t.Object({
+    usage: t.Optional(t.String()),
+    features: t.Optional(t.String()),
+    description: t.Optional(t.String()),
+    nutritional_content: t.Optional(t.Object({
+      ingredients: t.Optional(t.Array(t.Object({
+        aroma: t.Union([t.String(), t.Null()]),
+        value: t.String()
+      }))),
+      nutrition_facts: t.Optional(t.Object({
+        ingredients: t.Array(t.Object({
+          name: t.String(),
+          amounts: t.Array(t.String())
+        })),
+        portion_sizes: t.Array(t.String())
+      })),
+      amino_acid_facts: t.Optional(t.Any())
+    }))
+  })),
+  mainCategoryId: t.Optional(t.String()),
+  subCategoryId: t.Optional(t.String()),
+  tags: t.Optional(t.Array(t.String()))
 });
 
 // Query parameters schema for index
