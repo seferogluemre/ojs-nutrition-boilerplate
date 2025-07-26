@@ -19,7 +19,7 @@ export function AccountInfoTab({ user }: AccountInfoTabProps) {
 
   const updateMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await api.users[user.id].patch(data, {
+      const response = await api.users.me.patch(data, {
         headers: {
           authorization: `Bearer ${auth.accessToken}`,
         },
@@ -55,11 +55,11 @@ export function AccountInfoTab({ user }: AccountInfoTabProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Sadece değişen alanları gönder
     const updatedFields: any = {};
     if (formData.firstName !== user?.firstName) updatedFields.firstName = formData.firstName;
     if (formData.lastName !== user?.lastName) updatedFields.lastName = formData.lastName;
     
+    // En az bir alan değişmişse güncelle
     if (Object.keys(updatedFields).length > 0) {
       updateMutation.mutate(updatedFields);
     } else {
@@ -93,7 +93,7 @@ export function AccountInfoTab({ user }: AccountInfoTabProps) {
             <input
               type="text"
               value={formData.firstName}
-              onChange={(e) => handleInputChange("firstName", e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange("firstName", e.currentTarget.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm md:text-base"
               placeholder="Berkan"
               required
@@ -107,7 +107,7 @@ export function AccountInfoTab({ user }: AccountInfoTabProps) {
             <input
               type="text"
               value={formData.lastName}
-              onChange={(e) => handleInputChange("lastName", e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange("lastName", e.currentTarget.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm md:text-base"
               placeholder="Saraç"
               required
@@ -125,7 +125,7 @@ export function AccountInfoTab({ user }: AccountInfoTabProps) {
               <input
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange("phone", e.currentTarget.value)}
                 className="flex-1 px-3 py-2 border border-gray-300 sm:rounded-r-md sm:rounded-l-none rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm md:text-base"
                 placeholder="5XX XXX XX XX"
               />

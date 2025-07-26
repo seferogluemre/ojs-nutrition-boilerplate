@@ -147,3 +147,19 @@ export const userCreateDto = {
   },
 } satisfies ControllerHook;
 export const userCreateResponseDto = userCreateDto.response['200'];
+
+export const userUpdateMeDto = {
+  body: t.Object({
+    firstName: t.Optional(t.String({ minLength: 2, maxLength: 50 })),
+    lastName: t.Optional(t.String({ minLength: 2, maxLength: 50 })),
+    phone: t.Optional(t.String({ minLength: 10, maxLength: 15 })),
+    gender: t.Optional(t.Enum(Gender)),
+  }),
+  response: {
+    200: userResponseSchema,
+    422: errorResponseDto[422],
+  },
+  detail: {
+    summary: 'Update Own Profile',
+  },
+} satisfies ControllerHook;
