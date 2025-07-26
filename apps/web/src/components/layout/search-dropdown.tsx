@@ -45,10 +45,9 @@ export const SearchDropdown = React.forwardRef<HTMLDivElement, SearchDropdownPro
                                 >
                                     <div className="flex-shrink-0">
                                         <img
-                                            src={product.primaryPhotoUrl || "/images/collagen.jpg"}
+                                            src={product.primaryPhotoUrl ? product.primaryPhotoUrl : "/images/collagen.jpg"}
                                             alt={product.name}
                                             className="w-12 h-12 object-cover rounded"
-
                                         />
                                     </div>
 

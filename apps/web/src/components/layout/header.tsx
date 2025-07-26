@@ -46,7 +46,6 @@ export const Header = ({
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  console.log("debounced search query", debouncedSearchQuery)
 
   const { data: searchData } = useQuery({
     queryKey: ["search-products", debouncedSearchQuery],
@@ -390,8 +389,8 @@ export const Header = ({
           <Menu className="w-7 h-7 stroke-2" />
         </Button>
 
-        <div className="flex-1 text-center">
-          <span className="text-lg font-black">OJS NUTRITION</span>
+        <div className="flex-1 flex justify-center">
+          <img src="/images/image.png" alt="logo" className="h-8" />
         </div>
 
         <Button variant="ghost" size="sm" className="relative" onClick={toggleCartSidebar}>

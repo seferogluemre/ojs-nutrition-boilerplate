@@ -29,7 +29,6 @@ export const HeroBanner = ({
       }}
       {...props}
     >
-      {/* Banner content - currently empty as requested */}
     </div>
   );
 };

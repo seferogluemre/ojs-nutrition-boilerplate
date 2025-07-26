@@ -1,8 +1,13 @@
+import { SearchDropdown } from "#components/layout/search-dropdown";
 import { Button } from "#components/ui/button";
 import { Input } from "#components/ui/input";
+import { useDebounce } from "#hooks/use-debounce";
+import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
+import { SearchProps } from "#types/search";
+import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface CategoryNavProps extends React.HTMLAttributes<HTMLElement> {
   ref?: React.Ref<HTMLElement>;
@@ -21,6 +26,77 @@ export const CategoryNav = ({
   className,
   ...props
 }: CategoryNavProps) => {
+  // Search states
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<SearchProps[]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  // Search API query
+  const { data: searchData } = useQuery({
+    queryKey: ["search-products-category", debouncedSearchQuery],
+    queryFn: async () => {
+      if (debouncedSearchQuery.length < 2) return { data: [] };
+
+      const response = await api.products.get({
+        query: { search: debouncedSearchQuery }
+      });
+      return response.data;
+    },
+    enabled: debouncedSearchQuery.length >= 2,
+  });
+
+  // Handle search data changes
+  useEffect(() => {
+    if (searchData) {
+      setSearchResults(searchData?.data || []);
+      setIsSearchLoading(false);
+    }
+  }, [searchData]);
+
+  // Search handlers
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    if (value.length >= 2) {
+      setIsSearchLoading(true);
+      setIsSearchOpen(true);
+    } else {
+      setIsSearchOpen(false);
+      setSearchResults([]);
+    }
+  };
+
+  const handleSearchItemClick = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+  };
+
+  // Click outside effect for search
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    };
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, []);
+
   return (
     <nav
       className={cn(
@@ -53,11 +129,14 @@ export const CategoryNav = ({
 
       {/* Mobile Search Bar - 768px altı */}
       <div className="md:hidden bg-white px-4">
-        <div className="relative">
+        <div className="relative" ref={searchContainerRef}>
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 rounded-xxl" />
           <Input
             type="text"
             placeholder="ARADIĞINIZ ÜRÜNÜ YAZINIZ..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onFocus={() => searchQuery.length >= 2 && setIsSearchOpen(true)}
             className="w-full pl-10 pr-16 py-2 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <Button
@@ -66,6 +145,14 @@ export const CategoryNav = ({
           >
             ARA
           </Button>
+          
+          <SearchDropdown
+            items={searchResults}
+            isLoading={isSearchLoading}
+            isOpen={isSearchOpen}
+            onItemClick={handleSearchItemClick}
+            onClose={handleCloseSearch}
+          />
         </div>
       </div>
     </nav>

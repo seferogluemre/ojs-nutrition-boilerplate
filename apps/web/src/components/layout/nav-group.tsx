@@ -1,6 +1,3 @@
-import { ReactNode } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,6 +14,9 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "#components/ui/sidebar";
+import { Link, useLocation } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+import { ReactNode } from "react";
 import { Badge } from "../ui/badge";
 import {
   DropdownMenu,
