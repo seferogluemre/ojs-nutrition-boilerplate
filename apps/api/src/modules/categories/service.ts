@@ -104,6 +104,7 @@ export abstract class CategoriesService {
             ],
             take: 3,
             select: {
+                uuid: true,
                 name: true,
                 slug: true,
                 shortDescription: true,
@@ -112,6 +113,7 @@ export abstract class CategoriesService {
         });
 
         return topSellers.map(product => ({
+            id: product.uuid,
             name: product.name,
             slug: product.slug,
             description: product.shortDescription,

@@ -29,6 +29,7 @@ export abstract class CategoryFormatter {
                     slug: child.slug,
                     order: child.order,
                     sub_children: child.children?.map(subChild => ({
+                        id: subChild.uuid,
                         name: subChild.name,
                         slug: subChild.slug,
                         order: subChild.order,

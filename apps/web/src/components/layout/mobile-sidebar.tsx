@@ -90,94 +90,96 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
           </Button>
         </div>
 
-        {/* Content */}
-        <div className="flex flex-col h-full relative">
-          {/* Categories Navigation Section */}
-          <div className="bg-white flex-1 overflow-hidden">
+        {/* Content - Full height layout */}
+        <div className="flex flex-col h-full">
+          {/* Categories Navigation Section - Takes available space */}
+          <div className="flex-1 bg-white overflow-hidden">
             <CategoryNavigation onClose={onClose} />
           </div>
 
-          {/* Account Links Section - Gray Background */}
-          <div className="bg-gray-100 absolute bottom-0 w-full">
-            {accountLinks.map((link, index) => (
-              <div key={link}>
-                <a
-                  href="#"
-                  className="flex items-center px-6 py-4 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
-                  onClick={() => {
-                  }}
-                >
-                  <span className="text-base font-medium">{link}</span>
-                </a>
-                {/* Divider - except for last item */}
-                {index < accountLinks.length - 1 && (
-                  <div className="border-b border-gray-200 mx-6" />
-                )}
-              </div>
-            ))}
-          </div>
+          {/* Fixed Bottom Section */}
+          <div className="flex-shrink-0">
+            {/* Account Links Section - Gray Background */}
+            <div className="bg-gray-100">
+              {accountLinks.map((link, index) => (
+                <div key={link}>
+                  <a
+                    href="#"
+                    className="flex items-center px-6 py-4 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
+                    onClick={() => {
+                      // Handle account link click
+                      // TODO: Navigate to account page
+                    }}
+                  >
+                    <span className="text-base font-medium">{link}</span>
+                  </a>
+                  {/* Divider - except for last item */}
+                  {index < accountLinks.length - 1 && (
+                    <div className="border-b border-gray-200 mx-6" />
+                  )}
+                </div>
+              ))}
+            </div>
 
-          {/* Spacer to push user section towards bottom but keep it visible */}
-          <div className="flex-1"></div>
-
-          {/* User Section - Bottom but visible */}
-          <div className="mb-24 px-3">
-            {auth.user ? (
-              /* Logged in user */
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                      <User className="w-6 h-6 text-gray-600" />
+            {/* User Section - Bottom */}
+            <div className="bg-white px-4 py-4 border-t border-gray-200">
+              {auth.user ? (
+                /* Logged in user */
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3 flex-1">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                        <User className="w-6 h-6 text-gray-600" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        Hoşgeldin!
+                      </p>
+                      <p className="text-sm text-gray-600 truncate">
+                        {auth.user.firstName} {auth.user.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {auth.user.email}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      Hoşgeldin!
-                    </p>
-                    <p className="text-sm text-gray-600 truncate">
-                      {auth.user.firstName} {auth.user.lastName}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {auth.user.email}
-                    </p>
-                  </div>
+                  {/* Logout Icon - Right side of user info */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => logoutMutation.mutate()}
+                    className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-full ml-2"
+                    disabled={logoutMutation.isPending}
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </Button>
                 </div>
-                {/* Logout Icon - Right side of user info */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => logoutMutation.mutate()}
-                  className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-full ml-2"
-                  disabled={logoutMutation.isPending}
-                >
-                  <LogOut className="w-5 h-5" />
-                </Button>
-              </div>
-            ) : (
-              /* Not logged in */
-              <div className="space-y-2">
-                <Button 
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                  onClick={() => {
-                    router.navigate({ to: "/login" });
-                    onClose();
-                  }}
-                >
-                  Üye Girişi
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full border-gray-300"
-                  onClick={() => {
-                    router.navigate({ to: "/login" });
-                    onClose();
-                  }}
-                >
-                  Üye Ol
-                </Button>
-              </div>
-            )}
+              ) : (
+                /* Not logged in */
+                <div className="space-y-2">
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => {
+                      router.navigate({ to: "/login" });
+                      onClose();
+                    }}
+                  >
+                    Üye Girişi
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-gray-300"
+                    onClick={() => {
+                      router.navigate({ to: "/login" });
+                      onClose();
+                    }}
+                  >
+                    Üye Ol
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

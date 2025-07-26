@@ -1,4 +1,5 @@
 export interface SubChildCategory {
+  id: string;
   name: string;
   slug: string;
   order: number;
@@ -13,6 +14,7 @@ export interface ChildCategory {
 }
 
 export interface TopSeller {
+  id: string;
   name: string;
   slug: string;
   description: string;
@@ -42,12 +44,13 @@ export interface CategoryNavigationProps {
   onClose: () => void;
 }
 
-// Expanded state for accordion navigation
-export interface ExpandedState {
-  [categoryId: string]: {
-    isExpanded: boolean;
-    expandedChildren?: {
-      [childId: string]: boolean;
-    };
-  };
+// Sliding panels types
+export type PanelLevel = 'main' | 'category' | 'subcategory' | 'products';
+
+export interface PanelData {
+  level: PanelLevel;
+  title: string;
+  items: any[];
+  parentId?: string;
+  parentData?: Category | ChildCategory;
 } 

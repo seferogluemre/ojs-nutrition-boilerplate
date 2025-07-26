@@ -23,6 +23,7 @@ export type ChildCategory = {
 };
 
 export type TopSeller = {
+    id: string;
     name: string;
     slug: string;
     description: string;

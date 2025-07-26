@@ -3,6 +3,7 @@ import { ControllerHook, errorResponseDto, uuidValidation } from '../../utils';
 import { paginationQueryDto, paginationResponseDto } from '../../utils/pagination';
 
 const subChildCategorySchema = t.Object({
+    id: t.String(),
     name: t.String(),
     slug: t.String(),
     order: t.Number(),
@@ -17,6 +18,7 @@ const childCategorySchema = t.Object({
 });
 
 const topSellerSchema = t.Object({
+    id: t.String(),
     name: t.String(),
     slug: t.String(),
     description: t.String(),
