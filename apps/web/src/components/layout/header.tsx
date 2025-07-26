@@ -8,14 +8,17 @@ import {
   DropdownMenuTrigger,
 } from "#components/ui/dropdown-menu";
 import { Input } from "#components/ui/input";
+import { useDebounce } from "#hooks/use-debounce";
 import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { SearchProps } from "#types/search.js";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ChevronDown, Menu, Search, ShoppingCart, User } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { SearchDropdown } from "./search-dropdown";
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean;
@@ -34,8 +37,77 @@ export const Header = ({
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  // Search state
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<SearchProps[]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
-  // Logout mutation
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  console.log("debounced search query", debouncedSearchQuery)
+
+  const { data: searchData } = useQuery({
+    queryKey: ["search-products", debouncedSearchQuery],
+    queryFn: async () => {
+      if (debouncedSearchQuery.length < 2) return { data: [] };
+
+      const response = await api.products.get({
+        query: { search: debouncedSearchQuery }
+      });
+      return response.data;
+    },
+    enabled: debouncedSearchQuery.length >= 2,
+  });
+
+  // Handle search data changes
+  useEffect(() => {
+    if (searchData) {
+      setSearchResults(searchData?.data || []);
+      setIsSearchLoading(false);
+    }
+  }, [searchData]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = (e.target as HTMLInputElement).value;
+    setSearchQuery(value);
+
+    if (value.length >= 2) {
+      setIsSearchLoading(true);
+      setIsSearchOpen(true);
+    } else {
+      setIsSearchOpen(false);
+      setSearchResults([]);
+    }
+  };
+
+  const handleSearchItemClick = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+  };
+
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+
+  }, [])
+
+
   const logoutMutation = useMutation({
     mutationFn: async () => {
       return await api.auth["sign-out"].post();
@@ -90,18 +162,21 @@ export const Header = ({
         {/* Logo - Sol */}
         <div className="flex-shrink-0">
           <div className="flex items-center">
-           <img src="/images/image.png" alt="logo" className="h-10" />
+            <img src="/images/image.png" alt="logo" className="h-10" />
           </div>
         </div>
 
         {/* Search Bar - Orta, esnek genişlik */}
-        <div className="flex-1 max-w-lg mx-8">
+        <div className="flex-1 max-w-lg mx-8" ref={searchContainerRef}>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               type="text"
               placeholder="Aradığınız ürünü yazınız..."
               className="w-full pl-10 pr-20 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={() => searchQuery.length >= 2 && setIsSearchOpen(true)}
             />
             <Button
               size="sm"
@@ -109,6 +184,14 @@ export const Header = ({
             >
               ARA
             </Button>
+
+            <SearchDropdown
+              items={searchResults}
+              isLoading={isSearchLoading}
+              isOpen={isSearchOpen}
+              onItemClick={handleSearchItemClick}
+              onClose={handleCloseSearch}
+            />
           </div>
         </div>
 
@@ -117,9 +200,9 @@ export const Header = ({
           {/* Hesabım Button - Border'lı ve dropdown oklı */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="flex items-center space-x-2 border-gray-300 hover:bg-gray-50 px-4 py-2 h-10"
               >
                 <User className="w-5 h-5 text-gray-600" />
@@ -127,7 +210,7 @@ export const Header = ({
                   {auth.user ? (
                     <>
                       <span className="text-xs text-gray-500">{auth.user.firstName} {auth.user.lastName}</span>
-                      
+
                     </>
                   ) : (
                     <span className="text-gray-700 font-medium">HESAP</span>
@@ -144,7 +227,7 @@ export const Header = ({
                       Hesabım
                     </a>
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     className="text-center"
                     onClick={() => {
                       logoutMutation.mutate();
@@ -171,10 +254,10 @@ export const Header = ({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-          
+
           {/* Sepet Button - Gri background'lu */}
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             className="flex items-center space-x-2 relative bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 h-10"
             onClick={toggleCartSidebar}
           >
@@ -193,18 +276,21 @@ export const Header = ({
         {/* Logo - Sol */}
         <div className="flex-shrink-0">
           <div className="flex items-center">
-           <img src="/images/image.png" alt="logo" className="h-8" />
+            <img src="/images/image.png" alt="logo" className="h-8" />
           </div>
         </div>
 
         {/* Search Bar - Orta */}
-        <div className="flex-1 max-w-md mx-6">
+        <div className="flex-1 max-w-md mx-6" ref={searchContainerRef}>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               type="text"
               placeholder="Aradığınız ürünü yazınız..."
               className="w-full pl-9 pr-16 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={() => searchQuery.length >= 2 && setIsSearchOpen(true)}
             />
             <Button
               size="sm"
@@ -212,6 +298,14 @@ export const Header = ({
             >
               ARA
             </Button>
+
+            <SearchDropdown
+              items={searchResults}
+              isLoading={isSearchLoading}
+              isOpen={isSearchOpen}
+              onItemClick={handleSearchItemClick}
+              onClose={handleCloseSearch}
+            />
           </div>
         </div>
 
@@ -220,9 +314,9 @@ export const Header = ({
           {/* Hesabım Button - Tablet için kompakt */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="flex items-center space-x-1 border-gray-300 hover:bg-gray-50 px-3 py-2 h-9"
               >
                 <User className="w-4 h-4 text-gray-600" />
@@ -246,7 +340,7 @@ export const Header = ({
                       Hesabım
                     </a>
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     className="text-center"
                     onClick={() => {
                       logoutMutation.mutate();
@@ -273,10 +367,10 @@ export const Header = ({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-          
+
           {/* Sepet Button - Tablet için kompakt */}
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             className="flex items-center space-x-1 relative bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 h-9"
             onClick={toggleCartSidebar}
           >
@@ -295,11 +389,11 @@ export const Header = ({
         <Button variant="ghost" size="sm" onClick={toggleMobileSidebar}>
           <Menu className="w-7 h-7 stroke-2" />
         </Button>
-        
+
         <div className="flex-1 text-center">
           <span className="text-lg font-black">OJS NUTRITION</span>
         </div>
-        
+
         <Button variant="ghost" size="sm" className="relative" onClick={toggleCartSidebar}>
           <ShoppingCart className="w-7 h-7 stroke-2" />
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-black">
@@ -310,7 +404,7 @@ export const Header = ({
 
       {/* Mobile Sidebar */}
       <MobileSidebar isOpen={isMobileSidebarOpen} onClose={closeMobileSidebar} />
-      
+
       {/* Cart Sidebar */}
       <CartSidebar isOpen={isCartSidebarOpen} onClose={closeCartSidebar} />
     </header>

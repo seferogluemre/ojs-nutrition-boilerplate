@@ -47,9 +47,9 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
     >
       <div 
         className={cn(
-          "bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 pb-9 cursor-pointer relative overflow-hidden",
-          // Increased heights for better content display
-          "w-full h-[350px] md:h-[420px] lg:h-[475px]",
+          "bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer relative overflow-hidden",
+          // Flexible height instead of fixed heights
+          "w-full min-h-[350px] flex flex-col md:h-[420px]",
           className
         )}
       >
@@ -61,8 +61,8 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
           </div>
         )}
         
-        {/* Product Image */}
-        <div className="h-40 md:h-48 lg:h-64 overflow-hidden rounded-t-lg">
+        {/* Product Image - Fixed aspect ratio */}
+        <div className="aspect-square w-full overflow-hidden rounded-t-lg flex-shrink-0">
           <img 
             src={product.image || "/images/collagen.jpg"} 
             alt={product.name}
@@ -70,31 +70,31 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
           />
         </div>
         
-        {/* Product Info */}
-        <div className="p-3 lg:p-4 flex flex-col h-[calc(100%-220px)] md:h-[calc(100%-192px)]  lg:h-[calc(100%-256px)]">
+        {/* Product Info - Flexible content area */}
+        <div className="p-2 lg:p-3 flex flex-col flex-1 gap-1">
           {/* Product Name */}
-          <h3 className="font-bold text-gray-900 text-sm lg:text-base mb-1 line-clamp-3">
+          <h3 className="font-bold text-gray-900 text-xs lg:text-sm leading-tight line-clamp-2">
             {product.name}
           </h3>
             
           {/* Short Description */}
-          <p className="text-xs lg:text-sm text-gray-600 mb-2 line-clamp-2">
+          <p className="text-xs text-gray-600 line-clamp-2 leading-tight">
             {product.shortDescription}
           </p>
           
           {/* Rating & Reviews */}
-          <div className="flex items-center gap-1 mb-2">
+          <div className="flex items-center gap-1 mt-1">
             <div className="flex items-center gap-0.5">
               {renderStars(product.rating)}
             </div>
             <span className="text-xs text-gray-500 ml-1">
-              {product.comment_count} Yorum
+              {product.reviewCount} Yorum
             </span>
           </div>
           
           {/* Price Section */}
-          <div className="flex items-center gap-2 mt-auto">
-            <span className="font-bold text-gray-900 text-base lg:text-lg">
+          <div className="flex items-center gap-2 mt-auto pt-1">
+            <span className="font-bold text-gray-900 text-sm lg:text-base">
               {product.price} TL
             </span>
           </div>

@@ -207,8 +207,6 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
               </div>
             )}
           </div>
-
-          {/* Remove absolute positioned logout icon */}
         </div>
       </div>
     </>

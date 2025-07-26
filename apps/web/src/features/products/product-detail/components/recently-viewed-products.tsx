@@ -25,7 +25,7 @@ export const RecentlyViewedProducts = () => {
           <ProductCard 
             key={product.id} 
             product={product}
-            className="h-[320px] md:h-[360px] lg:h-[400px]"
+            className="h-[340px] md:h-[360px] lg:h-[430px]"
           />
         ))}
       </div>
