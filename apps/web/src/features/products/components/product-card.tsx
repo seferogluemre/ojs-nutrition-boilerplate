@@ -88,7 +88,7 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
               {renderStars(product.rating)}
             </div>
             <span className="text-xs text-gray-500 ml-1">
-              {product.reviewCount} Yorum
+              {product.comment_count} Yorum
             </span>
           </div>
           

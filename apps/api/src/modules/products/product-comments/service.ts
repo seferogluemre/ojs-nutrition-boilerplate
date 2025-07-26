@@ -25,7 +25,10 @@ export abstract class ProductCommentService {
       const [data, total] = await Promise.all([
         prisma.productComments.findMany({
           where: {
-            productId: product.id, // Integer ID kullan
+            productId: product.id,
+            user: {
+              deletedAt: null, // Only include users that are not deleted
+            },
           },
           include: {
             user: {
@@ -43,7 +46,10 @@ export abstract class ProductCommentService {
         }),
         prisma.productComments.count({
           where: {
-            productId: product.id, // Integer ID kullan
+            productId: product.id,
+            user: {
+              deletedAt: null, // Only count comments with non-deleted users
+            },
           },
         }),
       ]);
