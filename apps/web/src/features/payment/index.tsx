@@ -3,8 +3,6 @@
 import { useState } from "react"
 import { AddressStep } from "./components/address-step"
 import { OrderSummary } from "./components/order-summary"
-import { PaymentStep } from "./components/payment-step"
-import { ShippingStep } from "./components/shipping-step"
 import { StepIndicator } from "./components/step-indicator"
 
 const PaymentPage = () => {
@@ -63,7 +61,7 @@ const PaymentPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b">
+      <div className="bg-white-50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
