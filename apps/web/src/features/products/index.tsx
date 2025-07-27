@@ -1,7 +1,7 @@
 import { Main } from "#components/layout/main";
 import { api } from "#lib/api.js";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ProductCard } from "./components/product-card";
 import { Product } from "./data/mock-products";
 
@@ -43,6 +43,11 @@ export default function Products() {
     const category = categoriesData?.data?.find((cat: any) => cat.id === categoryId);
     return category?.name || "KATEGORİ ÜRÜNLERİ";
   };
+
+  useEffect(()=>{
+    window.scrollTo(0, 0);
+  },[mainCategory])
+
 
   return (
     <Main>

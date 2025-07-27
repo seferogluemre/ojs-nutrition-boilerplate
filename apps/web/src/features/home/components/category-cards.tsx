@@ -78,6 +78,7 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
       SAĞLIK: "SAĞLIK",
       GIDA: "GIDA",
       "SPOR GIDALARI": "SPOR GIDALARI",
+      "TÜM ÜRÜNLER": "TÜM ÜRÜNLER",
     };
     return mappings[localCategoryName] || localCategoryName;
   };
