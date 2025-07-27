@@ -20,6 +20,19 @@ export abstract class OrderService {
               product: true,
             },
           },
+          user: {
+            include: {
+              cart: {
+                include: {
+                  items: {
+                    include: {
+                      product: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
@@ -28,7 +41,7 @@ export abstract class OrderService {
 
       return orders;
     } catch (error) {
-      throw  HandleError.handlePrismaError(error, 'order', 'find');
+      throw HandleError.handlePrismaError(error, 'order', 'find');
     }
   }
 
@@ -57,7 +70,7 @@ export abstract class OrderService {
 
       return order;
     } catch (error) {
-      throw  HandleError.handlePrismaError(error, 'order', 'find');
+      throw HandleError.handlePrismaError(error, 'order', 'find');
     }
   }
 

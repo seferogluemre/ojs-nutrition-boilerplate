@@ -39,6 +39,11 @@ const orderResponseSchema = t.Object({
   items: t.Array(formattedOrderItemSchema),
   createdAt: t.Date(),
   updatedAt: t.Date(),
+  user: t.Object({
+    id: t.String(),
+    name: t.String(),
+    email: t.String(),
+  }),
 });
 
 const orderListItemSchema = t.Object({
@@ -48,6 +53,14 @@ const orderListItemSchema = t.Object({
   subtotal: OrderPlain.properties.subtotal,
   itemCount: t.Number(),
   createdAt: t.Date(),
+  firstProduct: t.Union([
+    t.Object({
+      name: t.String(),
+      primary_photo_url: t.String(),
+    }),
+    t.Null()
+  ]),
+  productDisplayText: t.String(),
 });
 
 // GET /orders
@@ -121,4 +134,4 @@ export const completeShoppingDto = {
     summary: 'Complete shopping and create order',
     description: 'Creates an order from the user\'s cart and processes payment information.',
   },
-} satisfies ControllerHook; 
+} satisfies ControllerHook;

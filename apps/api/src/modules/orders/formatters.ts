@@ -47,6 +47,11 @@ export abstract class OrderFormatter {
       items: order?.items.map(OrderFormatter.formatItem),
       createdAt: order?.createdAt,
       updatedAt: order?.updatedAt,
+      user: {
+        id: order?.user?.id || '',
+        name: order?.user?.name || '',
+        email: order?.user?.email || '',
+      },
     };
   }
 
@@ -56,13 +61,28 @@ export abstract class OrderFormatter {
    * @returns İstemci dostu formatlanmış sipariş listesi.
    */
   static formatList(orders: OrdersListPayload) {
-    return orders?.map((order) => ({
-      id: order.uuid,
-      orderNumber: order.orderNumber,
-      status: order.status,
-      subtotal: order.subtotal,
-      itemCount: order.items.length,
-      createdAt: order.createdAt,
-    }));
+    return orders?.map((order) => {
+      // İlk ürünün bilgilerini al
+      const firstItem = order.items[0];
+      const firstProduct = firstItem?.product;
+      
+      return {
+        id: order.uuid,
+        orderNumber: order.orderNumber,
+        status: order.status,
+        subtotal: order.subtotal,
+        itemCount: order.items.length,
+        createdAt: order.createdAt,
+        // Sipariş listesi için ürün bilgileri
+        firstProduct: firstProduct ? {
+          name: firstProduct.name,
+          primary_photo_url: firstProduct.primaryPhotoUrl,
+        } : null,
+        // Ürün sayısı metni
+        productDisplayText: order.items.length === 1 
+          ? firstProduct?.name 
+          : `${order.items.length} farklı ürün`,
+      };
+    });
   }
 }
