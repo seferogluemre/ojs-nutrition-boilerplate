@@ -62,7 +62,7 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Left Column - Product Image */}
           <ProductImage 
-            src={product.primaryPhotoUrl} 
+            src="/images/collagen.jpg" 
             alt={product.name} 
           />
 

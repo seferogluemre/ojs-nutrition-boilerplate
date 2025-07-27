@@ -1,5 +1,6 @@
 import { cn } from "#lib/utils";
 import { Check } from "lucide-react";
+import { useEffect } from "react";
 import { ProductVariant } from "../../types";
 
 interface ProductVariantsProps {
@@ -17,6 +18,58 @@ export function ProductVariants({
   onFlavorSelect, 
   onSizeSelect 
 }: ProductVariantsProps) {
+  // Aroma isimlerini icon dosya isimlerine eşleyen fonksiyon
+  const getAromaIcon = (aroma: string) => {
+    const aromaMap: { [key: string]: string } = {
+      'Bisküvi': 'bisküvi.webp',
+      'Çikolata': 'çikolata.webp', 
+      'Muz': 'muz.webp',
+      'Salted Caramel': 'karamel.webp',
+      'Choco Nut': 'çokonat.webp',
+      'Hindistan Cevizi': 'cake.webp', // fallback
+      'Raspberry Cheesecake': 'rasperryChescake.webp',
+      'Çilek': 'çilek.webp',
+      'Aromasız': 'aromasız.webp',
+      'Muhallebi': 'muhallebi.webp',
+      'Şeftali': 'seftali.webp',
+      'Karpuz': 'karpuz.webp',
+      'Limonata': 'limonata.webp',
+      'Lemon Cheesecake': 'lemonCheescake.webp',
+      'Fruit Fusion': 'fruitfusion.webp',
+      'Ahududu': 'ahududu.webp',
+      'Yeşil Elma': 'yesilelma.webp',
+      'Tigers': 'tigers.webp'
+    };
+
+    if (aromaMap[aroma]) {
+      return `/icons/${aromaMap[aroma]}`;
+    }
+
+    const normalizedAroma = aroma.toLowerCase()
+      .replace(/ı/g, 'i')
+      .replace(/ğ/g, 'g')
+      .replace(/ü/g, 'u')
+      .replace(/ş/g, 's')
+      .replace(/ö/g, 'o')
+      .replace(/ç/g, 'c')
+      .replace(/\s+/g, '');
+
+    // Icon dosyalarında ara
+    const iconFiles = [
+      'bisküvi', 'çikolata', 'muz', 'karamel', 'çokonat', 'çilek', 
+      'aromasız', 'muhallebi', 'seftali', 'karpuz', 'limonata', 
+      'lemonCheescake', 'fruitfusion', 'ahududu', 'yesilelma', 'tigers',
+      'rasperryChescake', 'cake'
+    ];
+
+    const matchedIcon = iconFiles.find(icon => 
+      icon.toLowerCase().includes(normalizedAroma) || 
+      normalizedAroma.includes(icon.toLowerCase())
+    );
+
+    return matchedIcon ? `/icons/${matchedIcon}.webp` : '/icons/aromasız.webp';
+  };
+
   const getFlavorStyle = (flavor: ProductVariant, isSelected: boolean) => {
     return {
       backgroundColor: '#ffffff',
@@ -27,6 +80,16 @@ export function ProductVariants({
 
   const flavorsWithAroma = variants.filter(v => v.aroma);
   const variantsWithSize = variants.filter(v => v.size);
+
+  // Varsayılan seçimleri ayarla
+  useEffect(() => {
+    if (flavorsWithAroma.length > 0 && !selectedFlavor) {
+      onFlavorSelect(flavorsWithAroma[0]);
+    }
+    if (variantsWithSize.length > 0 && !selectedSize) {
+      onSizeSelect(variantsWithSize[0]);
+    }
+  }, [flavorsWithAroma, variantsWithSize, selectedFlavor, selectedSize, onFlavorSelect, onSizeSelect]);
 
   return (
     <div className="space-y-6">
@@ -41,8 +104,8 @@ export function ProductVariants({
                 onClick={() => onFlavorSelect(flavor)}
                 disabled={!flavor.is_available}
                 className={cn(
-                  "relative ps-2 rounded-lg border-2 text-sm font-medium transition-all duration-200",
-                  "h-[35px] md:h-[40px] flex items-center justify-between min-w-[120px] md:min-w-[130px]",
+                  "relative px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all duration-200",
+                  "h-[60px] md:h-[65px] flex items-center gap-3 min-w-[140px] md:min-w-[150px]",
                   selectedFlavor?.id === flavor.id
                     ? "border-blue-500 ring-2 ring-blue-200"
                     : "border-gray-300 hover:border-gray-400",
@@ -50,7 +113,23 @@ export function ProductVariants({
                 )}
                 style={getFlavorStyle(flavor, selectedFlavor?.id === flavor.id)}
               >
-                <span className="flex-1 text-xs md:text-sm text-center pr-1 md:pr-2">{flavor.aroma}</span>
+                {/* Aroma İkonu */}
+                <div className="flex-shrink-0">
+                  <img 
+                    src={getAromaIcon(flavor.aroma || '')}
+                    alt={flavor.aroma}
+                    className="w-[50px] h-[50px] object-cover rounded-md"
+                    onError={(e) => {
+                      // Eğer görsel yüklenmezse fallback kullan
+                      (e.target as HTMLImageElement).src = '/icons/aromasız.webp';
+                    }}
+                  />
+                </div>
+                
+                {/* Aroma Adı */}
+                <span className="flex-1 text-xs md:text-sm text-left leading-tight">{flavor.aroma}</span>
+                
+                {/* Seçim İşareti */}
                 {selectedFlavor?.id === flavor.id && (
                   <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-1">
                     <Check className="w-3 h-3 text-white" />
