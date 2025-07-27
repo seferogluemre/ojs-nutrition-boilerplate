@@ -284,10 +284,10 @@ export const productUpdateSchema = t.Object({
 
 // Query parameters schema for index
 export const productIndexQuerySchema = t.Object({
-  categoryId: t.Optional(
-    t.Number({
-      minimum: 1,
-      error: 'Kategori ID geçerli bir sayı olmalıdır.',
+  main_category: t.Optional(
+    t.String({
+      format: 'uuid',
+      error: 'Kategori ID geçerli bir UUID olmalıdır.',
     }),
   ),
   isActive: t.Optional(t.Boolean()),

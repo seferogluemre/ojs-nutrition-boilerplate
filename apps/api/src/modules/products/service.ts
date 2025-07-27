@@ -24,10 +24,23 @@ export abstract class ProductsService {
     throw error;
   }
 
-  private static buildWhereClause(query: ProductIndexQuery): Prisma.ProductWhereInput {
+  private static async buildWhereClause(query: ProductIndexQuery): Promise<Prisma.ProductWhereInput> {
     const where: Prisma.ProductWhereInput = {};
 
-    if (query.categoryId) where.categoryId = query.categoryId;
+    // UUID formatında main_category varsa, önce kategori ID'sini bul
+    if (query.main_category) {
+      const category = await prisma.category.findUnique({
+        where: { uuid: query.main_category },
+        select: { id: true }
+      });
+
+      if (!category) {
+        throw new NotFoundException('Kategori bulunamadı');
+      }
+
+      where.categoryId = category.id;
+    }
+
     if (query.isActive !== undefined) where.isActive = query.isActive;
 
     if (query.priceMin !== undefined || query.priceMax !== undefined) {
@@ -59,7 +72,7 @@ export abstract class ProductsService {
       const { page = 1, limit = 20 } = query;
       const skip = (page - 1) * limit;
 
-      const where = this.buildWhereClause(query);
+      const where = await this.buildWhereClause(query);
       const orderBy = this.buildOrderBy(query);
 
       const [data, total] = await Promise.all([
@@ -107,7 +120,6 @@ export abstract class ProductsService {
         prisma.product.count({ where }),
       ]);
 
-      // Format products with empty arrays for missing relations
       const formattedData = data.map((product) => ({
         ...product,
         photos: [],
