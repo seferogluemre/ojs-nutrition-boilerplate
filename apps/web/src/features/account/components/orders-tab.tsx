@@ -1,23 +1,96 @@
 export function OrdersTab() {
+  // Mock data for orders
+  const orders = [
+    {
+      id: 1,
+      orderNumber: "427795",
+      productName: "DEEP SLEEP",
+      orderDate: "31 Mart 2023",
+      status: "Teslim Edildi",
+      statusColor: "text-green-600 bg-green-50",
+      image: "/icons/ahududu.webp"
+    },
+    {
+      id: 2,
+      orderNumber: "290405",
+      productName: "MELATONIN - GÜNLÜK VİTAMİN PAKETİ - BROMELAIN",
+      orderDate: "14 Aralık 2022",
+      status: "Teslim Edildi",
+      statusColor: "text-green-600 bg-green-50",
+      image: "/icons/aromasız.webp"
+    },
+    {
+      id: 3,
+      orderNumber: "255564",
+      productName: "GAMER HACK - DETOX PAKETİ",
+      orderDate: "19 Kasım 2022",
+      status: "Teslim Edildi",
+      statusColor: "text-green-600 bg-green-50",
+      image: "/icons/bisküvi.webp"
+    },
+    {
+      id: 4,
+      orderNumber: "190462",
+      productName: "CREAM OF RICE",
+      orderDate: "1 Ekim 2022",
+      status: "Teslim Edildi",
+      statusColor: "text-green-600 bg-green-50",
+      image: "/icons/çikolata.webp"
+    }
+  ];
+
   return (
     <div>
-      <h3 className="text-xl font-semibold text-gray-900 mb-6">Siparişlerim</h3>
+      <h3 className="text-xl font-semibold text-gray-900 mb-6">Siparişlerim ({orders.length})</h3>
       
-      <div className="text-center py-12">
-        <div className="mb-4">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-        </div>
-        
-        <h4 className="text-lg font-medium text-gray-900 mb-2">Henüz siparişiniz yok</h4>
-        <p className="text-gray-600 mb-6">
-          Verdiğiniz siparişler burada görünecek
-        </p>
-        
-        <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium transition-colors">
-          Alışverişe Başla
-        </button>
+      <div className="space-y-4">
+        {orders.map((order) => (
+          <div key={order.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              {/* Sol taraf - Görsel ve Bilgiler */}
+              <div className="flex items-center space-x-4">
+                {/* Ürün Görseli */}
+                <div className="flex-shrink-0">
+                  <img 
+                    src={order.image} 
+                    alt={order.productName}
+                    className="w-16 h-16 object-cover rounded-lg"
+                  />
+                </div>
+                
+                {/* Sipariş Bilgileri */}
+                <div className="flex-1">
+                  {/* Sipariş Durumu */}
+                  <div className="mb-2">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.statusColor}`}>
+                      {order.status}
+                    </span>
+                  </div>
+                  
+                  {/* Ürün Adı */}
+                  <h4 className="text-sm font-medium text-gray-900 mb-1">
+                    {order.productName}
+                  </h4>
+                  
+                  {/* Tarih ve Sipariş No */}
+                  <p className="text-sm text-gray-600">
+                    {order.orderDate} Tarihinde Sipariş Verildi
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {order.orderNumber} numaralı sipariş
+                  </p>
+                </div>
+              </div>
+              
+              {/* Sağ taraf - Detay Butonu */}
+              <div className="flex-shrink-0">
+                <button className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                  Detayını Görüntüle
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
