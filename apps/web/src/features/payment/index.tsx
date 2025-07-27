@@ -1,11 +1,15 @@
 "use client"
 
+import { useAuthStore } from "#stores/authStore"
 import { useState } from "react"
 import { AddressStep } from "./components/address-step"
 import { OrderSummary } from "./components/order-summary"
+import { PaymentStep } from "./components/payment-step"
+import { ShippingStep } from "./components/shipping-step"
 import { StepIndicator } from "./components/step-indicator"
 
 const PaymentPage = () => {
+  const { auth } = useAuthStore()
   const [currentStep, setCurrentStep] = useState(1)
   const [selectedAddress, setSelectedAddress] = useState<any>(null)
   const [shippingCost, setShippingCost] = useState(0)
@@ -69,8 +73,10 @@ const PaymentPage = () => {
               <span className="text-2xl font-light text-black ml-1">NUTRITION</span>
             </div>
             <div className="text-right">
-              <div className="font-medium text-gray-900">İsim Soyisim</div>
-              <div className="text-sm text-gray-500">isimsoyisim@gmail.com</div>
+              <div className="font-medium text-gray-900">
+                {auth.user?.firstName} {auth.user?.lastName}
+              </div>
+              <div className="text-sm text-gray-500">{auth.user?.email}</div>
             </div>
           </div>
         </div>

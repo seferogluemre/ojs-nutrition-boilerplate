@@ -4,6 +4,7 @@ import { cn } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import React, { useEffect } from "react";
 
@@ -16,6 +17,7 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   const { auth } = useAuthStore();
   const { items: cartItems, setItems, clearCart } = useCartStore();
   const queryClient = useQueryClient();
+  const router=useRouter();
 
   const { data: cartData } = useQuery({
     queryKey: ["cart-items"],
@@ -40,7 +42,6 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     }
   }, [cartData, auth.accessToken, setItems, clearCart]);
 
-  // Add item mutation
   const addItemMutation = useMutation({
     mutationFn: async ({
       productId,
@@ -51,15 +52,31 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
       variantId: string;
       quantity: number;
     }) => {
-      return await api["cart-items"].post(
-        {
-          product_id: productId,
-          product_variant_id: variantId,
-          quantity,
+      const data = {
+        product_id: productId,
+        product_variant_id: variantId,
+        quantity,
+      };
+
+      return await api["cart-items"].post(data, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${auth.accessToken}`,
         },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart-items"] });
+    },
+  });
+
+  // Remove item mutation
+  const removeItemMutation = useMutation({
+    mutationFn: async (itemId: string) => {
+      return await api["cart-items"]({ itemId }).delete(
+        {},
         {
           headers: {
-            "Content-Type": "application/json",
             authorization: `Bearer ${auth.accessToken}`,
           },
         },
@@ -70,33 +87,16 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     },
   });
 
-  // Remove item mutation
-  const removeItemMutation = useMutation({
-    mutationFn: async (itemId: string) => {
-      return await api["cart-items"]({ itemId }).delete({}, {
-        headers: {
-          authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart-items"] });
-    },
-  });
-
-  // Calculate total - gerçek data ile
   const totalAmount = cartItems.reduce((total: number, item: any) => {
     return total + item.product.price * item.quantity;
   }, 0);
 
-  // Backdrop click handler
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
-  // Quantity handlers
   const increaseQuantity = async (item: any) => {
     await removeItemMutation.mutateAsync(item.id);
     await addItemMutation.mutateAsync({
@@ -253,7 +253,9 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
             <Button
               className="w-full bg-black py-3 text-base font-semibold text-white hover:bg-gray-800"
               onClick={() => {
-                // TODO: Handle checkout process
+                router.navigate({
+                  to: "/payment",
+                });
               }}
               disabled={cartItems.length === 0}
             >
