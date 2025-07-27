@@ -1,26 +1,79 @@
+import { api } from "#lib/api.js";
+import { useAuthStore } from "#stores/authStore.js";
+import { useQuery } from "@tanstack/react-query";
+
+interface CartItem {
+  id: string;
+  quantity: number;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    price: number;
+    primary_photo_url: string;
+  };
+  variant: {
+    id: string;
+    name: string;
+  };
+  added_at: string;
+}
+
+interface CartData {
+  id: string;
+  items: CartItem[];
+  summary: {
+    total_items: number;
+    total_quantity: number;
+    subtotal: number;
+  };
+  updated_at: string;
+}
+
 interface OrderSummaryProps {
   shippingCost: number;
 }
 
 export const OrderSummary = ({ shippingCost }: OrderSummaryProps) => {
-  const items = [
-    {
-      id: 1,
-      name: "WHEY PROTEIN",
-      variant: "Çilek / 400g",
-      price: 1098,
-      image: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      id: 2,
-      name: "ARGININE",
-      variant: "120g",
-      price: 458,
-      image: "/placeholder.svg?height=60&width=60",
-    },
-  ];
+  const auth = useAuthStore();
 
-  const subtotal = items.reduce((sum, item) => sum + item.price, 0);
+  const { data: cartData } = useQuery<CartData>({
+    queryKey: ["cart-items"],
+    queryFn: async () => {
+      const response = await api["cart-items"].get({
+        headers: {
+          authorization: `Bearer ${auth.auth.accessToken}`,
+        },
+      });
+      return response.data;
+    },
+  });
+  if (!cartData) {
+    return (
+      <div className="sticky top-4 rounded-lg bg-gray-50 p-6">
+        <h3 className="mb-4 text-lg font-medium">Sipariş Özeti</h3>
+        <div className="animate-pulse">
+          <div className="mb-4 h-4 rounded bg-gray-200"></div>
+          <div className="mb-4 h-4 rounded bg-gray-200"></div>
+          <div className="h-4 rounded bg-gray-200"></div>
+        </div>
+      </div>
+    );
+  }
+
+  const itemsData =
+    cartData.items?.map((item: CartItem) => ({
+      id: item.id,
+      name: item.product.name,
+      variant: item.variant.name,
+      price: item.product.price,
+      quantity: item.quantity,
+      image: item.product.primary_photo_url || "/images/collagen.jpg",
+    })) || [];
+
+  const subtotal = cartData.summary?.subtotal
+    ? cartData.summary.subtotal / 100
+    : 0;
   const total = subtotal + shippingCost;
 
   return (
@@ -28,18 +81,29 @@ export const OrderSummary = ({ shippingCost }: OrderSummaryProps) => {
       <h3 className="mb-4 text-lg font-medium">Sipariş Özeti</h3>
 
       <div className="space-y-4">
-        {items.map((item) => (
+        {itemsData.map((item) => (
           <div key={item.id} className="flex items-center space-x-3">
             <img
-              src={item.image || "/placeholder.svg"}
+              src={item.image || "/images/collagen.jpg"}
               alt={item.name}
               className="h-12 w-12 rounded-lg bg-blue-100 object-cover"
+              onError={(e: any) => {
+                e.target.src = "/images/collagen.jpg";
+              }}
             />
             <div className="flex-1">
               <h4 className="text-sm font-medium">{item.name}</h4>
               <p className="text-xs text-gray-600">{item.variant}</p>
+              <p className="text-xs text-blue-600">Adet: {item.quantity}</p>
             </div>
-            <div className="text-sm font-medium">{item.price} TL</div>
+            <div className="text-right">
+              <div className="text-sm font-medium">
+                {(item.price / 100).toFixed(2)} TL
+              </div>
+              <div className="text-xs text-gray-500">
+                Toplam: {((item.price * item.quantity) / 100).toFixed(2)} TL
+              </div>
+            </div>
           </div>
         ))}
 

@@ -31,28 +31,24 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
   });
 
   return (
-    <section className={cn("bg-gray-50 py-12", className)} {...props}>
+    <section className={cn(" py-12", className)} {...props}>
       <div className="container mx-auto px-4">
-        {/* Section Title */}
         <h2 className="mb-8 text-center text-2xl font-bold text-gray-900 lg:text-3xl">
           ÇOK SATANLAR
         </h2>
 
-        {/* Products Grid */}
-        <div className="mx-auto grid max-w-7xl grid-cols-2 justify-items-center gap-4 md:grid-cols-3 lg:grid-cols-6 lg:gap-6">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 justify-items-center gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 lg:gap-6">
           {data?.data?.slice(0, 6).map((product: BestSellerProduct,index:number) => (
             <div
               key={index}
-              className="relative h-[368px] w-[200px] cursor-pointer rounded-lg bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl md:h-[389.66px] md:w-[272.66px] lg:h-[375px] lg:w-[200px]"
+              className="relative h-[368px] w-[200px] cursor-pointer rounded-lg bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl md:h-[389.66px] md:w-[250px] lg:h-[375px] lg:w-[250px] xl:h-[375px] xl:w-[200px]"
             >
-              {/* Discount Badge */}
               {product.discountPercentage && (
                 <div className="absolute -right-2 -top-2 z-10 rounded-md bg-red-500 px-2 py-1 text-xs font-bold text-white">
                   %{product.discountPercentage} İNDİRİM
                 </div>
               )}
 
-              {/* Product Image */}
               <div className="flex w-full justify-center">
                 <div className="flex h-[168px] w-[168px] items-center justify-center overflow-hidden rounded-lg bg-gray-100">
                   <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200">
@@ -65,14 +61,12 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
                 </div>
               </div>
 
-              {/* Product Info */}
               <div className="p-4 pt-3">
                 {/* Product Name */}
                 <h3 className="mb-1 text-sm font-bold leading-tight text-gray-900">
                   {product.name}
                 </h3>
 
-                {/* Description */}
                 <p className="mb-2 text-xs leading-tight text-gray-600">
                   {product.short_explanation}
                 </p>

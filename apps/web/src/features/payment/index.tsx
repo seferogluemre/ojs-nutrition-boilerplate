@@ -1,5 +1,3 @@
-"use client"
-
 import { useAuthStore } from "#stores/authStore"
 import { useState } from "react"
 import { AddressStep } from "./components/address-step"
@@ -8,7 +6,7 @@ import { PaymentStep } from "./components/payment-step"
 import { ShippingStep } from "./components/shipping-step"
 import { StepIndicator } from "./components/step-indicator"
 
-const PaymentPage = () => {
+export default function PaymentPage() {
   const { auth } = useAuthStore()
   const [currentStep, setCurrentStep] = useState(1)
   const [selectedAddress, setSelectedAddress] = useState<any>(null)
@@ -63,34 +61,33 @@ const PaymentPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 w-[100vw] overflow-x-hidden">
       {/* Header */}
       <div className="bg-white-50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-black">DJS</h1>
-              <span className="text-2xl font-light text-black ml-1">NUTRITION</span>
+              <img src="/images/image.png" alt="logo"  />
             </div>
-            <div className="text-right">
-              <div className="font-medium text-gray-900">
+            <div className="text-right flex flex-col gap-1">
+              <div className="font-medium text-gray-900 text-lg">
                 {auth.user?.firstName} {auth.user?.lastName}
               </div>
-              <div className="text-sm text-gray-500">{auth.user?.email}</div>
+              <div className="text-gray-500">{auth.user?.email}</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-1">
+        <div className="p-0">
             <StepIndicator currentStep={currentStep} />
           </div>
 
-          <div className="lg:col-span-3">{renderCurrentStep()}</div>
+          <div className="lg:col-span-2">{renderCurrentStep()}</div>
 
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <OrderSummary shippingCost={shippingCost} />
           </div>
         </div>
@@ -98,5 +95,3 @@ const PaymentPage = () => {
     </div>
   )
 }
-
-export default PaymentPage

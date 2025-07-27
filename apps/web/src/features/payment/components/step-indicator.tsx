@@ -12,7 +12,7 @@ export const StepIndicator = ({ currentStep }: StepIndicatorProps) => {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-7">
       {steps.map((step, index) => (
         <div key={step.number} className="flex items-center space-x-3">
           <div
