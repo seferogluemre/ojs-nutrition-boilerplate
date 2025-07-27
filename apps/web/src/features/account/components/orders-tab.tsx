@@ -2,21 +2,10 @@ import { api } from "#lib/api.js";
 import { useAuthStore } from "#stores/authStore.js";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { OrderFromAPI } from "../types";
 import { OrderDetail } from "./order/order-detail";
 
-interface OrderFromAPI {
-  id: string;
-  orderNumber: string;
-  status: string;
-  subtotal: number;
-  itemCount: number;
-  createdAt: string;
-  firstProduct: {
-    name: string;
-    primary_photo_url: string;
-  } | null;
-  productDisplayText: string;
-}
+
 
 export function OrdersTab() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);

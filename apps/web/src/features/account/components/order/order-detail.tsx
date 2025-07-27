@@ -1,3 +1,7 @@
+import { api } from "#lib/api.js";
+import { useAuthStore } from "#stores/authStore.js";
+import { useQuery } from "@tanstack/react-query";
+import { OrderDetailAPI } from "../../types";
 import { OrderSidebar } from './order-sidebar';
 import { OrderSummary } from './order-summary';
 
@@ -7,48 +11,109 @@ interface OrderDetailProps {
 }
 
 export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
-  // Mock data for order detail
+  const { auth } = useAuthStore();
+
+  // API call for order detail
+  const { data: orderData, isLoading, error } = useQuery({
+    queryKey: ["order-detail", orderId],
+    queryFn: async () => {
+      const response = await api.orders({ id: orderId }).get({
+        headers: {
+          Authorization: `Bearer ${auth?.accessToken}`,
+        },
+      });
+      return response.data as OrderDetailAPI;
+    },
+    enabled: !!auth?.accessToken && !!orderId,
+  });
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div>
+        <div className="flex items-center mb-6">
+          <button 
+            onClick={onBack}
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4"
+          >
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Geri
+          </button>
+          <h3 className="text-xl font-semibold text-gray-900">Sipariş Detayı</h3>
+        </div>
+
+        <div className="flex justify-center items-center py-20">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-green-600"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !orderData) {
+    return (
+      <div>
+        <div className="flex items-center mb-6">
+          <button 
+            onClick={onBack}
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4"
+          >
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Geri
+          </button>
+          <h3 className="text-xl font-semibold text-gray-900">Sipariş Detayı</h3>
+        </div>
+
+        <div className="text-center py-20">
+          <div className="mb-4">
+            <svg className="mx-auto h-12 w-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h4 className="text-lg font-medium text-gray-900 mb-2">Sipariş bulunamadı</h4>
+          <p className="text-gray-600">Bu sipariş mevcut değil veya erişim izniniz yok.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Transform API data to component format
   const orderDetail = {
-    id: orderId,
-    orderNumber: "290405",
-    status: "Sipariş Teslim Edildi",
-    deliveryDate: "14 Aralık 2022",
-    products: [
-      {
-        id: 1,
-        name: "MELATONIN x 2",
-        price: "62 TL",
-        size: "Boyut: 1 KUTU",
-        image: "/icons/aromasız.webp"
-      },
-      {
-        id: 2,
-        name: "GÜNLÜK VİTAMİN PAKETİ x 1",
-        price: "449 TL",
-        size: "Boyut: 1 Paket x 2 Adet",
-        image: "/icons/bisküvi.webp"
-      },
-      {
-        id: 3,
-        name: "BROMELAIN x 1",
-        price: "197 TL",
-        size: "Boyut: 1 KUTU x 2 Adet",
-        image: "/icons/çikolata.webp"
-      }
-    ],
+    id: orderData.id,
+    orderNumber: orderData.orderNumber,
+    status: orderData.status === 'PENDING' ? 'Sipariş Alındı' : 
+           orderData.status === 'PROCESSING' ? 'Hazırlanıyor' :
+           orderData.status === 'SHIPPED' ? 'Kargoya Verildi' :
+           orderData.status === 'DELIVERED' ? 'Sipariş Teslim Edildi' : orderData.status,
+    deliveryDate: new Date(orderData.createdAt).toLocaleDateString('tr-TR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }),
+    products: orderData.items.map(item => ({
+      id: item.id,
+      name: `${item.product.name}`,
+      price: `${(item.totalPrice / 100).toFixed(2)} TL`,
+      size: `Boyut: ${item.quantity} ADET`,
+      image: item.product.primary_photo_url ? `/api/media/${item.product.primary_photo_url}` : "/icons/placeholder.webp"
+    })),
     address: {
-      name: "Uğur İLTER",
-      fullAddress: "Barbaros, Nidakule Ataşehir Batı, Begonya Sk. No: 1/2, 34746 Ataşehir/İstanbul"
+      name: orderData.shippingAddress.recipientName,
+      fullAddress: `${orderData.shippingAddress.addressLine1}, ${orderData.shippingAddress.city}, ${orderData.shippingAddress.state}, ${orderData.shippingAddress.country}`
     },
     payment: {
-      method: "Kredi Kartı - 770 TL",
-      cardNumber: "**** **** **** **61",
+      method: "Kredi Kartı",
+      cardNumber: "**** **** **** ****",
       summary: {
-        subtotal: "856 TL",
+        subtotal: `${(orderData.subtotal / 100).toFixed(2)} TL`,
         shipping: "0 TL",
-        tax: "8 TL",
-        discount: "- 86 TL",
-        total: "770 TL"
+        tax: "0 TL",
+        discount: "0 TL",
+        total: `${(orderData.subtotal / 100).toFixed(2)} TL`
       }
     }
   };

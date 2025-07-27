@@ -1,22 +1,5 @@
-interface OrderSidebarProps {
-  order: {
-    address: {
-      name: string;
-      fullAddress: string;
-    };
-    payment: {
-      method: string;
-      cardNumber: string;
-      summary: {
-        subtotal: string;
-        shipping: string;
-        tax: string;
-        discount: string;
-        total: string;
-      };
-    };
-  };
-}
+import { OrderSidebarProps } from "../../types";
+
 
 export function OrderSidebar({ order }: OrderSidebarProps) {
   return (
