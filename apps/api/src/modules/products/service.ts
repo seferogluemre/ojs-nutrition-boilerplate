@@ -186,7 +186,7 @@ export abstract class ProductsService {
       });
 
       if (!product) {
-        throw new NotFoundException('Ürün bulunamadı');
+        throw new NotFoundException('Ürün Kaldırıldı');
       }
       return {
         ...product,

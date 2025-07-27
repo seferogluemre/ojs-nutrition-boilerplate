@@ -119,10 +119,10 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
         <div key={category.id}>
           <button
             onClick={() => {
-              if (category.children.length > 0) {
+              if (category.children.length > 0 || category.top_sellers?.length > 0) {
                 navigateToCategory(category);
               }
-              // No action for categories without children
+              // No action for categories without children and top_sellers
             }}
             className="flex items-center justify-between w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors duration-200"
           >
@@ -137,7 +137,7 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
                 {category.name}
               </span>
             </div>
-            {category.children.length > 0 && (
+            {(category.children.length > 0 || category.top_sellers?.length > 0) && (
               <ChevronRight className="w-5 h-5 text-gray-400" />
             )}
           </button>
@@ -161,6 +161,14 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
     
     return (
       <div className="space-y-1">
+        {/* If no children but has top_sellers, show a message */}
+        {currentItems.length === 0 && (currentPanel.parentData as Category)?.top_sellers?.length > 0 && (
+          <div className="px-6 py-4 text-center text-gray-600 bg-gray-50 mx-4 rounded-lg">
+            <p className="text-sm">Bu kategoride alt kategoriler bulunmuyor.</p>
+            <p className="text-xs mt-1">Aşağıda bu kategorinin çok satan ürünlerini görebilirsiniz.</p>
+          </div>
+        )}
+        
         {/* Render SubCategories and their products */}
         {currentItems.map((childCategory) => (
           <div key={childCategory.id}>
