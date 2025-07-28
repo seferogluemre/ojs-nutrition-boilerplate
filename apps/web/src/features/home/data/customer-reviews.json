@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "date": "03/05/2024",
+    "title": "Beğendim gayet güzeldi",
+    "description": "Ürün gayet güzel ama ekşiliği biraz sürdürememişse gerekmişti sonra bayağıilıyor insanı. Teşekkürler."
+  },
+  {
+    "id": 2,
+    "date": "15/04/2024", 
+    "title": "Mükemmel kalite",
+    "description": "Aldığım protein tozu gerçekten çok kaliteli. Özellikle antrenman sonrası kas gelişiminde fark edilir bir etki yaratıyor."
+  },
+  {
+    "id": 3,
+    "date": "28/04/2024",
+    "title": "Hızlı kargo",
+    "description": "Sipariş verdiğim günün ertesi günü kapımda. Ürün kalitesi de gayet iyi, tavsiye ederim."
+  },
+  {
+    "id": 4,
+    "date": "20/04/2024",
+    "title": "Etkili ürün",
+    "description": "BCAA kullanmaya başladıktan sonra antrenman performansımda belirgin bir artış gözlemliyorum."
+  },
+  {
+    "id": 5,
+    "date": "12/05/2024",
+    "title": "Güvenilir satıcı",
+    "description": "OJS Nutrition'dan aldığım vitaminler gerçekten işe yarıyor. Düzenli kullanımda enerji seviyemde artış var."
+  },
+  {
+    "id": 6,
+    "date": "07/05/2024",
+    "title": "Lezzet mükemmel",
+    "description": "Whey protein tozunun lezzeti gerçekten harika. Su ile bile karıştırınca çok güzel oluyor."
+  },
+  {
+    "id": 7,
+    "date": "25/04/2024",
+    "title": "Fiyat performans",
+    "description": "Bu kalitede ürünleri bu fiyata bulmak gerçekten zor. Kesinlikle tavsiye ediyorum."
+  },
+  {
+    "id": 8,
+    "date": "18/04/2024",
+    "title": "Doktor tavsiyesi",
+    "description": "Doktorum tavsiye etmişti bu markanın ürünlerini. Gerçekten kaliteli ve etkili buluyorum."
+  },
+  {
+    "id": 9,
+    "date": "30/04/2024",
+    "title": "Yan etki yok",
+    "description": "Uzun süredir kullanıyorum, hiçbir yan etkisi olmadı. Güvenle tüketebiliyorum."
+  },
+  {
+    "id": 10,
+    "date": "10/05/2024",
+    "title": "Ambalaj kalitesi",
+    "description": "Ürünlerin ambalajı çok kaliteli ve sağlam. Taşıma sırasında hiç problem yaşamadım."
+  },
+  {
+    "id": 11,
+    "date": "02/05/2024",
+    "title": "Müşteri hizmetleri",
+    "description": "Bir sorum olduğunda müşteri hizmetleri çok hızlı ve yararlı bir şekilde cevap verdi."
+  },
+  {
+    "id": 12,
+    "date": "16/04/2024",
+    "title": "Sonuç aldım",
+    "description": "3 haftalık kullanımdan sonra antrenmanlarımda ciddi bir gelişme gözlemliyorum."
+  },
+  {
+    "id": 13,
+    "date": "22/04/2024",
+    "title": "Ambalaj güvenli",
+    "description": "Ürünler çok güvenli ambalajlarla geliyor. Taşıma sırasında hiç zarar görmüyor."
+  },
+  {
+    "id": 14,
+    "date": "14/05/2024",
+    "title": "Çeşitli ürün seçeneği",
+    "description": "İhtiyacım olan tüm supplement ürünleri tek yerden bulabiliyorum. Çok praktik."
+  },
+  {
+    "id": 15,
+    "date": "05/05/2024",
+    "title": "Doğal içerik",
+    "description": "Ürünlerin içeriği tamamen doğal. Yapay katkı maddeleri yok, bu çok önemli."
+  },
+  {
+    "id": 16,
+    "date": "29/04/2024",
+    "title": "Antrenman desteği",
+    "description": "Pre-workout aldığım ürün gerçekten enerji veriyor. Antrenmanlarım çok daha verimli geçiyor."
+  },
+  {
+    "id": 17,
+    "date": "11/05/2024",
+    "title": "Kolay çözünüyor",
+    "description": "Protein tozu su ile çok kolay karışıyor, topaklanma problemi yaşamıyorum."
+  },
+  {
+    "id": 18,
+    "date": "26/04/2024",
+    "title": "Spor salonunda tavsiye",
+    "description": "Spor salonundaki arkadaşlara da tavsiye ettim. Herkes memnun kaldı ürünlerden."
+  }
+] 

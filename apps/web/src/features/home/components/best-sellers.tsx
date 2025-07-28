@@ -36,13 +36,18 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
       <div className="container mx-auto px-4">
 
 
-        <div className="mx-auto grid max-w-7xl grid-cols-2 justify-items-center gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 lg:gap-6">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 lg:gap-6">
           {data?.data?.slice(0, 6).map((product: BestSellerProduct,index:number) => (
             <Link
               key={index}
               to="/products/$productId" 
               params={{ productId: product.id }}
-              className="relative h-[368px] w-[200px] cursor-pointer rounded-lg bg-white dark:bg-gray-800 shadow-lg transition-shadow duration-300 hover:shadow-xl md:h-[389.66px] md:w-[250px] lg:h-[375px] lg:w-[250px] xl:h-[375px] xl:w-[200px]"
+              className="relative w-full max-w-[200px] mx-auto cursor-pointer rounded-lg bg-white dark:bg-gray-800 shadow-lg transition-shadow duration-300 hover:shadow-xl"
+              style={{
+                aspectRatio: "200/375", // Sabit aspect ratio
+                minHeight: "320px",
+                maxHeight: "380px"
+              }}
           >
               {product.discountPercentage && (
                 <div className="absolute -right-2 -top-2 z-10 rounded-md bg-red-500 px-2 py-1 text-xs font-bold text-white">

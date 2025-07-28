@@ -111,11 +111,11 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
     <section className={cn("py-12", className)} {...props}>
       <div className="container mx-auto px-4">
         {/* Grid Layout */}
-        <div className="grid grid-cols-2 justify-items-center gap-4 lg:grid-cols-3 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {categories.map((category) => (
             <div
               key={category.id}
-              className="group relative h-[167px] w-[384px] max-w-full cursor-pointer overflow-hidden rounded-2xl bg-cover bg-center shadow-lg transform transition-all duration-300 ease-in-out hover:shadow-2xl hover:scale-105 hover:-translate-y-2"
+              className="group relative h-[167px] w-full max-w-[384px] mx-auto cursor-pointer overflow-hidden rounded-2xl bg-cover bg-center shadow-lg transform transition-all duration-300 ease-in-out hover:shadow-2xl hover:scale-105 hover:-translate-y-2"
               style={{
                 backgroundImage: `url('${category.image}')`,
                 backgroundPosition: "center 50%",
