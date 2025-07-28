@@ -129,14 +129,14 @@ export function CustomerReviews() {
   });
 
   return (
-    <section className="py-16">
+    <section className="py-16 bg-white dark:bg-gray-900">
       <div className="container mx-auto px-4">
         {/* Header with title and review count */}
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             GERÇEK MÜŞTERİ YORUMLARI
           </h2>
-          <div className="text-sm text-green-600 font-medium">
+          <div className="text-sm text-green-600 dark:text-green-400 font-medium">
             <span className="font-bold">{mockReviews.length}</span> Yorum
           </div>
         </div>
@@ -146,18 +146,18 @@ export function CustomerReviews() {
           {/* Navigation buttons */}
           <button
             onClick={prev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white shadow-lg rounded-full p-2 hover:shadow-xl transition-shadow duration-200"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white dark:bg-gray-800 shadow-lg rounded-full p-2 hover:shadow-xl transition-shadow duration-200"
             aria-label="Önceki yorumlar"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
+            <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </button>
           
           <button
             onClick={next}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white shadow-lg rounded-full p-2 hover:shadow-xl transition-shadow duration-200"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white dark:bg-gray-800 shadow-lg rounded-full p-2 hover:shadow-xl transition-shadow duration-200"
             aria-label="Sonraki yorumlar"
           >
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+            <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </button>
 
           {/* Slider */}
@@ -167,19 +167,19 @@ export function CustomerReviews() {
                 <div className="blaze-track">
                   {mockReviews.map((review) => (
                     <div key={review.id} className="blaze-slide">
-                      <div className="w-[300px] h-[196px] p-6 bg-transparent">
+                      <div className="w-[300px] h-[196px] p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-shadow duration-200">
                         {/* Date */}
-                        <div className="text-sm text-gray-500 mb-3">
+                        <div className="text-sm text-gray-500 dark:text-gray-400 mb-3">
                           {review.date}
                         </div>
                         
                         {/* Title */}
-                        <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2">
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2">
                           {review.title}
                         </h3>
                         
                         {/* Description */}
-                        <p className="text-sm text-gray-600 line-clamp-4 leading-relaxed">
+                        <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-4 leading-relaxed">
                           {review.description}
                         </p>
                       </div>

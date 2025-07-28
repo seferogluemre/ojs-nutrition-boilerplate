@@ -123,13 +123,13 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
               }}
             >
               {/* Overlay for better text visibility */}
-              <div className="absolute inset-0 bg-black bg-opacity-5"></div>
+              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
               {/* Content */}
               <div className="relative flex h-full flex-col justify-between p-6">
                 {/* Category Name - Center-right aligned, top */}
                 <div className="flex flex-1 items-start justify-end">
-                  <h3 className="mt-4 text-end text-lg font-bold leading-tight text-gray-900 lg:text-xl">
+                  <h3 className="mt-4 text-end text-lg font-bold leading-tight text-white drop-shadow-lg lg:text-xl">
                     {category.name}
                   </h3>
                 </div>

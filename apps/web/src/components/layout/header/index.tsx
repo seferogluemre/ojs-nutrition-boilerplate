@@ -1,5 +1,6 @@
 import { CartSidebar } from "#components/layout/cart-sidebar";
 import { MobileSidebar } from "#components/layout/mobile-sidebar";
+import { ThemeSwitch } from "#components/theme-switch";
 import { Button } from "#components/ui/button";
 import {
   DropdownMenu,
@@ -195,29 +196,24 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
         </div>
 
         {/* Account & Cart - Sağ */}
-        <div className="flex flex-shrink-0 items-center space-x-4">
-          {/* Hesabım Button - Border'lı ve dropdown oklı */}
+        <div className="flex items-center space-x-3">
+          {/* Theme Switch */}
+          <ThemeSwitch />
+          
+          {/* Account Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex h-10 items-center space-x-2 border-gray-300 px-4 py-2 hover:bg-gray-50"
-              >
-                <User className="h-5 w-5 text-gray-600" />
-                <div className="flex flex-col items-start">
-                  {auth.user ? (
-                    <>
-                      <span className="text-xs text-gray-500">
-                        {auth.user.firstName} {auth.user.lastName}
-                      </span>
-                    </>
-                  ) : (
-                      <span className="font-medium text-gray-700">HESAP</span>
-                  )}
-                </div>
-                <ChevronDown className="h-4 w-4 text-gray-600" />
-              </Button>
+                              <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex h-9 items-center space-x-1 px-3 py-2 text-gray-700 dark:text-gray-900 hover:bg-gray-100"
+                >
+                  <User className="h-4 w-4" />
+                  <span className="text-sm font-medium">
+                    {auth?.user?.firstName || "HESAP"}
+                  </span>
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
@@ -293,7 +289,7 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
             <Input
               type="text"
               placeholder="Aradığınız ürünü yazınız..."
-              className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-16 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 bg-white text-gray-900 py-2 pl-9 pr-16 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
               value={searchQuery}
               onChange={handleSearchChange}
               onFocus={() => searchQuery.length >= 2 && setIsSearchOpen(true)}
@@ -385,7 +381,7 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
           {/* Sepet Button - Tablet için kompakt */}
           <Button
             size="sm"
-            className="relative flex h-9 items-center space-x-1 bg-gray-600 px-3 py-2 text-white hover:bg-gray-700"
+            className="relative flex h-9 items-center space-x-1 bg-gray-600 dark:bg-gray-700 px-3 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600"
             onClick={toggleCartSidebar}
           >
             <ShoppingCart className="h-4 w-4" />
@@ -399,7 +395,7 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
       </div>
 
       <div className="flex w-full items-center justify-between md:hidden">
-        <Button variant="ghost" size="icon" onClick={toggleMobileSidebar}>
+        <Button variant="ghost" size="icon" onClick={toggleMobileSidebar} className="text-gray-700 dark:text-gray-900 hover:bg-gray-100">
           <Menu className="h-9 w-9 stroke-2" />
         </Button>
 
@@ -412,17 +408,22 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
           />
         </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="relative"
-          onClick={toggleCartSidebar}
-        >
-          <ShoppingCart className="h-7 w-7 stroke-2" />
-          <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-black text-white">
-            {cartItemCount}
-          </span>
-        </Button>
+        <div className="flex items-center space-x-2">
+          {/* Theme Switch - Mobile */}
+          <ThemeSwitch />
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            className="relative text-gray-700 dark:text-gray-900 hover:bg-gray-100"
+            onClick={toggleCartSidebar}
+          >
+            <ShoppingCart className="h-7 w-7 stroke-2" />
+            <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-black text-white">
+              {cartItemCount}
+            </span>
+          </Button>
+        </div>
       </div>
 
       <MobileSidebar
