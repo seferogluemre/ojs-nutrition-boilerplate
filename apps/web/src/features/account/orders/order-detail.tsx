@@ -27,7 +27,6 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
     enabled: !!auth?.accessToken && !!orderId,
   });
 
-  // Loading state
   if (isLoading) {
     return (
       <div>
@@ -51,7 +50,6 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
     );
   }
 
-  // Error state
   if (error || !orderData) {
     return (
       <div>
@@ -81,7 +79,6 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
     );
   }
 
-  // Transform API data to component format
   const orderDetail = {
     id: orderData.id,
     orderNumber: orderData.orderNumber,

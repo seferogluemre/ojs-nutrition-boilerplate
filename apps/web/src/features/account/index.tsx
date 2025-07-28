@@ -11,7 +11,7 @@ export function Account() {
 
   useEffect(() => {
     if (!auth.user && !auth.accessToken) {
-      router.navigate({ to: "/sign-in" });
+      router.navigate({ to: "/login" });
     }
   }, [auth.user, auth.accessToken, router]);
 
