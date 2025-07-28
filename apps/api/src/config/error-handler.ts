@@ -3,7 +3,6 @@ import { ErrorHandler } from "elysia";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handleElysiaError: ErrorHandler<any, any, any, any, any> = ({ error, code, set }) => {
     set.headers['Content-Type'] = 'application/json';
-
     if (code === 'VALIDATION') {
         return {
             name: 'UnprocessableEntityError',

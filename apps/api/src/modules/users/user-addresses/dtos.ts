@@ -3,23 +3,12 @@ import { UserAddressPlain } from '#prismabox/UserAddress';
 import { ControllerHook, errorResponseDto } from '#utils';
 import { t } from 'elysia';
 
-
-
-export const userAddressResponseSchema = t.Object({
-  id: UserAddressPlain.properties.id,
-  uuid: UserAddressPlain.properties.uuid,
-  title: UserAddressPlain.properties.title,
-  recipientName: UserAddressPlain.properties.recipientName,
-  phone: UserAddressPlain.properties.phone,
-  addressLine1: UserAddressPlain.properties.addressLine1,
-  addressLine2: UserAddressPlain.properties.addressLine2,
-  postalCode: UserAddressPlain.properties.postalCode,
-  isDefault: UserAddressPlain.properties.isDefault,
-  createdAt: UserAddressPlain.properties.createdAt,
-  updatedAt: UserAddressPlain.properties.updatedAt,
-  city: t.Object(CityPlain),
-  cityId: CityPlain.properties.id,
-});
+export const userAddressResponseSchema = t.Composite([
+  t.Omit(UserAddressPlain, ['phone','postalCode']),
+  t.Object({
+    city: t.Pick(CityPlain, ['id', 'name']),
+  }),
+]);
 
 export const userAddressIndexDto = {
   response: { 200: t.Array(userAddressResponseSchema) },
@@ -89,7 +78,7 @@ export const userAddressCreateDto = {
     addressLine2: UserAddressPlain.properties.addressLine2,
     postalCode: UserAddressPlain.properties.postalCode,
     isDefault: UserAddressPlain.properties.isDefault,
-    cityId: t.Integer({ minimum: 1 }), // Manual olarak tanımlandı çünkü @prismabox.hide kullanılmış
+    cityId: t.Integer({ minimum: 1 }),
   }),
   response: {
     200: userAddressResponseSchema,

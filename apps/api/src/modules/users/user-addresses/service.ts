@@ -63,8 +63,15 @@ export abstract class UserAddressesService {
     try {
       const userAddress = await prisma.userAddress.create({
         data: payload,
+        include: {
+          city: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       });
-
       return userAddress;
     } catch (error) {
       await HandleError.handlePrismaError(error, 'userAddress', 'create');
