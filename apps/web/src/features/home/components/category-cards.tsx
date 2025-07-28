@@ -115,7 +115,7 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
           {categories.map((category) => (
             <div
               key={category.id}
-              className="group relative h-[167px] w-[384px] max-w-full cursor-pointer overflow-hidden rounded-2xl bg-cover bg-center shadow-lg transition-shadow duration-300 hover:shadow-xl"
+              className="group relative h-[167px] w-[384px] max-w-full cursor-pointer overflow-hidden rounded-2xl bg-cover bg-center shadow-lg transform transition-all duration-300 ease-in-out hover:shadow-2xl hover:scale-105 hover:-translate-y-2"
               style={{
                 backgroundImage: `url('${category.image}')`,
                 backgroundPosition: "center 50%",
@@ -123,7 +123,7 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
               }}
             >
               {/* Overlay for better text visibility */}
-              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+              <div className="absolute inset-0 bg-black bg-opacity-40 transition-opacity duration-300 group-hover:bg-opacity-50"></div>
 
               {/* Content */}
               <div className="relative flex h-full flex-col justify-between p-6">
@@ -137,7 +137,7 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
                 {/* İNCELE Button - Center-right aligned, bottom */}
                 <div className="flex justify-end">
                   <Button
-                    className="rounded-full bg-black px-6 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-gray-800"
+                    className="rounded-full bg-black px-6 py-2 text-sm font-semibold text-white transform transition-all duration-200 ease-in-out hover:bg-gray-800 hover:scale-110 group-hover:shadow-lg"
                     onClick={() => {
                       router.navigate({
                         to: category.link,
