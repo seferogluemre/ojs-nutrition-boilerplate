@@ -15,9 +15,9 @@ interface MobileSidebarProps {
 }
 
 const accountLinks = [
-  "HESABIM",
-  "MÜŞTERİ YORUMLARI",
-  "İLETİŞİM"
+  { label: "HESABIM", href: "/account" },
+  { label: "MÜŞTERİ YORUMLARI", href: "/about" },
+  { label: "İLETİŞİM", href: "/contact" }
 ];
 
 export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
@@ -26,8 +26,7 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // Eden treaty type fix
-  const apiAuth = (api as any).auth;
+  const apiAuth = api.auth;
 
   // Logout mutation
   const logoutMutation = useMutation({
@@ -98,20 +97,19 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
           </div>
 
           {/* Fixed Bottom Section */}
-          <div className="flex-shrink-0">
+          <div className="mb-20">
             {/* Account Links Section - Gray Background */}
             <div className="bg-gray-100">
               {accountLinks.map((link, index) => (
-                <div key={link}>
+                <div key={index}>
                   <a
-                    href="#"
+                    href={link.href}
                     className="flex items-center px-6 py-4 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
                     onClick={() => {
-                      // Handle account link click
-                      // TODO: Navigate to account page
+                      router.navigate({ to: link.href });
                     }}
                   >
-                    <span className="text-base font-medium">{link}</span>
+                    <span className="text-base font-medium">{link.label}</span>
                   </a>
                   {/* Divider - except for last item */}
                   {index < accountLinks.length - 1 && (

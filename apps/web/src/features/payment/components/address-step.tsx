@@ -5,7 +5,7 @@ import { Label } from "#components/ui/label.js"
 import { RadioGroup, RadioGroupItem } from "#components/ui/radio-group.js"
 import { Plus } from "lucide-react"
 import { useState } from "react"
-import { addresses } from "../data/mockData"
+import { addresses } from "../data"
 import { AddressForm } from "./address-form"
 
 interface AddressStepProps {

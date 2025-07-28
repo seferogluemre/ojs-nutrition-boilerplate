@@ -82,4 +82,17 @@ export interface Benefit {
   icon: string;
   title: string;
   description: string;
-} 
+}
+
+export interface ProductCommentResponse {
+  id: string;
+  title: string;
+  content: string;
+  rating: number;
+  user: {
+    id: number;
+    name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}

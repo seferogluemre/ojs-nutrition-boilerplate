@@ -4,6 +4,7 @@ import { Label } from "#/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "#/components/ui/select";
 import { Textarea } from "#/components/ui/textarea";
 import { useState } from "react";
+import { ADDRESS_TYPES } from "../data";
 import { Address } from "./address-card";
 
 interface AddressFormProps {
@@ -12,12 +13,7 @@ interface AddressFormProps {
   initialData?: Address | null;
 }
 
-const ADDRESS_TYPES = [
-  { value: "Ev", label: "Ev" },
-  { value: "Ofis", label: "Ofis" },
-  { value: "İş", label: "İş Yeri" },
-  { value: "Diğer", label: "Diğer" }
-];
+
 
 export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProps) {
   const [formData, setFormData] = useState({

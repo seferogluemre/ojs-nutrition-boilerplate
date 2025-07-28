@@ -1,4 +1,4 @@
-import { AddressList } from "../addresses";
+import { AddressList } from "../../addresses";
 
 export function AddressesTab() {
   return <AddressList />;

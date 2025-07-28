@@ -1,38 +1,7 @@
 import { api } from "#lib/api.js";
 import { useAuthStore } from "#stores/authStore.js";
 import { useQuery } from "@tanstack/react-query";
-
-interface CartItem {
-  id: string;
-  quantity: number;
-  product: {
-    id: string;
-    name: string;
-    slug: string;
-    price: number;
-    primary_photo_url: string;
-  };
-  variant: {
-    id: string;
-    name: string;
-  };
-  added_at: string;
-}
-
-interface CartData {
-  id: string;
-  items: CartItem[];
-  summary: {
-    total_items: number;
-    total_quantity: number;
-    subtotal: number;
-  };
-  updated_at: string;
-}
-
-interface OrderSummaryProps {
-  shippingCost: number;
-}
+import { CartData, CartItem, OrderSummaryProps } from "../types";
 
 export const OrderSummary = ({ shippingCost }: OrderSummaryProps) => {
   const auth = useAuthStore();

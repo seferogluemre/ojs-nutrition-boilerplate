@@ -54,6 +54,7 @@ export default function ProductDetail() {
       </Main>
     );
   }
+  console.log("product", product);
 
   return (
     <Main>
@@ -98,7 +99,7 @@ export default function ProductDetail() {
 
             <ProductBenefits />
 
-            <ProductDetails />
+            <ProductDetails explanation={product.explanation} />
           </div>
         </div>
       </div>

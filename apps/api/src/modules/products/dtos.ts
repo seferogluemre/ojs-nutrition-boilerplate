@@ -108,6 +108,7 @@ export const bestSellersDto = {
   }),
   response: {
       200: t.Array(t.Object({
+        id: t.String(),
         name: t.String(),
         short_explanation: t.String(),
         slug: t.String(),

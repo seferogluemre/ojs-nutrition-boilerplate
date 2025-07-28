@@ -5,14 +5,7 @@ import { Input } from "#/components/ui/input"
 import { Label } from "#/components/ui/label"
 import { CreditCard } from "lucide-react"
 import { useState } from "react"
-
-interface PaymentStepProps {
-  onPrev: () => void
-  selectedAddress: any
-  shippingCost: number
-  isProcessing: boolean
-  setIsProcessing: (processing: boolean) => void
-}
+import { PaymentStepProps } from "../types"
 
 export const PaymentStep = ({
   onPrev,

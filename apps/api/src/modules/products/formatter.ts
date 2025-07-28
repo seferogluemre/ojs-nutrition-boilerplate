@@ -110,6 +110,7 @@ export abstract class ProductFormatter {
 
   static bestSeller(product: any) {
     return {
+      id: product.uuid,
       name: product.name,
       short_explanation: product.shortDescription,
       slug: product.slug,

@@ -4,21 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useState } from "react";
 import { Review, calculateReviewStats } from "../../data/mock-reviews";
+import { ProductCommentResponse } from "../types";
 
 const REVIEWS_PER_PAGE = 3;
-
-interface ProductCommentResponse {
-  id: string;
-  title: string;
-  content: string;
-  rating: number;
-  user: {
-    id: number;
-    name: string;
-  },
-  createdAt: string;
-  updatedAt: string;
-}
 
 const mapApiReviewsToReviews = (apiReviews: ProductCommentResponse[]): Review[] => {
   return apiReviews.map(apiReview => ({
@@ -40,8 +28,6 @@ export const ProductReviews = ({ productId }: { productId: string }) => {
     queryKey: ["product-comments", productId],
     queryFn: () => api.products({ productId }).comments.get()
   })
-  
-
   const apiReviews = data?.data?.data || [];
   const mappedReviews = mapApiReviewsToReviews(apiReviews);
   const stats = calculateReviewStats(mappedReviews);

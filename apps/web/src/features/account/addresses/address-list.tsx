@@ -3,40 +3,23 @@ import { Button } from "#/components/ui/button";
 import { toast } from "#/hooks/use-toast";
 import { ArrowLeft, Plus } from "lucide-react";
 import { useState } from "react";
+import { MOCK_ADDRESSES } from "../data";
 import { Address, AddressCard } from "./address-card";
 import { AddressForm } from "./address-form";
 
-// Mock data - Gerçek uygulamada API'den gelecek
-const MOCK_ADDRESSES: Address[] = [
-  {
-    id: "1",
-    type: "Ev",
-    title: "Ana Ev Adresi",
-    description: "Birincil ev adresi",
-    fullAddress: "Ahmet Mah. Mehmetoğlu Sk., No: 1 Daire: 2, Ataşehir, İstanbul, Türkiye"
-  },
-  {
-    id: "2", 
-    type: "Ofis",
-    title: "İş Yeri Adresi",
-    description: "Ana ofis binası",
-    fullAddress: "Ayşe Mah. Fatmaoğlu Cad., No: 4 D: 4, Ataşehir, İstanbul, Türkiye"
-  }
-];
 
 export function AddressList() {
   const [addresses, setAddresses] = useState<Address[]>(MOCK_ADDRESSES);
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   
-  // Silme onayı için state'ler
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<Address | null>(null);
 
   const handleAddAddress = (newAddress: Omit<Address, 'id'>) => {
     const address: Address = {
       ...newAddress,
-      id: Math.random().toString(36).substr(2, 9) // Geçici ID
+      id: Math.random().toString(36).substr(2, 9) 
     };
     setAddresses(prev => [...prev, address]);
     setShowForm(false);
@@ -61,7 +44,6 @@ export function AddressList() {
     }
   };
 
-  // Silme butonuna basıldığında dialog'u aç
   const handleDeleteAddress = (addressId: string) => {
     const address = addresses.find(addr => addr.id === addressId);
     if (address) {
@@ -70,13 +52,11 @@ export function AddressList() {
     }
   };
 
-  // Gerçek silme işlemi - dialog onayından sonra
   const confirmDeleteAddress = () => {
     if (addressToDelete) {
       setAddresses(prev => prev.filter(addr => addr.id !== addressToDelete.id));
       setShowDeleteDialog(false);
       
-      // Başarılı silme toast mesajı
       toast({
         title: "✅ Adres silindi",
         description: `"${addressToDelete.title}" adresi başarıyla silindi.`,
@@ -97,7 +77,6 @@ export function AddressList() {
     setEditingAddress(null);
   };
 
-  // Form gösteriliyorsa form ekranını render et
   if (showForm) {
     return (
       <div>
@@ -126,7 +105,6 @@ export function AddressList() {
     );
   }
 
-  // Adres yoksa boş durum göster
   if (addresses.length === 0) {
     return (
       <div>

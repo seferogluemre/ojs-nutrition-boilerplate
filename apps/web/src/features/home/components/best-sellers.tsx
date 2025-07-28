@@ -1,6 +1,7 @@
 import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import React from "react";
 import { BestSellerProduct } from "../types/index";
@@ -30,6 +31,8 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
     queryFn: () => api.products["best-sellers"].get(),
   });
 
+  console.log(data?.data);
+
   return (
     <section className={cn(" py-12", className)} {...props}>
       <div className="container mx-auto px-4">
@@ -39,10 +42,12 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
 
         <div className="mx-auto grid max-w-7xl grid-cols-2 justify-items-center gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 lg:gap-6">
           {data?.data?.slice(0, 6).map((product: BestSellerProduct,index:number) => (
-            <div
+            <Link
               key={index}
+              to="/products/$productId" 
+              params={{ productId: product.id }}
               className="relative h-[368px] w-[200px] cursor-pointer rounded-lg bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl md:h-[389.66px] md:w-[250px] lg:h-[375px] lg:w-[250px] xl:h-[375px] xl:w-[200px]"
-            >
+          >
               {product.discountPercentage && (
                 <div className="absolute -right-2 -top-2 z-10 rounded-md bg-red-500 px-2 py-1 text-xs font-bold text-white">
                   %{product.discountPercentage} İNDİRİM
@@ -99,7 +104,7 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
                   )}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

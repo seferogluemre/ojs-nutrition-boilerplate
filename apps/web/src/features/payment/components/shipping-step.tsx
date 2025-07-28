@@ -2,14 +2,7 @@
 
 import { Button } from "#/components/ui/button"
 import { MapPin } from "lucide-react"
-
-interface ShippingStepProps {
-  onNext: () => void
-  onPrev: () => void
-  selectedAddress: any
-  shippingCost: number
-  setShippingCost: (cost: number) => void
-}
+import { ShippingStepProps } from "../types"
 
 export const ShippingStep = ({ onNext, onPrev, selectedAddress, shippingCost, setShippingCost }: ShippingStepProps) => {
   const shippingOptions = [

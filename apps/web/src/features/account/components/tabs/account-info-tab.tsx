@@ -71,7 +71,6 @@ export function AccountInfoTab({ user }: AccountInfoTabProps) {
   };
 
   const handleCancel = () => {
-    // Form'u orijinal değerlere döndür
     setFormData({
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",

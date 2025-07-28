@@ -1,7 +1,7 @@
 import { api } from "#lib/api.js";
 import { useAuthStore } from "#stores/authStore.js";
 import { useQuery } from "@tanstack/react-query";
-import { OrderDetailAPI } from "../../types";
+import { OrderDetailAPI } from "../types";
 import { OrderSidebar } from './order-sidebar';
 import { OrderSummary } from './order-summary';
 
@@ -13,7 +13,6 @@ interface OrderDetailProps {
 export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
   const { auth } = useAuthStore();
 
-  // API call for order detail
   const { data: orderData, isLoading, error } = useQuery({
     queryKey: ["order-detail", orderId],
     queryFn: async () => {

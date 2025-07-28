@@ -13,7 +13,6 @@ export function ProductInfo({ name, shortExplanation, averageRating, commentCoun
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
 
-    // Full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(
         <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />

@@ -9,7 +9,6 @@ const REVIEWS_PER_PAGE = 3;
 export default function About() {
   const [currentPage, setCurrentPage] = useState(1);
   
-  // Pagination logic
   const totalPages = Math.ceil(customerReviews.length / REVIEWS_PER_PAGE);
   const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
   const endIndex = startIndex + REVIEWS_PER_PAGE;
@@ -84,7 +83,6 @@ export default function About() {
           </div>
         </section>
 
-        {/* Customer Count Section */}
         <section className="mb-16 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
             1.000.000+ den Fazla Mutlu Müşteri
@@ -94,7 +92,6 @@ export default function About() {
           </p>
         </section>
 
-        {/* Certificates Section */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-8">
             Sertifikalarımız
@@ -107,10 +104,7 @@ export default function About() {
                     src={certificate.imageUrl} 
                     alt={certificate.name}
                     className="w-16 h-16 md:w-20 md:h-20 object-contain"
-                    onError={(e) => {
-                      // Fallback for missing images
-                      const target = e.target as HTMLImageElement;
-                      target.src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="12">${certificate.name}</text></svg>`;
+                    onError={() => {
                     }}
                   />
                 </div>
@@ -127,7 +121,6 @@ export default function About() {
           </div>
         </section>
 
-        {/* Customer Reviews Section - Matching Product Detail Layout */}
         <section className="mb-16">
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -257,7 +250,6 @@ export default function About() {
           )}
         </section>
 
-        {/* Contact CTA */}
         <section className="text-center bg-gray-50 rounded-xl p-8">
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Bizimle İletişime Geçin
@@ -265,14 +257,12 @@ export default function About() {
           <p className="text-gray-600 mb-4">
             Sorularınız için uzman ekibimizle iletişime geçebilirsiniz.
           </p>
-          <Button 
-            asChild
-            className="bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-lg"
+          <a 
+            href="/contact"
+            className="inline-block bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-lg transition-colors"
           >
-            <a href="/contact">
-              İletişim
-            </a>
-          </Button>
+            İletişim
+          </a>
         </section>
       </div>
     </Main>

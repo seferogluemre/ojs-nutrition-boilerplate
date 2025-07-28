@@ -1,10 +1,9 @@
-import { OrderSidebarProps } from "../../types";
+import { OrderSidebarProps } from "../types";
 
 
 export function OrderSidebar({ order }: OrderSidebarProps) {
   return (
     <div className="space-y-6">
-      {/* Address Section */}
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <h5 className="font-semibold text-gray-900 mb-3">Adres</h5>
         <div className="space-y-2">

@@ -1,16 +1,13 @@
 import { useAuthStore } from "#stores/authStore";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AccountInfoTab } from "./components/account-info-tab";
-import { AddressesTab } from "./components/addresses-tab";
-import { OrdersTab } from "./components/orders-tab";
+import { AccountInfoTab, AddressesTab, OrdersTab } from "./components/tabs";
 
 export function Account() {
   const { auth } = useAuthStore();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("account-info");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
 
   useEffect(() => {
     if (!auth.user && !auth.accessToken) {
