@@ -52,16 +52,28 @@ export default function Products() {
   return (
     <Main>
       <div className="mx-auto max-w-7xl px-4 py-8">
-        <h1 className="mb-8 text-center text-3xl font-bold">
-          {getCategoryTitle(mainCategory)}
-        </h1>
+        {/* Category Title */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+            {getCategoryTitle(mainCategory)}
+          </h1>
+        </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+        {/* Products Grid - Desktop 4 columns, responsive */}
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 justify-items-center">
           {data?.data?.map((product: Product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {/* Empty state */}
+        {(!data?.data || data?.data?.length === 0) && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              Bu kategoride henüz ürün bulunmamaktadır.
+            </p>
+          </div>
+        )}
       </div>
     </Main>
   );

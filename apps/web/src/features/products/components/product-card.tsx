@@ -47,56 +47,65 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
     >
       <div 
         className={cn(
-          "bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer relative overflow-hidden",
-          // Flexible height instead of fixed heights
-          "w-full min-h-[350px] flex flex-col md:h-[420px]",
+          "bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden border border-gray-100 dark:border-gray-700",
+          // Responsive heights - matching görsel design  
+          "w-full max-w-[280px] h-[420px] flex flex-col",
           className
         )}
       >
-        {/* Discount Badge - Half outside the card */}
+        {/* Discount Badge */}
         {product.discountPercentage && (
-          <div className="absolute -top-1 -right-1 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold z-10">
+          <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold z-10 shadow-md">
             %{product.discountPercentage}
-            <div className="text-[10px] font-normal">İNDİRİM</div>
           </div>
         )}
         
-        {/* Product Image - Fixed aspect ratio */}
-        <div className="aspect-square w-full overflow-hidden rounded-t-lg flex-shrink-0">
+        {/* Product Image - Taking more space */}
+        <div className="h-[180px] w-full overflow-hidden rounded-t-lg flex-shrink-0 bg-gray-50 dark:bg-gray-700 flex items-center justify-center">
           <img 
             src={product.image || "/images/collagen.jpg"} 
             alt={product.name}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+            className="w-full h-full object-contain hover:scale-105 transition-transform duration-300 p-2"
           />
         </div>
         
-        {/* Product Info - Flexible content area */}
-        <div className="p-2 lg:p-3 flex flex-col flex-1 gap-1">
-          {/* Product Name */}
-          <h3 className="font-bold text-gray-900 text-xs lg:text-sm leading-tight line-clamp-2">
-            {product.name}
-          </h3>
-            
-          {/* Short Description */}
-          <p className="text-xs text-gray-600 line-clamp-2 leading-tight">
-            {product.shortDescription}
-          </p>
-          
-          {/* Rating & Reviews */}
-          <div className="flex items-center gap-1 mt-1">
-            <div className="flex items-center gap-0.5">
-              {renderStars(product.rating)}
-            </div>
-            <span className="text-xs text-gray-500 ml-1">
-              {product.reviewCount} Yorum
-            </span>
+        {/* Product Info */}
+        <div className="p-4 flex flex-col flex-1 justify-between bg-white dark:bg-gray-800">
+          <div>
+            {/* Product Name - Bold and prominent */}
+            <h3 className="font-bold text-gray-900 dark:text-white text-sm leading-tight line-clamp-2 mb-2 min-h-[2.5rem]">
+              {product.name}
+            </h3>
+              
+            {/* Short Description */}
+            <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed mb-3 min-h-[2rem]">
+              {product.shortDescription}
+            </p>
           </div>
           
-          {/* Price Section */}
-          <div className="flex items-center gap-2 mt-auto pt-1">
-            <span className="font-bold text-gray-900 text-sm lg:text-base">
-              {product.price} TL
-            </span>
+          {/* Bottom section with rating and price */}
+          <div className="mt-auto">
+            {/* Rating & Reviews */}
+            <div className="flex items-center gap-1 mb-2">
+              <div className="flex items-center gap-0.5">
+                {renderStars(product.rating)}
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                {product.reviewCount} Yorum
+              </span>
+            </div>
+            
+            {/* Price Section - Prominent */}
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-gray-900 dark:text-white text-lg">
+                {product.price} TL
+              </span>
+              {product.oldPrice && (
+                <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
+                  {product.oldPrice} TL
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
