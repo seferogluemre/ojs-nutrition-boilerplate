@@ -46,12 +46,8 @@ const app = new Elysia({
   )
   .get(
     '', // index
-    async ({ query, user }) => {
-      const queryWithUser = {
-        ...query,
-        userId: user.id, // Kullanıcı sadece kendi adreslerini görebilir
-      };
-      const userAddresses = await UserAddressesService.index(queryWithUser);
+    async ({ user }) => {
+      const userAddresses = await UserAddressesService.index({ userId: user.id });
       const response = userAddresses.map(UserAddressFormatter.response);
       return response;
     },

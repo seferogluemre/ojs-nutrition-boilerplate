@@ -3,7 +3,6 @@ import { Prisma, UserAddress } from '#prisma/index';
 import { HandleError } from '#shared/error/handle-error';
 import { InternalServerErrorException, NotFoundException } from '#utils';
 
-import { getUserAddressFilters } from './dtos';
 import { UserAddressCreatePayload, UserAddressIndexQuery, UserAddressUpdatePayload } from './types';
 
 
@@ -17,13 +16,11 @@ export abstract class UserAddressesService {
           }
         : undefined;
 
-      const [hasFilters, filters] = getUserAddressFilters(filterQuery);
-      const where: Prisma.UserAddressWhereInput  = {};
+      const where: Prisma.UserAddressWhereInput = {};
 
-      if (hasFilters) {
-        where.id = filters[0]?.id as number;
+      if (filterQuery?.userId) {
+        where.userId = filterQuery.userId;
       }
-
       return prisma.userAddress.findMany({
         where,
         include: {

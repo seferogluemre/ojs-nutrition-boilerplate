@@ -1,27 +1,9 @@
 import { CityPlain } from '#prismabox/City';
 import { UserAddressPlain } from '#prismabox/UserAddress';
 import { ControllerHook, errorResponseDto } from '#utils';
-import { Prisma } from '@prisma/client';
 import { t } from 'elysia';
 
-export function getUserAddressFilters(query?: { id?: string; userId?: string }) {
-  if (!query) {
-    return [false, [], undefined] as const;
-  }
 
-  const filters: Prisma.UserWhereInput[] = [];
-  const { id, userId } = query;
-
-  if (id) {
-    filters.push({ id });
-  }
-
-  if (userId) {
-    filters.push({id: userId });
-  }
-
-  return [filters.length > 0, filters, undefined] as const;
-}
 
 export const userAddressResponseSchema = t.Object({
   id: UserAddressPlain.properties.id,
@@ -40,11 +22,6 @@ export const userAddressResponseSchema = t.Object({
 });
 
 export const userAddressIndexDto = {
-  query: t.Optional(
-    t.Object({
-      userId: t.Optional(t.String()),
-    }),
-  ),
   response: { 200: t.Array(userAddressResponseSchema) },
   detail: {
     summary: 'Index',
@@ -76,7 +53,7 @@ export const userAddressUpdateDto = {
     addressLine2: t.Optional(UserAddressPlain.properties.addressLine2),
     postalCode: t.Optional(UserAddressPlain.properties.postalCode),
     isDefault: t.Optional(UserAddressPlain.properties.isDefault),
-    cityId: t.Optional(CityPlain.properties.id),
+    cityId: t.Optional(t.Integer({ minimum: 1 })), // Manual olarak tanımlandı
   }),
   response: {
     200: userAddressResponseSchema,
@@ -112,6 +89,7 @@ export const userAddressCreateDto = {
     addressLine2: UserAddressPlain.properties.addressLine2,
     postalCode: UserAddressPlain.properties.postalCode,
     isDefault: UserAddressPlain.properties.isDefault,
+    cityId: t.Integer({ minimum: 1 }), // Manual olarak tanımlandı çünkü @prismabox.hide kullanılmış
   }),
   response: {
     200: userAddressResponseSchema,
