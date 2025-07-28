@@ -19,11 +19,7 @@ export function AccountInfoTab({ user }: AccountInfoTabProps) {
 
   const updateMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await api.users.me.patch(data, {
-        headers: {
-          authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
+      const response = await api.users({id:user.id}).patch(data)
       return response.data;
     },
     onSuccess: (data) => {
