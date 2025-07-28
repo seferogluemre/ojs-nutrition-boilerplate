@@ -129,7 +129,7 @@ export function CustomerReviews() {
   });
 
   return (
-    <section className="py-16 bg-white dark:bg-gray-900">
+    <section className="py-16">
       <div className="container mx-auto px-4">
         {/* Header with title and review count */}
         <div className="flex justify-between items-center mb-8">

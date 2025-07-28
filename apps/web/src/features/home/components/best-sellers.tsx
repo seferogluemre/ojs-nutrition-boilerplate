@@ -32,11 +32,9 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
   });
 
   return (
-    <section className={cn(" py-12", className)} {...props}>
+    <section className={cn("py-12 bg-white dark:bg-[#010819]", className)} {...props}>
       <div className="container mx-auto px-4">
-        <h2 className="mb-8 text-center text-2xl font-bold text-gray-900 lg:text-3xl">
-          ÇOK SATANLAR
-        </h2>
+
 
         <div className="mx-auto grid max-w-7xl grid-cols-2 justify-items-center gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 lg:gap-6">
           {data?.data?.slice(0, 6).map((product: BestSellerProduct,index:number) => (
@@ -44,7 +42,7 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
               key={index}
               to="/products/$productId" 
               params={{ productId: product.id }}
-              className="relative h-[368px] w-[200px] cursor-pointer rounded-lg bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl md:h-[389.66px] md:w-[250px] lg:h-[375px] lg:w-[250px] xl:h-[375px] xl:w-[200px]"
+              className="relative h-[368px] w-[200px] cursor-pointer rounded-lg bg-white dark:bg-gray-800 shadow-lg transition-shadow duration-300 hover:shadow-xl md:h-[389.66px] md:w-[250px] lg:h-[375px] lg:w-[250px] xl:h-[375px] xl:w-[200px]"
           >
               {product.discountPercentage && (
                 <div className="absolute -right-2 -top-2 z-10 rounded-md bg-red-500 px-2 py-1 text-xs font-bold text-white">
@@ -66,11 +64,11 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
 
               <div className="p-4 pt-3">
                 {/* Product Name */}
-                <h3 className="mb-1 text-sm font-bold leading-tight text-gray-900">
+                <h3 className="mb-1 text-sm font-bold leading-tight text-gray-900 dark:text-white">
                   {product.name}
                 </h3>
 
-                <p className="mb-2 text-xs leading-tight text-gray-600">
+                <p className="mb-2 text-xs leading-tight text-gray-600 dark:text-gray-300">
                   {product.short_explanation}
                 </p>
 
@@ -80,7 +78,7 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
                 </div>
 
                 {/* Review Count */}
-                <p className="mb-3 text-xs text-gray-500">
+                <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
                   {product.comment_count} Yorum
                 </p>
 
@@ -88,15 +86,15 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
                 <div className="flex items-baseline space-x-2">
                   {product.price_info ? (
                     <>
-                      <span className="text-lg font-bold text-gray-900">
+                      <span className="text-lg font-bold text-gray-900 dark:text-white">
                         {product.price_info.total_price} TL
                       </span>
-                      <span className="text-sm text-red-500 line-through">
+                      <span className="text-sm text-red-500 dark:text-red-400 line-through">
                         {product.price_info.price_per_servings} TL
                       </span>
                     </>
                   ) : (
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-lg font-bold text-gray-900 dark:text-white">
                       {product.total_price} TL
                     </span>
                   )}

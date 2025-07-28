@@ -381,7 +381,7 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
           {/* Sepet Button - Tablet için kompakt */}
           <Button
             size="sm"
-            className="relative flex h-9 items-center space-x-1 bg-gray-600 dark:bg-gray-700 px-3 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600"
+            className="relative flex h-9 items-center space-x-1 bg-gray-600 px-3 py-2 text-white hover:bg-gray-700"
             onClick={toggleCartSidebar}
           >
             <ShoppingCart className="h-4 w-4" />
