@@ -1,27 +1,11 @@
+import { Address } from "#/features/account/addresses/address-card"
 import { useAuthStore } from "#stores/authStore"
 import { useState } from "react"
-import { AddressStep } from "./components/address-step"
+import { AddressStep } from "./components/address/address-step"
 import { OrderSummary } from "./components/order-summary"
-import { PaymentStep } from "./components/payment-step"
+import { PaymentStep } from "./components/payment/payment-step"
 import { ShippingStep } from "./components/shipping-step"
 import { StepIndicator } from "./components/step-indicator"
-
-interface Address {
-  id: number;
-  uuid: string;
-  title: string;
-  recipientName: string;
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  postalCode: string;
-  isDefault: boolean;
-  city: {
-    id: number;
-    name: string;
-    stateName: string;
-  };
-}
 
 export default function PaymentPage() {
   const { auth } = useAuthStore()

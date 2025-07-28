@@ -4,7 +4,7 @@ import { ControllerHook, errorResponseDto } from '#utils';
 import { t } from 'elysia';
 
 export const userAddressResponseSchema = t.Composite([
-  t.Omit(UserAddressPlain, ['phone', 'postalCode']),
+  t.Omit(UserAddressPlain, [ 'postalCode']),
   t.Object({
     city: t.Pick(CityPlain, ['id','stateName','name']),
   }),

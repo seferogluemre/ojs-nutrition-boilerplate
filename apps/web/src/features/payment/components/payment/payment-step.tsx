@@ -4,29 +4,13 @@ import { Button } from "#/components/ui/button"
 import { Input } from "#/components/ui/input"
 import { Label } from "#/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "#/components/ui/select"
+import { Address } from "#/features/account/addresses/address-card"
 import { toast } from "#/hooks/use-toast"
 import { api } from "#/lib/api"
 import { useAuthStore } from "#/stores/authStore"
 import { useRouter } from "@tanstack/react-router"
 import { CreditCard } from "lucide-react"
 import { useState } from "react"
-
-interface Address {
-  id: number;
-  uuid: string;
-  title: string;
-  recipientName: string;
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  postalCode: string;
-  isDefault: boolean;
-  city: {
-    id: number;
-    name: string;
-    stateName: string;
-  };
-}
 
 interface PaymentStepProps {
   onPrev: () => void

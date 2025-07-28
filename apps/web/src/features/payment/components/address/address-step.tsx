@@ -1,5 +1,6 @@
 "use client"
 
+import { Address } from "#/features/account/addresses/address-card"
 import { Button } from "#components/ui/button.js"
 import { Label } from "#components/ui/label.js"
 import { RadioGroup, RadioGroupItem } from "#components/ui/radio-group.js"
@@ -9,23 +10,6 @@ import { useQuery } from "@tanstack/react-query"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import { AddressForm } from "./address-form"
-
-interface Address {
-  id: number;
-  uuid: string;
-  title: string;
-  recipientName: string;
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  postalCode: string;
-  isDefault: boolean;
-  city: {
-    id: number;
-    name: string;
-    stateName: string;
-  };
-}
 
 interface AddressStepProps {
   onNext: () => void
@@ -50,6 +34,8 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
   })
 
   const addresses = addressesData?.data || []
+  console.log('API Response:', addressesData)
+  console.log('Addresses:', addresses)
 
   const handleEditAddress = (address: Address) => {
     setEditingAddress(address)
