@@ -1,4 +1,5 @@
 export interface SubChildCategory {
+  id: string;
   name: string;
   slug: string;
   order: number;
@@ -13,6 +14,7 @@ export interface ChildCategory {
 }
 
 export interface TopSeller {
+  id: string;
   name: string;
   slug: string;
   description: string;

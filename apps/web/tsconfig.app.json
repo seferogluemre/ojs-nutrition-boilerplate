@@ -6,7 +6,8 @@
     "paths": {
       "#*": ["./src/*"]
     },
-    "outDir": "../../dist/apps/web"
+    "outDir": "../../dist/apps/web",
+    "lib": ["es2022", "dom", "dom.iterable"]
   },
   "files": [],
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.json"],
