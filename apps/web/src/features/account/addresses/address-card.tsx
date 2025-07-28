@@ -8,9 +8,12 @@ export interface Address {
   addressLine1: string;
   addressLine2: string;
   title:string;
+  phone:string;
+  postalCode:string;
   city:{
     id:number,
     name:string;
+    stateName:string;
   }
   createdAt:string;
   isDefault:boolean;
@@ -55,7 +58,7 @@ export function AddressCard({ address, onEdit, onDelete }: AddressCardProps) {
          {/* Orta - Adres açıklaması */}
          <div className="mb-4 min-h-[60px]">
           <p className="text-sm text-gray-600 leading-relaxed">
-            {address.city.name}
+          {address.city.stateName} - {address.city.name} 
           </p>
           <p className="text-sm text-gray-700 font-bold leading-relaxed">
             {address.recipientName}

@@ -6,7 +6,7 @@ import { t } from 'elysia';
 export const userAddressResponseSchema = t.Composite([
   t.Omit(UserAddressPlain, ['phone', 'postalCode']),
   t.Object({
-    city: t.Pick(CityPlain, ['id','name']),
+    city: t.Pick(CityPlain, ['id','stateName','name']),
   }),
 ]);
 
