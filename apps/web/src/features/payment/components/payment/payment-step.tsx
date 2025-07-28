@@ -10,7 +10,8 @@ import { api } from "#/lib/api"
 import { useAuthStore } from "#/stores/authStore"
 import { useRouter } from "@tanstack/react-router"
 import { CreditCard } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { SuccessScreen } from "./success-screen"
 
 interface PaymentStepProps {
   onPrev: () => void
@@ -36,8 +37,22 @@ export const PaymentStep = ({
     paymentType: "credit_card",
   })
 
+  const [orderSuccess, setOrderSuccess] = useState(false)
+  const [showContent, setShowContent] = useState(false)
+  const [orderNumber, setOrderNumber] = useState("")
+
   const { auth } = useAuthStore()
   const router = useRouter()
+
+  // Success ekranı animasyonu için
+  useEffect(() => {
+    if (orderSuccess) {
+      const timer = setTimeout(() => {
+        setShowContent(true)
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [orderSuccess])
 
   const handleCardNumberChange = (value: string) => {
     // Sadece rakamları al ve 16 karakterle sınırla
@@ -131,6 +146,10 @@ export const PaymentStep = ({
     return true
   }
 
+  const generateOrderNumber = () => {
+    return Math.random().toString(36).substr(2, 9).toUpperCase()
+  }
+
   const handleCompleteOrder = async () => {
     if (!validateForm()) return
 
@@ -152,15 +171,8 @@ export const PaymentStep = ({
         },
       })
 
-      toast({
-        title: "✅ Başarılı",
-        description: "Siparişiniz başarıyla oluşturuldu!",
-      })
-
-      // Anasayfaya yönlendir
-      setTimeout(() => {
-        router.navigate({ to: "/" })
-      }, 2000)
+      setOrderNumber(generateOrderNumber())
+      setOrderSuccess(true)
 
     } catch (error: any) {
       console.error("Order completion error:", error)
@@ -174,6 +186,15 @@ export const PaymentStep = ({
     }
   }
 
+  const handleContinueToOrders = () => {
+    router.navigate({ to: "/account" })
+  }
+
+  if (orderSuccess) {
+    return <SuccessScreen showContent={showContent} orderNumber={orderNumber} onContinueToOrders={handleContinueToOrders} />
+  }
+
+  // Processing Ekranı
   if (isProcessing) {
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-lg">
@@ -184,6 +205,7 @@ export const PaymentStep = ({
     )
   }
 
+  // Ana Ödeme Formu
   return (
     <div className="space-y-6">
       <div className="bg-gray-50 rounded-lg p-6">
