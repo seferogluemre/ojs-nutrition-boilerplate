@@ -21,22 +21,24 @@ interface AddressFormData {
 }
 
 export function AddressList() {
-    const auth = useAuthStore();
-    const queryClient = useQueryClient();
+  const auth = useAuthStore();
+  const queryClient = useQueryClient();
 
-    const { data, isLoading } = useQuery({
-      queryKey: ['user-addresses'],
-      queryFn: () => api["user-addresses"].get({
+  const { data, isLoading } = useQuery({
+    queryKey: ["user-addresses"],
+    queryFn: () =>
+      api["user-addresses"].get({
         headers: {
           authorization: `Bearer ${auth.auth.accessToken}`,
         },
-      })
-    });
+      }),
+  });
 
-    // Create address mutation
-    const createAddressMutation = useMutation({
-      mutationFn: async (addressData: AddressFormData) => {
-        return api["user-addresses"].post({
+  // Create address mutation
+  const createAddressMutation = useMutation({
+    mutationFn: async (addressData: AddressFormData) => {
+      return api["user-addresses"].post(
+        {
           title: addressData.title,
           recipientName: addressData.recipientName,
           phone: addressData.phone,
@@ -45,34 +47,36 @@ export function AddressList() {
           postalCode: addressData.postalCode,
           isDefault: addressData.isDefault,
           cityId: addressData.cityId,
-        }, {
+        },
+        {
           headers: {
             authorization: `Bearer ${auth.auth.accessToken}`,
           },
-        });
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['user-addresses'] });
-        toast({
-          title: "✅ Adres eklendi",
-          description: "Adresiniz başarıyla eklendi.",
-        });
-        setShowForm(false);
-      },
-      onError: (error) => {
-        toast({
-          title: "❌ Hata",
-          description: "Adres eklenirken bir hata oluştu.",
-          variant: "destructive",
-        });
-        console.error('Address creation error:', error);
-      },
-    });
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
+      toast({
+        title: "✅ Adres eklendi",
+        description: "Adresiniz başarıyla eklendi.",
+      });
+      setShowForm(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "❌ Hata",
+        description: "Adres eklenirken bir hata oluştu.",
+        variant: "destructive",
+      });
+      console.error("Address creation error:", error);
+    },
+  });
 
   const addresses = data?.data || [];
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
-  
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<Address | null>(null);
 
@@ -85,34 +89,58 @@ export function AddressList() {
     setShowForm(true);
   };
 
-  const handleUpdateAddress = (updatedAddress: AddressFormData) => {
-    // TODO: Implement update address API call
-    console.log('Update address:', updatedAddress);
+  const handleUpdateAddress = async (updatedAddress: AddressFormData) => {
+    const result = await api["user-addresses"]({
+      id: editingAddress?.uuid,
+    }).patch({
+      headers: {
+        authorization: `Bearer ${auth.auth.accessToken}`,
+      },
+      body: {
+        title: updatedAddress.title,
+        recipientName: updatedAddress.recipientName,
+        phone: updatedAddress.phone,
+        addressLine1: updatedAddress.addressLine1,
+        addressLine2: updatedAddress.addressLine2,
+        postalCode: updatedAddress.postalCode,
+        isDefault: updatedAddress.isDefault,
+        cityId: updatedAddress.cityId,
+      },
+    });
+
     toast({
-      title: "ℹ️ Bilgi",
-      description: "Adres güncelleme özelliği henüz hazır değil.",
+      title: "✅ Adres güncellendi",
+      description: "Adresiniz başarıyla güncellendi.",
     });
   };
 
   const handleDeleteAddress = (addressUuid: string) => {
-    const address = addresses.find((addr: Address) => addr.uuid === addressUuid);
+    const address = addresses.find(
+      (addr: Address) => addr.uuid === addressUuid,
+    );
     if (address) {
       setAddressToDelete(address);
       setShowDeleteDialog(true);
     }
   };
 
-  const confirmDeleteAddress = () => {
+  const confirmDeleteAddress = async () => {
     if (addressToDelete) {
-      // TODO: Implement delete address API call
-      console.log('Delete address:', addressToDelete.uuid);
-      setShowDeleteDialog(false);
-      
-      toast({
-        title: "ℹ️ Bilgi",
-        description: "Adres silme özelliği henüz hazır değil.",
+      const result = await api["user-addresses"]({
+        id: addressToDelete.uuid,
+      }).delete({
+        headers: {
+          authorization: `Bearer ${auth.auth.accessToken}`,
+        },
       });
-      
+
+      setShowDeleteDialog(false);
+
+      toast({
+        title: "✅ Adres silindi",
+        description: "Adresiniz başarıyla silindi.",
+      });
+
       setAddressToDelete(null);
     }
   };
@@ -131,9 +159,9 @@ export function AddressList() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-12">
+      <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <p className="text-gray-600">Adresler yükleniyor...</p>
         </div>
       </div>
@@ -144,7 +172,7 @@ export function AddressList() {
     return (
       <div>
         {/* Form Header */}
-        <div className="flex items-center gap-3 mb-6">
+        <div className="mb-6 flex items-center gap-3">
           <Button
             variant="ghost"
             size="sm"
@@ -171,32 +199,49 @@ export function AddressList() {
   if (addresses.length === 0) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <h3 className="text-xl font-semibold text-gray-900">Adreslerim</h3>
-          <Button 
+          <Button
             onClick={() => setShowForm(true)}
             className="bg-blue-600 hover:bg-blue-700"
             disabled={createAddressMutation.isPending}
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Yeni Adres Ekle
           </Button>
         </div>
-        
-        <div className="text-center py-12">
+
+        <div className="py-12 text-center">
           <div className="mb-4">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
           </div>
-          
-          <h4 className="text-lg font-medium text-gray-900 mb-2">Henüz adresiniz yok</h4>
-          <p className="text-gray-600 mb-6">
+
+          <h4 className="mb-2 text-lg font-medium text-gray-900">
+            Henüz adresiniz yok
+          </h4>
+          <p className="mb-6 text-gray-600">
             Hızlı teslimat için teslimat adreslerinizi ekleyin
           </p>
-          
-          <Button 
+
+          <Button
             onClick={() => setShowForm(true)}
             className="bg-blue-600 hover:bg-blue-700"
             disabled={createAddressMutation.isPending}
@@ -211,20 +256,20 @@ export function AddressList() {
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h3 className="text-xl font-semibold text-gray-900">Adreslerim</h3>
-        <Button 
+        <Button
           onClick={() => setShowForm(true)}
           className="bg-blue-600 hover:bg-blue-700"
           disabled={createAddressMutation.isPending}
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           {createAddressMutation.isPending ? "Ekleniyor..." : "Yeni Adres Ekle"}
         </Button>
       </div>
 
       {/* Address Grid - 2 sütunlu yapıp kartları genişlettik */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {addresses.map((address: Address) => (
           <AddressCard
             key={address.id}
@@ -243,7 +288,8 @@ export function AddressList() {
         desc={
           <div>
             <p className="mb-2">
-              <strong>"{addressToDelete?.title}"</strong> adresini silmek istediğinizden emin misiniz?
+              <strong>"{addressToDelete?.title}"</strong> adresini silmek
+              istediğinizden emin misiniz?
             </p>
             <p className="text-sm text-gray-600">
               Bu işlem geri alınamaz ve adres kalıcı olarak silinecektir.
@@ -257,4 +303,4 @@ export function AddressList() {
       />
     </div>
   );
-} 
+}

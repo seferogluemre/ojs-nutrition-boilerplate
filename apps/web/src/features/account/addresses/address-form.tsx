@@ -41,10 +41,10 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
   const [formData, setFormData] = useState<AddressFormData>({
     title: initialData?.title || "",
     recipientName: initialData?.recipientName || "",
-    phone: "",
+    phone: initialData?.phone || "",
     addressLine1: initialData?.addressLine1 || "",
     addressLine2: initialData?.addressLine2 || "",
-    postalCode: "",
+    postalCode: initialData?.postalCode || "",
     isDefault: initialData?.isDefault || false,
     cityId: initialData?.city?.id || null
   });
