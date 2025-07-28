@@ -1,10 +1,10 @@
+import type { CategoriesApiResponse, Category } from "#components/layout/mobile-sidebar/types";
 import { SearchDropdown } from "#components/layout/search-dropdown";
 import { Button } from "#components/ui/button";
 import { Input } from "#components/ui/input";
 import { useDebounce } from "#hooks/use-debounce";
 import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
-import type { CategoriesApiResponse, Category } from "#types/mobile-sidebar.types";
 import { SearchProps } from "#types/search";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";

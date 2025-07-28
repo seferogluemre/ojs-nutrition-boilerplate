@@ -4,14 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import React, { useState } from "react";
-import {
-  CategoriesApiResponse,
-  Category,
-  CategoryNavigationProps,
-  ChildCategory,
-  PanelData,
-  SubChildCategory
-} from "./mobile-sidebar.types";
+import { CategoriesApiResponse, Category, CategoryNavigationProps, ChildCategory, PanelData, SubChildCategory } from "./types";
 
 export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
   const router = useRouter();

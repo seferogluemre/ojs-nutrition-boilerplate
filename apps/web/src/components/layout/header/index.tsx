@@ -18,7 +18,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ChevronDown, Menu, Search, ShoppingCart, User } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { SearchDropdown } from "./search-dropdown";
+import { SearchDropdown } from "../search-dropdown";
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean;
@@ -213,7 +213,7 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
                       </span>
                     </>
                   ) : (
-                    <span className="font-medium text-gray-700">HESAP</span>
+                      <span className="font-medium text-gray-700">HESAP</span>
                   )}
                 </div>
                 <ChevronDown className="h-4 w-4 text-gray-600" />
@@ -227,9 +227,9 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
               {auth.user ? (
                 <>
                   <DropdownMenuItem className="border-b border-gray-300 text-center">
-                    <a href="/account" className="w-full">
-                      Hesabım
-                    </a>
+                      <a href="/account" className="w-full">
+                        Hesabım
+                      </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="text-center"
@@ -273,7 +273,6 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
         </div>
       </div>
 
-      {/* Tablet Layout (md-lg) */}
       <div className="mx-auto hidden w-full max-w-5xl items-center justify-between md:flex lg:hidden">
         {/* Logo - Sol */}
         <div className="flex-shrink-0">
@@ -399,10 +398,9 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
         </div>
       </div>
 
-      {/* Mobile Layout */}
       <div className="flex w-full items-center justify-between md:hidden">
-        <Button variant="ghost" size="sm" onClick={toggleMobileSidebar}>
-          <Menu className="h-7 w-7 stroke-2" />
+        <Button variant="ghost" size="icon" onClick={toggleMobileSidebar}>
+          <Menu className="h-9 w-9 stroke-2" />
         </Button>
 
         <div className="flex flex-1 justify-center">
@@ -427,16 +425,14 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
         </Button>
       </div>
 
-      {/* Mobile Sidebar */}
       <MobileSidebar
         isOpen={isMobileSidebarOpen}
         onClose={closeMobileSidebar}
       />
 
-      {/* Cart Sidebar */}
       <CartSidebar isOpen={isCartSidebarOpen} onClose={closeCartSidebar} />
     </header>
   );
 };
 
-Header.displayName = "Header";
+Header.displayName = "Header"; 

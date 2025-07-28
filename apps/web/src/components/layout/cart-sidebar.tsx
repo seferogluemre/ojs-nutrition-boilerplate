@@ -5,7 +5,7 @@ import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { Minus, Plus, Trash2, X } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
 import React, { useEffect } from "react";
 
 interface CartSidebarProps {
@@ -17,7 +17,7 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   const { auth } = useAuthStore();
   const { items: cartItems, setItems, clearCart } = useCartStore();
   const queryClient = useQueryClient();
-  const router=useRouter();
+  const router = useRouter();
 
   const { data: cartData } = useQuery({
     queryKey: ["cart-items"],
@@ -151,8 +151,26 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
           {/* Items List */}
           <div className="flex-1 overflow-y-auto p-4">
             {cartItems.length === 0 ? (
-              <div className="mt-8 text-center text-gray-500">
-                <p>Sepetiniz boş</p>
+              <div className="flex h-[400px] flex-col items-center justify-center text-center">
+                {/* Simple Cart Icon */}
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                  <ShoppingCart className="h-8 w-8 text-gray-400" />
+                </div>
+
+                {/* Simple Text */}
+                <div className="mb-8 space-y-2">
+                  <h3 className="text-lg font-medium text-gray-800">
+                    Sepetiniz Boş
+                  </h3>
+                  <p className="max-w-xs text-sm text-gray-600">
+                    Sepetinizde henüz ürün bulunmuyor.
+                  </p>
+                </div>
+
+                {/* Simple Button */}
+                <Button className="bg-black hover:bg-gray-800">
+                  Alışverişe Başla
+                </Button>
               </div>
             ) : (
               cartItems.map((item: any) => (
