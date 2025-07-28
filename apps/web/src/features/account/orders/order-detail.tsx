@@ -1,4 +1,5 @@
 import { api } from "#lib/api.js";
+import { formatPrice, getOrderStatus } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useQuery } from "@tanstack/react-query";
 import { OrderDetailAPI } from "../types";
@@ -84,10 +85,7 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
   const orderDetail = {
     id: orderData.id,
     orderNumber: orderData.orderNumber,
-    status: orderData.status === 'PENDING' ? 'Sipariş Alındı' : 
-           orderData.status === 'PROCESSING' ? 'Hazırlanıyor' :
-           orderData.status === 'SHIPPED' ? 'Kargoya Verildi' :
-           orderData.status === 'DELIVERED' ? 'Sipariş Teslim Edildi' : orderData.status,
+    status: getOrderStatus(orderData.status).text,
     deliveryDate: new Date(orderData.createdAt).toLocaleDateString('tr-TR', {
       day: 'numeric',
       month: 'long',
@@ -96,7 +94,7 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
     products: orderData.items.map(item => ({
       id: item.id,
       name: `${item.product.name}`,
-      price: `${(item.totalPrice / 100).toFixed(2)} TL`,
+      price: formatPrice(item.totalPrice / 100),
       size: `Boyut: ${item.quantity} ADET`,
       image: item.product.primary_photo_url ? `/api/media/${item.product.primary_photo_url}` : "/icons/placeholder.webp"
     })),
@@ -108,11 +106,11 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
       method: "Kredi Kartı",
       cardNumber: "**** **** **** ****",
       summary: {
-        subtotal: `${(orderData.subtotal / 100).toFixed(2)} TL`,
-        shipping: "0 TL",
-        tax: "0 TL",
-        discount: "0 TL",
-        total: `${(orderData.subtotal / 100).toFixed(2)} TL`
+        subtotal: formatPrice(orderData.subtotal / 100),
+        shipping: "0,00 TL",
+        tax: "0,00 TL",
+        discount: "0,00 TL",
+        total: formatPrice(orderData.subtotal / 100)
       }
     }
   };

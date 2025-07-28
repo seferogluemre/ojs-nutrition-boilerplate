@@ -16,26 +16,46 @@ export const Footer = ({ className }: FooterProps) => {
   };
 
   const ojsNutritionLinks = [
-    "İletişim",
-    "Hakkımızda", 
-    "Sıkça Sorulan Sorular",
-    "KVKK",
-    "Blog",
-    "Garanti ve İade Koşulları",
-    "Gençlik Mücadele Sorumluları",
-    "Servis Müşteri Yemekleri"
+    {
+      label: "İletişim",
+      href: "/contact"
+    },
+    {
+      label: "Hakkımızda",
+      href: "/about"
+    },
+    {
+      label: "Sıkça Sorulan Sorular",
+      href: "/sss"
+    },
   ];
 
   const categoryLinks = [
-    "Protein",
-    "Spor Gıdaları",
-    "Sağlık",
+    {
+      label: "Protein",
+      href: "/products?main_category=1142dc02-2a2c-423b-bae8-c9232e902be1"
+    },
+    {
+      label: "Spor Gıdaları",
+      href: "/products?main_category=97e0c3d2-a370-4ec1-bedf-5eb72e0e7902"
+    },
+    {
+      label: "Sağlık",
+      href: "/products?main_category=a7909d8b-1abc-4f14-9086-469115d40051"
+    },
     "Gıda",
-    "Vitamin",
-    "Artiküler",
-    "Tüm Ürünler",
-    "Pedaller",
-    "Lanmanna Özel Fırsatlar"
+    {
+      label: "Vitamin",
+      href: "/products?main_category=d01c960b-7c46-475d-980e-7ba6b6a5a8d7"
+    },
+    {
+      label: "Tüm Ürünler",
+      href: "/products"
+    },
+    {
+      label: "Gıda",
+      href: "/products?main_category=66c6462b-aa91-4c1b-b757-c86f0c11665a"
+    },
   ];
 
   const popularProducts = [
@@ -50,7 +70,6 @@ export const Footer = ({ className }: FooterProps) => {
     "ZMA"
   ];
 
-  // Helper function to get the correct href for specific links
   const getHref = (linkText: string) => {
     switch (linkText) {
       case "İletişim":
@@ -107,8 +126,8 @@ export const Footer = ({ className }: FooterProps) => {
               <ul className="space-y-2">
                 {ojsNutritionLinks.map((link, index) => (
                   <li key={index}>
-                    <a href={getHref(link)} className="text-gray-300 hover:text-white transition-colors text-sm">
-                      {link}
+                    <a href={link.href} className="text-gray-300 hover:text-white transition-colors text-sm">
+                      {link.label}
                     </a>
                   </li>
                 ))}
@@ -121,8 +140,8 @@ export const Footer = ({ className }: FooterProps) => {
               <ul className="space-y-2">
                 {categoryLinks.map((link, index) => (
                   <li key={index}>
-                    <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                      {link}
+                    <a href={link.href} className="text-gray-300 hover:text-white transition-colors text-sm">
+                      {link.label}
                     </a>
                   </li>
                 ))}

@@ -36,6 +36,7 @@ export default function ProductDetail() {
   useEffect(() => {
     if (product) {
       addToRecentlyViewed(product);
+      window.scrollTo(0, 0);
     }
   }, [product, addToRecentlyViewed]);
 
@@ -54,7 +55,6 @@ export default function ProductDetail() {
       </Main>
     );
   }
-  console.log("product", product);
 
   return (
     <Main>

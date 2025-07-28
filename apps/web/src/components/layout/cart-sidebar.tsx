@@ -1,6 +1,6 @@
 import { Button } from "#components/ui/button";
 import { api } from "#lib/api.js";
-import { cn } from "#lib/utils";
+import { cn, formatPrice } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -187,14 +187,14 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                           {item.variant.name}
                         </p>
                         <p className="text-xs text-gray-500">
-                          Birim: {item.product.price} TL
+                          Birim: {formatPrice(item.product.price)}
                         </p>
                       </div>
 
                       {/* Price */}
                       <div className="text-right">
                         <p className="text-sm font-bold text-gray-900">
-                          {item.product.price * item.quantity} TL
+                          {formatPrice(item.product.price * item.quantity)}
                         </p>
                       </div>
                     </div>
@@ -245,7 +245,7 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
             {/* Total */}
             <div className="text-center">
               <p className="text-end text-lg font-bold text-gray-900">
-                TOPLAM {totalAmount} TL
+                TOPLAM {formatPrice(totalAmount)}
               </p>
             </div>
 

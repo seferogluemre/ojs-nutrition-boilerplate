@@ -1,6 +1,7 @@
 import { Button } from "#components/ui/button";
 import { toast } from "#hooks/use-toast.js";
 import { api } from "#lib/api.js";
+import { formatPrice } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
@@ -46,10 +47,19 @@ export function ProductPricing({
         description: "Ürün sepete eklendi!",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      
+      let errorMessage = "Ürün sepete eklenirken bir hata oluştu.";
+      
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Hata ❌", 
-        description: "Ürün sepete eklenirken bir hata oluştu.",
+        description: errorMessage,
       });
     },
   });
@@ -68,7 +78,6 @@ export function ProductPricing({
     return (price / servings).toFixed(2);
   };
 
-  // Stok kontrolü fonksiyonları
   const getCurrentStock = () => {
     // Önce seçilen variant'ın stok bilgisini al, yoksa product'ın genel stok bilgisini kullan
     return product.stock || 0;
@@ -79,7 +88,6 @@ export function ProductPricing({
     return quantity >= currentStock;
   };
 
-  // Override quantity increase with stock control
   const handleQuantityIncrease = () => {
     const currentStock = getCurrentStock();
     
@@ -111,7 +119,32 @@ export function ProductPricing({
       return;
     }
 
-    const variantId = selectedFlavor?.id || selectedSize?.id;
+    // Önce selectedFlavor'ı kullan, yoksa selectedSize'ı kullan
+    // Ama ikisi de varsa selectedFlavor öncelikli olsun
+    let variantId: string;
+    
+    if (selectedFlavor && selectedSize) {
+      // Eğer her ikisi de seçili ise, flavor'ı tercih et
+      variantId = selectedFlavor.id;
+    } else if (selectedFlavor) {
+      variantId = selectedFlavor.id;
+    } else if (selectedSize) {
+      variantId = selectedSize.id;
+    } else {
+      toast({
+        title: "Hata ❌",
+        description: "Lütfen ürün varyantını seçin.",
+      });
+      return;
+    }
+
+    console.log("Sending to cart:", {
+      productId: product.id,
+      variantId,
+      selectedFlavor: selectedFlavor?.name,
+      selectedSize: selectedSize?.name,
+      quantity
+    });
     
     addToCartMutation.mutate({
       productId: product.id,
@@ -124,17 +157,17 @@ export function ProductPricing({
     <div className="bg-white p-3 rounded-lg border-gray-200">
       <div className="flex items-center justify-between mb-4">
         <div className="text-3xl font-bold text-gray-900">
-          {getCurrentPrice()} TL
+          {formatPrice(getCurrentPrice())}
           {getOldPrice() && (
             <span className="text-lg text-gray-500 line-through ml-3">
-              {getOldPrice()} TL
+              {formatPrice(getOldPrice()!)}
             </span>
           )}
         </div>
         <div className="text-right">
           <div className="text-sm text-gray-600">Servis başına</div>
           <div className="text-lg font-semibold text-gray-900">
-            {getServingPrice()} TL
+            {formatPrice(parseFloat(getServingPrice()))}
           </div>
         </div>
       </div>

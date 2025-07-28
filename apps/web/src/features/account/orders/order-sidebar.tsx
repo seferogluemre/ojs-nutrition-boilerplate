@@ -14,7 +14,6 @@ export function OrderSidebar({ order }: OrderSidebarProps) {
         </div>
       </div>
 
-      {/* Payment Section */}
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <h5 className="font-semibold text-gray-900 mb-3">Ödeme</h5>
         <div className="space-y-2">

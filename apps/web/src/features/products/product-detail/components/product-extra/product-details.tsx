@@ -2,7 +2,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "#c
 import { ProductExplanation } from "../../types";
 
 export function ProductDetails({ explanation }: { explanation: ProductExplanation }) {
-  console.log("explanation", explanation);
   return (
     <div className="mt-8">
       <Accordion type="single" collapsible className="w-full">

@@ -31,8 +31,6 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
     queryFn: () => api.products["best-sellers"].get(),
   });
 
-  console.log(data?.data);
-
   return (
     <section className={cn(" py-12", className)} {...props}>
       <div className="container mx-auto px-4">

@@ -1,13 +1,14 @@
 import { Main } from "#components/layout/main";
 import { Button } from "#components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#components/ui/tabs";
+import { useRouter } from "@tanstack/react-router";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { SSS } from "./data/data";
-import { SSSCategory, SSSItem } from "./types";
 
 export default function SSSPage() {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+  const router = useRouter();
 
   const toggleItem = (category: string, index: number) => {
     const key = `${category}-${index}`;
@@ -15,51 +16,6 @@ export default function SSSPage() {
       ...prev,
       [key]: !prev[key]
     }));
-  };
-
-  const renderAccordionItem = (item: SSSItem, category: SSSCategory, index: number) => {
-    const key = `${category}-${index}`;
-    const isOpen = openItems[key] || false;
-
-    return (
-      <div key={index} className="border border-gray-200 rounded-lg mb-3 overflow-hidden">
-        <button
-          onClick={() => toggleItem(category, index)}
-          className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:bg-gray-50"
-        >
-          <span className="font-medium text-gray-900 pr-4">
-            {item.request}
-          </span>
-          <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-gray-100 rounded border">
-            {isOpen ? (
-              <Minus className="w-4 h-4 text-gray-600" />
-            ) : (
-              <Plus className="w-4 h-4 text-gray-600" />
-            )}
-          </div>
-        </button>
-        
-        {isOpen && (
-          <div className="px-4 pb-4 pt-0">
-            <div className="border-t border-gray-100 pt-4">
-              <p className="text-gray-700 leading-relaxed">
-                {item.reply}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderTabContent = (category: SSSCategory) => {
-    const items = SSS[category];
-    
-    return (
-      <div className="space-y-3">
-        {items.map((item, index) => renderAccordionItem(item, category, index))}
-      </div>
-    );
   };
 
   return (
@@ -103,7 +59,42 @@ export default function SSSPage() {
                 <h2 className="text-xl font-semibold text-gray-900">GENEL</h2>
               </div>
             </div>
-            {renderTabContent("genel")}
+            <div className="space-y-3">
+              {SSS.genel.map((item, index) => {
+                const key = `genel-${index}`;
+                const isOpen = openItems[key] || false;
+                
+                return (
+                  <div key={index} className="border border-gray-200 rounded-lg mb-3 overflow-hidden">
+                    <button
+                      onClick={() => toggleItem("genel", index)}
+                      className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:bg-gray-50"
+                    >
+                      <span className="font-medium text-gray-900 pr-4">
+                        {item.request}
+                      </span>
+                      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-gray-100 rounded border">
+                        {isOpen ? (
+                          <Minus className="w-4 h-4 text-gray-600" />
+                        ) : (
+                          <Plus className="w-4 h-4 text-gray-600" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {isOpen && (
+                      <div className="px-4 pb-4 pt-0">
+                        <div className="border-t border-gray-100 pt-4">
+                          <p className="text-gray-700 leading-relaxed">
+                            {item.reply}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </TabsContent>
 
           <TabsContent value="ürünler" className="mt-0">
@@ -115,7 +106,42 @@ export default function SSSPage() {
                 <h2 className="text-xl font-semibold text-gray-900">ÜRÜNLER</h2>
               </div>
             </div>
-            {renderTabContent("ürünler")}
+            <div className="space-y-3">
+              {SSS.ürünler.map((item, index) => {
+                const key = `ürünler-${index}`;
+                const isOpen = openItems[key] || false;
+                
+                return (
+                  <div key={index} className="border border-gray-200 rounded-lg mb-3 overflow-hidden">
+                    <button
+                      onClick={() => toggleItem("ürünler", index)}
+                      className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:bg-gray-50"
+                    >
+                      <span className="font-medium text-gray-900 pr-4">
+                        {item.request}
+                      </span>
+                      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-gray-100 rounded border">
+                        {isOpen ? (
+                          <Minus className="w-4 h-4 text-gray-600" />
+                        ) : (
+                          <Plus className="w-4 h-4 text-gray-600" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {isOpen && (
+                      <div className="px-4 pb-4 pt-0">
+                        <div className="border-t border-gray-100 pt-4">
+                          <p className="text-gray-700 leading-relaxed">
+                            {item.reply}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </TabsContent>
 
           <TabsContent value="kargo" className="mt-0">
@@ -127,7 +153,42 @@ export default function SSSPage() {
                 <h2 className="text-xl font-semibold text-gray-900">KARGO</h2>
               </div>
             </div>
-            {renderTabContent("kargo")}
+            <div className="space-y-3">
+              {SSS.kargo.map((item, index) => {
+                const key = `kargo-${index}`;
+                const isOpen = openItems[key] || false;
+                
+                return (
+                  <div key={index} className="border border-gray-200 rounded-lg mb-3 overflow-hidden">
+                    <button
+                      onClick={() => toggleItem("kargo", index)}
+                      className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:bg-gray-50"
+                    >
+                      <span className="font-medium text-gray-900 pr-4">
+                        {item.request}
+                      </span>
+                      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-gray-100 rounded border">
+                        {isOpen ? (
+                          <Minus className="w-4 h-4 text-gray-600" />
+                        ) : (
+                          <Plus className="w-4 h-4 text-gray-600" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {isOpen && (
+                      <div className="px-4 pb-4 pt-0">
+                        <div className="border-t border-gray-100 pt-4">
+                          <p className="text-gray-700 leading-relaxed">
+                            {item.reply}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </TabsContent>
         </Tabs>
 
@@ -140,12 +201,10 @@ export default function SSSPage() {
             Uzman ekibimiz size yardımcı olmaktan memnuniyet duyar.
           </p>
           <Button 
-            asChild
             className="bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-lg"
+            onClick={() => router.navigate({ to: '/contact' })}
           >
-            <a href="/contact">
-              Bize Ulaşın
-            </a>
+            Bize Ulaşın
           </Button>
         </div>
       </div>
