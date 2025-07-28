@@ -13,8 +13,6 @@ interface AddressFormProps {
   initialData?: Address | null;
 }
 
-
-
 export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProps) {
   const [formData, setFormData] = useState({
     type: initialData?.type || "",

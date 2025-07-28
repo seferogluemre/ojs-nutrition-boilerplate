@@ -1,15 +1,28 @@
 import { ConfirmDialog } from "#/components/confirm-dialog";
 import { Button } from "#/components/ui/button";
 import { toast } from "#/hooks/use-toast";
+import { api } from "#lib/api.js";
+import { useAuthStore } from "#stores/authStore.js";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Plus } from "lucide-react";
 import { useState } from "react";
-import { MOCK_ADDRESSES } from "../data";
 import { Address, AddressCard } from "./address-card";
 import { AddressForm } from "./address-form";
 
 
 export function AddressList() {
-  const [addresses, setAddresses] = useState<Address[]>(MOCK_ADDRESSES);
+    const auth = useAuthStore();
+
+    const { data } = useQuery({
+      queryKey: ['user-addresses'],
+      queryFn: () => api["user-addresses"].get({
+        headers: {
+          authorization: `Bearer ${auth.auth.accessToken}`,
+        },
+      })
+    });
+
+  const [addresses, setAddresses] = useState<Address[]>(data?.data || []);
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   
