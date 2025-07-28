@@ -2,8 +2,6 @@ import { ProductVariantPlain } from "#prismabox/ProductVariant";
 import { ControllerHook, errorResponseDto, headers } from "#utils";
 import { t } from "elysia";
 
-
-
 const variantResponseSchema = t.Object({
     id: t.String(),
     name: ProductVariantPlain.properties.name,

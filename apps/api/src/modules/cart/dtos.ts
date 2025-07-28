@@ -21,7 +21,6 @@ const formattedCartItemSchema = t.Object({
     id: ProductVariantPlain.properties.uuid,
     name: ProductVariantPlain.properties.name,
   }),
-  added_at: t.Date(),
 });
 
 const cartResponseSchema = t.Object({

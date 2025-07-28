@@ -5,7 +5,6 @@ import { headers } from '../../../utils';
 import { errorResponseDto } from '../../../utils/common-dtos';
 import { type ControllerHook } from '../../../utils/elysia-types';
 
-// Response schemas
 export const commentResponseSchema = t.Object({
   id: ProductCommentsPlain.properties.uuid,
   title: t.Union([t.String(), t.Null()]),
@@ -29,7 +28,6 @@ export const commentListResponseSchema = t.Object({
   }),
 });
 
-// Query parameters schema for index
 export const commentIndexQuerySchema = t.Object({
   limit: t.Optional(
     t.Number({
@@ -46,7 +44,6 @@ export const commentIndexQuerySchema = t.Object({
   ),
 });
 
-// Create comment schema
 export const commentCreateSchema = t.Object({
   title: t.Optional(
     t.String({
@@ -67,7 +64,6 @@ export const commentCreateSchema = t.Object({
   }),
 });
 
-// DTO definitions
 export const commentIndexDto = {
   params: t.Object({
     id: t.String({

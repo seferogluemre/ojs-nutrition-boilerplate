@@ -7,7 +7,7 @@ import { auth, authSwagger } from '../auth/authentication/plugin';
 import { PERMISSIONS } from '../auth/roles/constants';
 import { withPermission } from '../auth/roles/middleware';
 import {
-  bestSellersDto,
+  bestSellerProductSchema,
   productCreateDto,
   productDestroyDto,
   productIndexDto,
@@ -29,7 +29,7 @@ const app = new Elysia({
       const products = await ProductsService.getBestSellers(query);
       return products.map(ProductFormatter.bestSeller);
     },
-    bestSellersDto,
+    bestSellerProductSchema,
   )
   .get(
     '', // GET /products - Tüm ürünleri listele

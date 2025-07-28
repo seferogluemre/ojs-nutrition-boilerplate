@@ -2,6 +2,27 @@ import { t } from 'elysia';
 import { ControllerHook, errorResponseDto, uuidValidation } from '../../utils';
 import { paginationQueryDto, paginationResponseDto } from '../../utils/pagination';
 
+const baseCategoryFields = t.Object({   
+    name: t.String({
+        minLength: 2,
+        maxLength: 100,
+        error: 'Kategori adı 2-100 karakter arasında olmalıdır.'
+    }),
+    slug: t.String({
+        minLength: 2,
+        maxLength: 100,
+        error: 'Slug 2-100 karakter arasında olmalıdır.'
+    }),
+    parentId: t.Optional(t.String({
+        format: 'uuid',
+        error: 'Parent ID geçerli bir UUID olmalıdır.'
+    })),
+    order: t.Optional(t.Number({
+        minimum: 0,
+        error: 'Sıra numarası 0 veya pozitif olmalıdır.'
+    }))
+});
+
 const subChildCategorySchema = t.Object({
     id: t.String(),
     name: t.String(),
@@ -32,7 +53,6 @@ const topSellerSchema = t.Object({
     picture_src: t.String(),
 });
 
-// Main category response schema (1st level)
 export const categoryResponseDto = t.Object({
     id: t.String(),
     name: t.String(),
@@ -57,26 +77,7 @@ export const categoryIndexDto = {
 } satisfies ControllerHook;
 
 export const categoryCreateDto = {
-    body: t.Object({
-        name: t.String({
-            minLength: 2,
-            maxLength: 100,
-            error: 'Kategori adı 2-100 karakter arasında olmalıdır.'
-        }),
-        slug: t.String({
-            minLength: 2,
-            maxLength: 100,
-            error: 'Slug 2-100 karakter arasında olmalıdır.'
-        }),
-        parentId: t.Optional(t.String({
-            format: 'uuid',
-            error: 'Parent ID geçerli bir UUID olmalıdır.'
-        })),
-        order: t.Optional(t.Number({
-            minimum: 0,
-            error: 'Sıra numarası 0 veya pozitif olmalıdır.'
-        }))
-    }),
+    body: baseCategoryFields,
     response: { 200: categoryResponseDto, 422: errorResponseDto[422] },
     detail: {
         summary: 'Create',
@@ -88,26 +89,7 @@ export const categoryUpdateDto = {
     params: t.Object({
         uuid: uuidValidation,
     }),
-    body: t.Object({
-        name: t.Optional(t.String({
-            minLength: 2,
-            maxLength: 100,
-            error: 'Kategori adı 2-100 karakter arasında olmalıdır.'
-        })),
-        slug: t.Optional(t.String({
-            minLength: 2,
-            maxLength: 100,
-            error: 'Slug 2-100 karakter arasında olmalıdır.'
-        })),
-        parentId: t.Optional(t.String({
-            format: 'uuid',
-            error: 'Parent ID geçerli bir UUID olmalıdır.'
-        })),
-        order: t.Optional(t.Number({
-            minimum: 0,
-            error: 'Sıra numarası 0 veya pozitif olmalıdır.'
-        }))
-    }),
+    body: t.Partial(baseCategoryFields),
     response: { 200: categoryResponseDto, 404: errorResponseDto[404], 422: errorResponseDto[422] },
     detail: {
         summary: 'Update',

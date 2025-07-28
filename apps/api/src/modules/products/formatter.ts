@@ -121,7 +121,7 @@ export abstract class ProductFormatter {
         discount_percentage: undefined,
       },
       photo_src: product.primaryPhotoUrl,
-      comment_count: product.reviewCount,
+      comment_count: product.commentsCount,
       average_star: product.averageRating,
     };
   }

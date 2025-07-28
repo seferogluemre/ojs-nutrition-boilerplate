@@ -351,10 +351,18 @@ export abstract class ProductsService {
               slug: true,
             },
           },
+          comments: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
 
-      return products;
+      return products.map(product => ({
+        ...product,
+        commentsCount: product.comments.length,
+      }));
     } catch (error) {
       throw this.handlePrismaError(error, 'find');
     }

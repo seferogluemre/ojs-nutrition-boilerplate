@@ -11,7 +11,6 @@ export const app = new Elysia({
     tags: ['Product Comments'],
   },
 })
-
   .get(
     '',
     async ({ params, query }) => {
