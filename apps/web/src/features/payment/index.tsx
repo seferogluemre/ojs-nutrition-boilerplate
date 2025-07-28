@@ -6,10 +6,27 @@ import { PaymentStep } from "./components/payment-step"
 import { ShippingStep } from "./components/shipping-step"
 import { StepIndicator } from "./components/step-indicator"
 
+interface Address {
+  id: number;
+  uuid: string;
+  title: string;
+  recipientName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2: string;
+  postalCode: string;
+  isDefault: boolean;
+  city: {
+    id: number;
+    name: string;
+    stateName: string;
+  };
+}
+
 export default function PaymentPage() {
   const { auth } = useAuthStore()
   const [currentStep, setCurrentStep] = useState(1)
-  const [selectedAddress, setSelectedAddress] = useState<any>(null)
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
   const [shippingCost, setShippingCost] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
 
