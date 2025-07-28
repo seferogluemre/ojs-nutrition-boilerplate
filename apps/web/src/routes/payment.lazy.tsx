@@ -34,4 +34,4 @@ function RouteComponent() {
   }
 
   return <PaymentPage />
-} 
+}
