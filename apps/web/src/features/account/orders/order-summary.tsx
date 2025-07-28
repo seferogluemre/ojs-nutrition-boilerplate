@@ -1,6 +1,35 @@
+import { useState } from "react";
 import { OrderSummaryProps } from "../types";
+import { ProductCommentModal } from "./components";
 
 export function OrderSummary({ order }: OrderSummaryProps) {
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    productId: string;
+    productName: string;
+  }>({
+    isOpen: false,
+    productId: "",
+    productName: ""
+  });
+
+  const handleOpenCommentModal = (productId: string, productName: string) => {
+    setModalState({
+      isOpen: true,
+      productId,
+      productName
+    });
+  };
+
+  const handleCloseCommentModal = () => {
+    setModalState({
+      isOpen: false,
+      productId: "",
+      productName: ""
+    });
+  };
+
+  const isDelivered = order.status === "Teslim Edildi";
   return (
     <div className="bg-white">
       <div className="mb-6">
@@ -40,11 +69,32 @@ export function OrderSummary({ order }: OrderSummaryProps) {
                 </h6>
                 <p className="mb-1 text-sm text-gray-600">{product.price}</p>
                 <p className="text-sm text-gray-500">{product.size}</p>
+                
+                {/* Comment button for delivered orders */}
+                {isDelivered && (
+                  <button
+                    onClick={() => handleOpenCommentModal(product.productId || product.id, product.name)}
+                    className="mt-2 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 transition-colors"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10m0 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2m0 0v10a2 2 0 002 2h8a2 2 0 002-2V8m-9 4h4" />
+                    </svg>
+                    Yorum Ekle
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Comment Modal */}
+      <ProductCommentModal
+        isOpen={modalState.isOpen}
+        onClose={handleCloseCommentModal}
+        productId={modalState.productId}
+        productName={modalState.productName}
+      />
     </div>
   );
 }

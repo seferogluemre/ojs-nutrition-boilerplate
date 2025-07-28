@@ -93,7 +93,8 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
       name: `${item.product.name}`,
       price: formatPrice(item.totalPrice / 100),
       size: `Boyut: ${item.quantity} ADET`,
-      image: item.product.primary_photo_url ? `/api/media/${item.product.primary_photo_url}` : "/icons/placeholder.webp"
+      image: item.product.primary_photo_url ? `/api/media/${item.product.primary_photo_url}` : "/icons/placeholder.webp",
+      productId: item.product.id
     })),
     address: {
       name: orderData.shippingAddress.recipientName,

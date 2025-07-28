@@ -51,11 +51,12 @@ export interface OrderDetailAPI {
 }
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   price: string;
   size: string;
   image: string;
+  productId?: string; // For api call
 }
 
 export interface OrderSummaryProps {
