@@ -59,13 +59,16 @@ const app = new Elysia({
   .patch(
     '/:id', // update
     async ({ params: { id }, body, user }) => {
-      // Önce adresin kullanıcıya ait olduğunu kontrol et
-      await UserAddressesService.show({ 
+      
+      const existingAddress = await UserAddressesService.show({ 
         id: id,
         userId: user.id 
       });
       
+      
       const updatedUserAddress = await UserAddressesService.update(id, body);
+      
+      
       const response = UserAddressFormatter.response(updatedUserAddress);
       return response;
     },

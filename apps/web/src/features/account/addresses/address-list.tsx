@@ -34,44 +34,74 @@ export function AddressList() {
       }),
   });
 
-  // Create address mutation
-  const createAddressMutation = useMutation({
-    mutationFn: async (addressData: AddressFormData) => {
-      return api["user-addresses"].post(
-        {
-          title: addressData.title,
-          recipientName: addressData.recipientName,
-          phone: addressData.phone,
-          addressLine1: addressData.addressLine1,
-          addressLine2: addressData.addressLine2,
-          postalCode: addressData.postalCode,
-          isDefault: addressData.isDefault,
-          cityId: addressData.cityId,
-        },
-        {
+      // Create address mutation
+    const createAddressMutation = useMutation({
+      mutationFn: async (addressData: AddressFormData) => {
+        return api["user-addresses"].post(
+          {
+            title: addressData.title,
+            recipientName: addressData.recipientName,
+            phone: addressData.phone,
+            addressLine1: addressData.addressLine1,
+            addressLine2: addressData.addressLine2,
+            postalCode: addressData.postalCode,
+            isDefault: addressData.isDefault,
+            cityId: addressData.cityId,
+          },
+          {
+            headers: {
+              authorization: `Bearer ${auth.auth.accessToken}`,
+            },
+          },
+        );
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
+        toast({
+          title: "✅ Adres eklendi",
+          description: "Adresiniz başarıyla eklendi.",
+        });
+        setShowForm(false);
+      },
+      onError: (error) => {
+        toast({
+          title: "❌ Hata",
+          description: "Adres eklenirken bir hata oluştu.",
+          variant: "destructive",
+        });
+        console.error("Address creation error:", error);
+      },
+    });
+
+    // Delete address mutation
+    const deleteAddressMutation = useMutation({
+      mutationFn: async (addressUuid: string) => {
+        return api["user-addresses"]({
+          id: addressUuid,
+        }).delete({
           headers: {
             authorization: `Bearer ${auth.auth.accessToken}`,
           },
-        },
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
-      toast({
-        title: "✅ Adres eklendi",
-        description: "Adresiniz başarıyla eklendi.",
-      });
-      setShowForm(false);
-    },
-    onError: (error) => {
-      toast({
-        title: "❌ Hata",
-        description: "Adres eklenirken bir hata oluştu.",
-        variant: "destructive",
-      });
-      console.error("Address creation error:", error);
-    },
-  });
+        });
+      },  
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
+        toast({
+          title: "✅ Adres silindi",
+          description: "Adresiniz başarıyla silindi.",
+        });
+        setShowDeleteDialog(false);
+        setAddressToDelete(null);
+      },
+      onError: (error) => {
+        toast({
+          title: "❌ Hata",
+          description: "Adres silinirken bir hata oluştu.",
+          variant: "destructive",
+        });
+        console.error("Address deletion error:", error);
+      },
+    });
 
   const addresses = data?.data || [];
   const [showForm, setShowForm] = useState(false);
@@ -93,18 +123,17 @@ export function AddressList() {
     const result = await api["user-addresses"]({
       id: editingAddress?.uuid,
     }).patch({
+      title: updatedAddress.title,
+      recipientName: updatedAddress.recipientName,
+      phone: updatedAddress.phone,
+      addressLine1: updatedAddress.addressLine1,
+      addressLine2: updatedAddress.addressLine2,
+      postalCode: updatedAddress.postalCode,
+      isDefault: updatedAddress.isDefault,
+      cityId: updatedAddress.cityId,
+    }, {
       headers: {
         authorization: `Bearer ${auth.auth.accessToken}`,
-      },
-      body: {
-        title: updatedAddress.title,
-        recipientName: updatedAddress.recipientName,
-        phone: updatedAddress.phone,
-        addressLine1: updatedAddress.addressLine1,
-        addressLine2: updatedAddress.addressLine2,
-        postalCode: updatedAddress.postalCode,
-        isDefault: updatedAddress.isDefault,
-        cityId: updatedAddress.cityId,
       },
     });
 
@@ -124,24 +153,9 @@ export function AddressList() {
     }
   };
 
-  const confirmDeleteAddress = async () => {
+  const confirmDeleteAddress = () => {
     if (addressToDelete) {
-      const result = await api["user-addresses"]({
-        id: addressToDelete.uuid,
-      }).delete({
-        headers: {
-          authorization: `Bearer ${auth.auth.accessToken}`,
-        },
-      });
-
-      setShowDeleteDialog(false);
-
-      toast({
-        title: "✅ Adres silindi",
-        description: "Adresiniz başarıyla silindi.",
-      });
-
-      setAddressToDelete(null);
+      deleteAddressMutation.mutate(addressToDelete.uuid);
     }
   };
 

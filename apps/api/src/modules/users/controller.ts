@@ -7,7 +7,7 @@ import { auth, authSwagger } from '../auth/authentication/plugin';
 import { PERMISSIONS } from '../auth/roles/constants';
 import { ensureUserHasPermission } from '../auth/roles/helpers';
 import { withPermission } from '../auth/roles/middleware';
-import { userCreateDto, userDestroyDto, userIndexDto, userShowDto, userUpdateDto } from './dtos';
+import { userCreateDto, userDestroyDto, userIndexDto, userShowDto } from './dtos';
 import { UserFormatter } from './formatters';
 import { UsersService } from './service';
 import { userRolesApp } from './user-roles';
@@ -70,15 +70,6 @@ const app = new Elysia({
           const response = UserFormatter.response(updatedUser);
           return response;
         },
-        dtoWithMiddlewares(
-          userUpdateDto,
-          withAuditLog<typeof userUpdateDto>({
-            actionType: AuditLogAction.UPDATE,
-            entityType: AuditLogEntity.USER,
-            getEntityUuid: ({ params }) => params.id,
-            getDescription: ({ body }) => `Kullanıcı güncellendi`,
-          }),
-        ),
       )
       .delete(
         '/:id', // destroy

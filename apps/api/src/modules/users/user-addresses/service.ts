@@ -81,6 +81,7 @@ export abstract class UserAddressesService {
 
   static async update(id: string, payload: UserAddressUpdatePayload): Promise<UserAddress> {
     try {
+      
       const userAddress = await prisma.userAddress.findUnique({
         where: {uuid: id },
       });
@@ -89,6 +90,7 @@ export abstract class UserAddressesService {
         throw new NotFoundException('Kullanıcı bulunamadı');
       }
 
+
       const updatedUserAddress = await prisma.userAddress.update({
         where: { uuid: id },
         data: payload,
@@ -96,6 +98,7 @@ export abstract class UserAddressesService {
           city: true,
         },
       });
+
 
       if (!updatedUserAddress) {
         throw new InternalServerErrorException('Bilinmeyen bir hata oluştu');
