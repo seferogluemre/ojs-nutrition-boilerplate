@@ -369,12 +369,12 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
               ) : (
                 <>
                   <DropdownMenuItem className="border-b border-gray-300 text-center">
-                    <a href="/sign-in" className="w-full text-sm">
+                    <a href="/login" className="w-full text-sm">
                       Üye girişi
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="text-center">
-                    <a href="/sign-up" className="w-full text-sm">
+                    <a href="/login" className="w-full text-sm">
                       Üye ol
                     </a>
                   </DropdownMenuItem>
