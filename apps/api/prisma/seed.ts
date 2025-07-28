@@ -1,6 +1,6 @@
 import { loadEnv } from '#config/env';
 import prisma from '#core/prisma';
-import { SystemAdministrationService } from '#modules/system-administration/service';
+import { RolesService } from '#modules/auth/roles/service';
 import { Gender } from '#prisma/client';
 import { faker } from '@faker-js/faker';
 import * as fs from 'fs';
@@ -9,43 +9,75 @@ import * as path from 'path';
 loadEnv();
 
 async function main() {
-  // Clear existing data
-  /* await prisma.$executeRaw`TRUNCATE TABLE "users" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "countries" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "states" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "cities" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "school_brands" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "categories" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "tags" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "product_brands" CASCADE`; */
+  console.log('🌱 Starting seed...');
 
-  await SystemAdministrationService.setupInitialUser();
+  // Bypass SystemAdministrationService for now
+  console.log('📋 Creating Admin role manually...');
+  let adminRole = await prisma.role.findFirst({
+    where: { name: 'Admin' }
+  });
 
+  if (!adminRole) {
+    adminRole = await RolesService.store({
+      name: 'Admin',
+      description: 'Sistem yöneticisi',
+      permissions: ['*'], // Tüm yetkiler
+    });
+    console.log('✅ Admin role created:', adminRole);
+  } else {
+    console.log('✅ Admin role already exists:', adminRole);
+  }
+
+  console.log('👤 Creating "user" role...');
+  // Create "user" role for regular users
+  let userRole = await prisma.role.findFirst({
+    where: { name: 'User' }
+  });
+
+  if (!userRole) {
+    userRole = await RolesService.store({
+      name: 'User',
+      description: 'Normal kullanıcı',
+      permissions: ['products:index', 'products:show', 'categories:index'],
+    });
+    console.log('✅ User role created:', userRole);
+  } else {
+    console.log('✅ User role already exists:', userRole);
+  }
+
+  console.log('🌍 Seeding world data...');
   await seedWorldData();
 
-  // Create users
-  await Promise.all(
-    Array(150)
-      .fill(null)
-      .map(() => {
-        const firstName = faker.person.firstName().slice(0, 50);
-        const lastName = faker.person.lastName().slice(0, 50);
-        return prisma.user.create({
-          data: {
-            firstName,
-            lastName,
-            name: `${firstName} ${lastName}`.slice(0, 101),
-            email: faker.internet.email().slice(0, 255),
-            gender: faker.helpers.arrayElement(Object.values(Gender)),
-            rolesSlugs: ['user'],
-            emailVerified: true,
-            image: faker.image.avatar().slice(0, 255),
-          },
-        });
-      }),
-  );
+  console.log('👥 Creating test users...');
+  // Create only 2 users for testing
+  for (let i = 0; i < 2; i++) {
+    const firstName = faker.person.firstName().slice(0, 50);
+    const lastName = faker.person.lastName().slice(0, 50);
+    const email = faker.internet.email().slice(0, 255);
+    
+    console.log(`Creating user ${i + 1}: ${email}`);
+    
+    try {
+      const user = await prisma.user.create({
+        data: {
+          firstName,
+          lastName,
+          name: `${firstName} ${lastName}`.slice(0, 101),
+          email,
+          gender: faker.helpers.arrayElement(Object.values(Gender)),
+          rolesSlugs: ['user'],
+          emailVerified: true,
+          image: faker.image.avatar().slice(0, 255),
+        },
+      });
+      console.log(`✅ User ${i + 1} created successfully:`, user.email);
+    } catch (error) {
+      console.error(`❌ Failed to create user ${i + 1}:`, error);
+      throw error;
+    }
+  }
 
-  console.log('Seeding completed successfully!');
+  console.log('✅ Seeding completed successfully!');
 }
 
 async function seedWorldData() {
