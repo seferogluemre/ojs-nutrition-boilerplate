@@ -37,6 +37,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible
       <div 
         className="fixed inset-0 bg-black bg-opacity-30 z-30"
         onClick={onClose}
+        onMouseEnter={onClose}
       />
       
       {/* Dropdown Content */}
