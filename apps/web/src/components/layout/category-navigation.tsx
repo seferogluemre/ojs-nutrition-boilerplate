@@ -277,8 +277,8 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
     if (!parentData?.top_sellers?.length) return null;
 
     return (
-      <div className="bg-gray-50 px-6 py-2 mt-12">
-        <h3 className="text-xs font-semibold text-gray-600 mb-3 uppercase tracking-wider">
+      <div className=" px-6 py-8 mt-12">
+        <h3 className="text-xs text-center font-semibold text-gray-600 mb-3 uppercase tracking-wider">
           Çok Satanlar
         </h3>
         <div className="space-y-2">
@@ -286,9 +286,9 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
             <button
               key={product.id}
               onClick={() => navigateToProductDetail(product.id)}
-              className="flex items-center space-x-3 w-full p-2 rounded-md hover:bg-white transition-colors duration-200"
+              className="flex items-center space-x-3 w-full p-3 rounded-md shadow-sm hover:shadow-md hover:bg-white transition-shadow duration-200"
             >
-              <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8  bg-gray-200 rounded-md flex items-center justify-center flex-shrink-0">
                 {product.picture_src && product.picture_src !== "null" ? (
                   <img 
                     src={`/images/${product.picture_src}`} 
@@ -352,7 +352,7 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
             )}
           >
             {/* Panel header */}
-            <div className="flex items-center px-4 py-3 border-b border-gray-200">
+            <div className="flex items-center px-4 pt-1">
               {index > 0 && (
                 <button
                   onClick={popPanel}
@@ -361,9 +361,7 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
                   <ArrowLeft className="w-5 h-5 text-gray-600" />
                 </button>
               )}
-              <h2 className="text-lg font-semibold text-gray-900">
-                {panel.title}
-              </h2>
+             
             </div>
 
             {/* Panel content */}
