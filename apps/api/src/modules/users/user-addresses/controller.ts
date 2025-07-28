@@ -48,8 +48,8 @@ const app = new Elysia({
     '/:id', // show
     async ({ params: { id }, user }) => {
       const userAddress = await UserAddressesService.show({ 
-        id: parseInt(id.toString()),
-        userId: user.id, 
+        id: id,
+        userId: user.id 
       });
       const response = UserAddressFormatter.response(userAddress);
       return response;
@@ -61,11 +61,11 @@ const app = new Elysia({
     async ({ params: { id }, body, user }) => {
       // Önce adresin kullanıcıya ait olduğunu kontrol et
       await UserAddressesService.show({ 
-        id: parseInt(id.toString()),
-        userId: user.id,
+        id: id,
+        userId: user.id 
       });
       
-      const updatedUserAddress = await UserAddressesService.update(id.toString(), body);
+      const updatedUserAddress = await UserAddressesService.update(id, body);
       const response = UserAddressFormatter.response(updatedUserAddress);
       return response;
     },
@@ -85,11 +85,11 @@ const app = new Elysia({
     async ({ params: { id }, user }) => {
       // Önce adresin kullanıcıya ait olduğunu kontrol et
       await UserAddressesService.show({ 
-        id: parseInt(id.toString()),
+        id: id,
         userId: user.id,
       });
       
-      await UserAddressesService.destroy(id.toString());
+      await UserAddressesService.destroy(id);
       return { message: 'Kullanıcı adresi silindi' };
     },
     // @ts-ignore - Complex middleware composition

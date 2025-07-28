@@ -36,11 +36,11 @@ export abstract class UserAddressesService {
     }
   }
 
-  static async show(where: { id: number; userId?: string }) {
+  static async show(where: { id: string; userId?: string }) {
     try {
       const userAddress = await prisma.userAddress.findFirst({
         where: {
-          id: where.id,
+          uuid: where.id,
           ...(where.userId && { userId: where.userId }),
         },
         include: {
@@ -92,6 +92,9 @@ export abstract class UserAddressesService {
       const updatedUserAddress = await prisma.userAddress.update({
         where: { uuid: id },
         data: payload,
+        include: {
+          city: true,
+        },
       });
 
       if (!updatedUserAddress) {

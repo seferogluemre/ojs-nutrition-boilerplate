@@ -4,9 +4,9 @@ import { ControllerHook, errorResponseDto } from '#utils';
 import { t } from 'elysia';
 
 export const userAddressResponseSchema = t.Composite([
-  t.Omit(UserAddressPlain, ['phone','postalCode']),
+  t.Omit(UserAddressPlain, ['phone', 'postalCode']),
   t.Object({
-    city: t.Pick(CityPlain, ['id', 'name']),
+    city: t.Pick(CityPlain, ['id','name']),
   }),
 ]);
 
@@ -19,7 +19,7 @@ export const userAddressIndexDto = {
 
 export const userAddressShowDto = {
   params: t.Object({
-    id: UserAddressPlain.properties.id,
+    id: t.String(),
   }),
   response: {
     200: userAddressResponseSchema,
@@ -32,18 +32,20 @@ export const userAddressShowDto = {
 
 export const userAddressUpdateDto = {
   params: t.Object({
-    id: UserAddressPlain.properties.id,
+    id: t.String(),
   }),
-  body: t.Object({
-    title: t.Optional(UserAddressPlain.properties.title),
-    recipientName: t.Optional(UserAddressPlain.properties.recipientName),
-    phone: t.Optional(UserAddressPlain.properties.phone),
-    addressLine1: t.Optional(UserAddressPlain.properties.addressLine1),
-    addressLine2: t.Optional(UserAddressPlain.properties.addressLine2),
-    postalCode: t.Optional(UserAddressPlain.properties.postalCode),
-    isDefault: t.Optional(UserAddressPlain.properties.isDefault),
-    cityId: t.Optional(t.Integer({ minimum: 1 })), // Manual olarak tanımlandı
-  }),
+  body: t.Partial(
+    t.Pick(UserAddressPlain, [
+      'title',
+      'recipientName',
+      'phone',
+      'addressLine1',
+      'addressLine2',
+      'postalCode',
+      'isDefault',
+      'cityId',
+    ])
+  ),
   response: {
     200: userAddressResponseSchema,
     404: errorResponseDto[404],
@@ -56,7 +58,7 @@ export const userAddressUpdateDto = {
 
 export const userAddressDestroyDto = {
   params: t.Object({
-    id: UserAddressPlain.properties.id,
+    id: t.String(),
   }),
   response: {
     200: t.Object({
