@@ -3,6 +3,7 @@ import { HandleError } from '#shared/error/handle-error';
 import { BadRequestException } from '#utils';
 import { NotFoundError } from 'elysia';
 
+import { OrderQueueService } from './queue/service';
 import { CompleteOrderParams, GetOrderDetailParams, GetUserOrdersParams } from './types';
 
 export abstract class OrderService {
@@ -210,6 +211,14 @@ export abstract class OrderService {
         where: {
           cartId: cart.id,
         },
+      });
+
+      await OrderQueueService.addOrderConfirmationJob({
+        orderId: order.uuid,
+        userId: order.userId,
+        orderNumber: order.orderNumber,
+        userEmail: order.user?.email || '', // user email'i varsa al
+        userName: order.user?.name || order.user?.email || 'Müşteri',
       });
 
       return order;

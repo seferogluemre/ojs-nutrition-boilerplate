@@ -55,7 +55,7 @@ interface EmailVerificationCodeProps {
   };
 }
 
-const baseUrl = process.env.CMS_URL;
+const baseUrl = process.env.APP_URL;
 
 function getUrl(url: string) {
   return url.startsWith('http') ? url : `${baseUrl}${url}`;
