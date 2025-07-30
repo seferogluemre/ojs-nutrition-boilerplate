@@ -146,7 +146,6 @@ export abstract class OrderService {
           country: address.city.country.name,
         };
       } else {
-        // Address yoksa default değerler
         shippingAddressData = {
           title: 'Varsayılan Adres',
           recipientName: 'Belirtilmemiş',
@@ -160,14 +159,11 @@ export abstract class OrderService {
         };
       }
 
-      // 3. Sipariş numarası oluştur
       const orderNumber = await this.generateOrderNumber();
 
-      // 4. Toplam tutarı hesapla
       const subtotal = cart.items.reduce((acc, item) => {
         return acc + item.product.price * item.quantity;
       }, 0);
-
       // 5. Sipariş oluştur
       const order = await prisma.order.create({
         data: {
@@ -206,7 +202,6 @@ export abstract class OrderService {
         });
       }
 
-      // 7. Sepeti temizle
       await prisma.cartItem.deleteMany({
         where: {
           cartId: cart.id,

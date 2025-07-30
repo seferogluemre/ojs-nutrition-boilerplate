@@ -27,7 +27,6 @@ export const orderEmailWorker = new Worker(
     console.log(`📨 Processing email job: ${job.id} for order: ${job.data.orderNumber}`);
     
     try {
-      // Job tipine göre email gönder
       switch (job.name) {
         case 'send-order-confirmation':
           await sendOrderConfirmationEmail(job.data);
@@ -48,9 +47,7 @@ export const orderEmailWorker = new Worker(
   }
 );
 
-// Sipariş onay emaili gönder
 async function sendOrderConfirmationEmail(data: OrderEmailJobProps) {
-  // Sipariş detaylarını veritabanından al
   const order = await prisma.order.findUnique({
     where: { uuid: data.orderId },
     include: {
@@ -67,7 +64,6 @@ async function sendOrderConfirmationEmail(data: OrderEmailJobProps) {
     throw new Error(`Order not found: ${data.orderId}`);
   }
 
-  // Email içeriği (şimdilik basit HTML, sonra React template kullanacağız)
   const emailHtml = `
     <h1>Sipariş Onayı</h1>
     <p>Merhaba ${data.userName},</p>
@@ -83,7 +79,6 @@ async function sendOrderConfirmationEmail(data: OrderEmailJobProps) {
     <p>Teşekkür ederiz!</p>
   `;
 
-  // Email gönder
   const mailOptions = {
     from: process.env.SMTP_FROM || 'noreply@yoursite.com',
     to: data.userEmail,

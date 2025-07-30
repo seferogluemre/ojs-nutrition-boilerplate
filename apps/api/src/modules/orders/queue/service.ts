@@ -23,7 +23,6 @@ export const emailQueue = new Queue('order-emails', {
 });
 
 export class OrderQueueService {
-  // Sipariş email job'ı ekle
   static async addOrderConfirmationJob(data: OrderEmailJobProps) {
     try {
       const job = await emailQueue.add('send-order-confirmation', data, {

@@ -8,6 +8,7 @@ import { loadEnv } from './config/env';
 import { handleElysiaError } from './config/error-handler';
 import { prepareSwaggerConfig } from './config/swagger.config';
 import routes, { swaggerTags } from './modules';
+import { orderEmailWorker, queueMaintenanceCron, dailyCleanupCron } from './modules/orders';
 
 loadEnv();
 
@@ -32,6 +33,14 @@ if (process.env.NODE_ENV === 'development') {
 
   app.use(swagger(swaggerConfig));
 }
+
+console.log('🚀 Starting background services...');
+
+// Worker'ı başlat (otomatik olarak queue'yu dinler)
+console.log('👷 Email worker started and listening...');
+
+// Cron'ları başlat  
+console.log('⏰ CRON jobs activated');
 
 console.log(
   `🦊 Elysia is running at ${app.server?.url.protocol}//${app.server?.hostname}:${app.server?.port} ${process.env.NODE_ENV} mode`,
