@@ -14,6 +14,6 @@
     },
     "outDir": "../../dist/apps/api"
   },
-  "include": ["src/**/*.ts", "prisma/**/*.ts"],
+  "include": ["src/**/*.{ts,tsx}", "prisma/**/*.ts"],
   "references": []
 }

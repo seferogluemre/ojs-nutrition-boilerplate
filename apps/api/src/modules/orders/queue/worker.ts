@@ -1,6 +1,8 @@
-import { prisma } from '#core';
+import prisma from "#core/prisma.ts";
+import { render } from '@react-email/render';
 import { Job, Worker } from 'bullmq';
 import nodemailer from 'nodemailer';
+import { OrderConfirmation } from '../../../emails/order-confirmation';
 import { OrderEmailJobProps } from './types';
 
 // Redis bağlantı ayarları (service.ts ile aynı)
@@ -47,7 +49,9 @@ export const orderEmailWorker = new Worker(
   }
 );
 
+// Sipariş onay emaili gönder
 async function sendOrderConfirmationEmail(data: OrderEmailJobProps) {
+  // Sipariş detaylarını veritabanından al
   const order = await prisma.order.findUnique({
     where: { uuid: data.orderId },
     include: {
@@ -64,23 +68,78 @@ async function sendOrderConfirmationEmail(data: OrderEmailJobProps) {
     throw new Error(`Order not found: ${data.orderId}`);
   }
 
-  const emailHtml = `
-    <h1>Sipariş Onayı</h1>
-    <p>Merhaba ${data.userName},</p>
-    <p>Sipariş numaranız: <strong>${data.orderNumber}</strong></p>
-    <p>Toplam tutar: <strong>${order.subtotal} TL</strong></p>
-    <h3>Sipariş Detayları:</h3>
-    <ul>
-      ${order.items.map(item => 
-        `<li>${item.product.name} - ${item.quantity} adet - ${item.totalPrice} TL</li>`
-      ).join('')}
-    </ul>
-    <p>Siparişiniz en kısa sürede hazırlanacaktır.</p>
-    <p>Teşekkür ederiz!</p>
-  `;
+  // Email için gerekli verileri hazırla
+  const emailData = {
+    orderNumber: order.orderNumber,
+    userName: data.userName,
+    orderDate: new Intl.DateTimeFormat('tr-TR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(order.createdAt)),
+    items: order.items.map(item => ({
+      productName: item.product.name,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      totalPrice: item.totalPrice,
+    })),
+    subtotal: order.subtotal,
+    shippingAddress: order.shippingAddress ? {
+      title: (order.shippingAddress as any).title || 'Teslimat Adresi',
+      recipientName: (order.shippingAddress as any).recipientName,
+      phone: (order.shippingAddress as any).phone,
+      addressLine1: (order.shippingAddress as any).addressLine1,
+      addressLine2: (order.shippingAddress as any).addressLine2,
+      postalCode: (order.shippingAddress as any).postalCode,
+      city: (order.shippingAddress as any).city,
+      state: (order.shippingAddress as any).state,
+      country: (order.shippingAddress as any).country,
+    } : undefined,
+    company: {
+      name: process.env.APP_NAME || 'DJS NUTRITION',
+      url: process.env.APP_URL || 'https://djsnutrition.com',
+      logoUrl: '/public/email/logo.png',
+    },
+    footer: {
+      links: [
+        { text: 'Ana Sayfa', url: process.env.APP_URL || 'https://djsnutrition.com' },
+        { text: 'Hakkımızda', url: (process.env.APP_URL || 'https://djsnutrition.com') + '/about' },
+        { text: 'İletişim', url: (process.env.APP_URL || 'https://djsnutrition.com') + '/contact' },
+      ],
+      description: `©${new Date().getFullYear()} ${process.env.APP_NAME || 'DJS NUTRITION'}, Premium Spor Besın Takviyesi.
+      
+Tüm hakları saklıdır.`,
+      socialLinks: [
+        {
+          name: 'X',
+          url: 'https://x.com',
+          logoUrl: '/public/email/socials/x.png',
+          alt: 'X',
+        },
+        {
+          name: 'Facebook',
+          url: 'https://facebook.com',
+          logoUrl: '/public/email/socials/facebook.png',
+          alt: 'Facebook',
+        },
+        {
+          name: 'LinkedIn',
+          url: 'https://linkedin.com',
+          logoUrl: '/public/email/socials/linkedin.png',
+          alt: 'LinkedIn',
+        },
+      ],
+    },
+  };
 
+  // React email şablonunu HTML'e çevir
+  const emailHtml = await render(OrderConfirmation(emailData));
+
+  // Email gönder
   const mailOptions = {
-    from: process.env.SMTP_FROM || 'noreply@yoursite.com',
+    from: process.env.SMTP_FROM || 'noreply@djsnutrition.com',
     to: data.userEmail,
     subject: `Sipariş Onayı - ${data.orderNumber}`,
     html: emailHtml,
