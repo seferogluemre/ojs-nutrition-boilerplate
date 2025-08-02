@@ -1,4 +1,5 @@
 import Elysia from 'elysia';
+
 import { auth } from '../auth/authentication/plugin';
 import { addToCartDto, deleteFromCartDto, getCartDto } from './dtos';
 import { CartFormatter } from './formatters';
@@ -16,12 +17,9 @@ export const app = new Elysia({
         ...body,
         user_id: user.id.toString(),
       });
-      set.status = 201;
       return CartFormatter.format(cart!);
     },
-    {
-      ...addToCartDto,
-    },
+    addToCartDto,
   )
   .delete(
     '/:item_uuid',
@@ -30,12 +28,9 @@ export const app = new Elysia({
         user_id: user.id,
         item_uuid: params.item_uuid,
       });
-      set.status = 200;
       return CartFormatter.format(cart!);
     },
-    {
-      ...deleteFromCartDto,
-    },
+    deleteFromCartDto,
   )
   .get(
     '/',
@@ -45,9 +40,7 @@ export const app = new Elysia({
       });
       return CartFormatter.format(cart!);
     },
-    {
-      ...getCartDto,
-    },
+    getCartDto,
   );
 
 export default app;

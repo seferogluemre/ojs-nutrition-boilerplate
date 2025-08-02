@@ -51,7 +51,9 @@
     "db:start": "docker-compose up -d",
     "db:stop": "docker-compose down",
     "db:logs": "docker-compose logs -f",
-    "db:init": "bun run db:start && bun run prisma:generate && bun run prisma:migrate"
+    "db:init": "bun run db:start && bun run prisma:generate && bun run prisma:migrate",
+    "db:test": "bun dotenvx run -f ../../config/apps/api/.env -- node test-db-connection.js",
+    "db:test-prisma": "bun dotenvx run -f ../../config/apps/api/.env -- node test-prisma-connection.js"
   },
   "type": "module",
   "types": "./src/types.ts",

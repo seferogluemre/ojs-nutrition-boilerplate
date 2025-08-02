@@ -1,8 +1,10 @@
+import { auth } from '#modules/auth/authentication/plugin.ts';
 import { Elysia } from 'elysia';
 
-import { AuditLogAction, AuditLogEntity, withAuditLog } from '#modules/audit-logs';
-import { auth } from '#modules/auth/authentication/plugin';
-import { dtoWithMiddlewares } from '#utils';
+
+import { AuditLogAction, AuditLogEntity } from '#modules/audit-logs/constants.ts';
+import { withAuditLog } from '#modules/audit-logs/middleware.ts';
+import { dtoWithMiddlewares } from '#utils/middleware-utils.ts';
 import {
   userAddressCreateDto,
   userAddressDestroyDto,
@@ -22,7 +24,7 @@ const app = new Elysia({
 })
   .use(auth()) 
   .post(
-    '', // create user address
+    '', 
     async ({ body, user }) => {
       const userAddress = await UserAddressesService.store({
         ...body,
@@ -36,7 +38,7 @@ const app = new Elysia({
     ),
   )
   .get(
-    '', // index
+    '', 
     async ({ user }) => {
       const userAddresses = await UserAddressesService.index({ userId: user.id });
       const response = userAddresses.map(UserAddressFormatter.response);
@@ -45,7 +47,7 @@ const app = new Elysia({
     userAddressIndexDto,
   )
   .get(
-    '/:id', // show
+    '/:id', 
     async ({ params: { id }, user }) => {
       const userAddress = await UserAddressesService.show({ 
         id: id,
@@ -57,17 +59,14 @@ const app = new Elysia({
     userAddressShowDto,
   )
   .patch(
-    '/:id', // update
+    '/:id', 
     async ({ params: { id }, body, user }) => {
-      
       const existingAddress = await UserAddressesService.show({ 
         id: id,
         userId: user.id 
       });
       
-      
       const updatedUserAddress = await UserAddressesService.update(id, body);
-      
       
       const response = UserAddressFormatter.response(updatedUserAddress);
       return response;
@@ -81,12 +80,11 @@ const app = new Elysia({
         getEntityUuid: ({ params }: any) => params.id.toString(),
         getDescription: () => 'Kullanıcı adresi güncellendi',
       }),
-    ),
+    ),  
   )
   .delete(
-    '/:id', // destroy
+    '/:id', 
     async ({ params: { id }, user }) => {
-      // Önce adresin kullanıcıya ait olduğunu kontrol et
       await UserAddressesService.show({ 
         id: id,
         userId: user.id,

@@ -18,9 +18,7 @@ export const app = new Elysia({
       });
       return OrderFormatter.formatList(orders);
     },
-    {
-      ...getOrdersDto,
-    },
+    getOrdersDto,
   )
   .get(
     '/:id',
@@ -31,9 +29,7 @@ export const app = new Elysia({
       });
       return OrderFormatter.format(order);
     },
-    {
-      ...getOrderDetailDto,
-    },
+    getOrderDetailDto,
   )
   .post(
     '/complete-shopping',
@@ -45,9 +41,7 @@ export const app = new Elysia({
       set.status = 201;
       return OrderFormatter.format(order);
     },
-    {
-      ...completeShoppingDto,
-    },
+    completeShoppingDto,
   );
 
 export default app;

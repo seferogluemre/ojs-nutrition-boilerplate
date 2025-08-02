@@ -5,7 +5,6 @@ import nodemailer from 'nodemailer';
 import { OrderConfirmation } from '../../../emails/order-confirmation';
 import { OrderEmailJobProps } from './types';
 
-// Redis bağlantı ayarları (service.ts ile aynı)
 const redisConnection = {
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379'),
@@ -22,7 +21,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Worker tanımı
 export const orderEmailWorker = new Worker(
   'order-emails',
   async (job: Job<OrderEmailJobProps>) => {
@@ -40,18 +38,16 @@ export const orderEmailWorker = new Worker(
       console.log(`✅ Email sent successfully for order: ${job.data.orderNumber}`);
     } catch (error) {
       console.error(`❌ Failed to send email for order: ${job.data.orderNumber}`, error);
-      throw error; // BullMQ retry mekanizması için error'ı fırlat
+      throw error;
     }
   },
   {
     connection: redisConnection,
-    concurrency: 5, // Aynı anda 5 email işle (yoğunluk kontrolü)
+    concurrency: 5, 
   }
 );
 
-// Sipariş onay emaili gönder
 async function sendOrderConfirmationEmail(data: OrderEmailJobProps) {
-  // Sipariş detaylarını veritabanından al
   const order = await prisma.order.findUnique({
     where: { uuid: data.orderId },
     include: {
@@ -68,7 +64,6 @@ async function sendOrderConfirmationEmail(data: OrderEmailJobProps) {
     throw new Error(`Order not found: ${data.orderId}`);
   }
 
-  // Email için gerekli verileri hazırla
   const emailData = {
     orderNumber: order.orderNumber,
     userName: data.userName,
@@ -134,10 +129,8 @@ Tüm hakları saklıdır.`,
     },
   };
 
-  // React email şablonunu HTML'e çevir
   const emailHtml = await render(OrderConfirmation(emailData));
 
-  // Email gönder
   const mailOptions = {
     from: process.env.SMTP_FROM || 'noreply@djsnutrition.com',
     to: data.userEmail,

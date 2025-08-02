@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 
-import { auth } from '#modules/auth/authentication/plugin';
+import { auth } from '#modules/auth/authentication/plugin.ts';
 import { commentCreateDto, commentIndexDto } from './dto';
 import { ProductCommentFormatter } from './formatter';
 import { ProductCommentService } from './service';

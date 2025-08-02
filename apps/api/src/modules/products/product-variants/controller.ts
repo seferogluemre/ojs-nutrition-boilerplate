@@ -1,11 +1,11 @@
-import { auth } from '#modules/auth/authentication/plugin';
 import Elysia from 'elysia';
 
+import { auth } from '#modules/auth/authentication/plugin.ts';
 import {
-    createVariantDto,
-    deleteVariantDto,
-    getProductVariantsDto,
-    updateVariantDto,
+  createVariantDto,
+  deleteVariantDto,
+  getProductVariantsDto,
+  updateVariantDto,
 } from './dtos';
 import { ProductVariantFormatter } from './formatters';
 import { ProductVariantService } from './service';
@@ -20,9 +20,7 @@ export const app = new Elysia({
       const variants = await ProductVariantService.get({ product_id: params.id });
       return ProductVariantFormatter.formatList(variants);
     },
-    {
-      ...getProductVariantsDto,
-    },
+    getProductVariantsDto,
   )
   .use(auth())
   .post(
@@ -37,9 +35,7 @@ export const app = new Elysia({
       set.status = 201;
       return ProductVariantFormatter.format(variant);
     },
-    {
-      ...createVariantDto,
-    },
+    createVariantDto,
   )
 
   .put(
@@ -51,9 +47,7 @@ export const app = new Elysia({
       });
       return ProductVariantFormatter.format(variant);
     },
-    {
-      ...updateVariantDto,
-    },
+    updateVariantDto,
   )
   .delete(
     '/:id',
@@ -64,7 +58,5 @@ export const app = new Elysia({
       });
       return result;
     },
-    {
-      ...deleteVariantDto,
-    },
+    deleteVariantDto,
   );

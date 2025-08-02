@@ -1,14 +1,12 @@
 import { Queue } from 'bullmq';
 import { OrderEmailJobProps, QueueStats } from './types';
 
-// Redis bağlantı ayarları
 const redisConnection = {
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379'),
   password: process.env.REDIS_PASSWORD,
 };
 
-// Email queue tanımı
 export const emailQueue = new Queue('order-emails', {
   connection: redisConnection,
   defaultJobOptions: {
@@ -26,7 +24,7 @@ export class OrderQueueService {
   static async addOrderConfirmationJob(data: OrderEmailJobProps) {
     try {
       const job = await emailQueue.add('send-order-confirmation', data, {
-        delay: 10000, // 10 saniye sonra gönder
+        delay: 10000, 
         priority: 1,
       });
       
@@ -52,7 +50,6 @@ export class OrderQueueService {
     };
   }
 
-  // Başarısız job'ları yeniden dene
   static async retryFailedJobs() {
     const failedJobs = await emailQueue.getFailed();
     let retryCount = 0;

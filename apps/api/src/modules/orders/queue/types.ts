@@ -1,4 +1,3 @@
-// Queue job tipleri
 export interface OrderEmailJobProps {
   orderId: string;
   userId: string;
@@ -7,7 +6,6 @@ export interface OrderEmailJobProps {
   userName: string;
 }
 
-// Queue istatistikleri
 export interface QueueStats {
   waiting: number;
   active: number;
@@ -15,7 +13,6 @@ export interface QueueStats {
   failed: number;
 }
 
-// Job durumları
 export type JobStatus = 'waiting' | 'active' | 'completed' | 'failed' | 'delayed';
 
 export interface OrderEmailTemplateProps {

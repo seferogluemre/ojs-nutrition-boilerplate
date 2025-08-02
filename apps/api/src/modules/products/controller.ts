@@ -32,7 +32,7 @@ const app = new Elysia({
     bestSellerProductSchema,
   )
   .get(
-    '', // GET /products - Tüm ürünleri listele
+    '', 
     async ({ query }) => {
       const { data: products, meta } = await ProductsService.index(query);
       return {
@@ -43,7 +43,7 @@ const app = new Elysia({
     productIndexDto,
   )
   .get(
-    '/:id', // GET /products/:id - Tek ürün getir
+    '/:id', 
     async ({ params }) => {
       const product = await ProductsService.show(params.id);
       return ProductFormatter.response(product);
@@ -59,7 +59,6 @@ const app = new Elysia({
         async ({ body }) => {
           let productData = { ...body };
 
-          // File upload handle - sadece File gelirse upload yap
           if (typeof body.primaryPhotoUrl === 'object' && body.primaryPhotoUrl instanceof File) {
             const { fileUrl } = await FileUploadUtil.uploadProductPhoto(body.primaryPhotoUrl);
             productData = {
@@ -67,7 +66,6 @@ const app = new Elysia({
               primaryPhotoUrl: fileUrl,
             };
           }
-          // String gelirse direkt kullan (test için)
 
           const product = await ProductsService.store(productData);
           return ProductFormatter.response(product);
@@ -103,7 +101,7 @@ const app = new Elysia({
       )
 
       .delete(
-        '/:id', // DELETE /products/:id - Ürün sil
+        '/:id', 
         async ({ params }) => {
           await ProductsService.destroy(params.id);
           return { message: 'Ürün başarıyla silindi' };
