@@ -1,7 +1,8 @@
-import { prisma } from "#core";
-import { Prisma } from "#prisma/index";
-import { PrismaClientKnownRequestError } from "#prisma/runtime/library";
-import { NotFoundException, PaginationQuery } from "#utils";
+import { prisma } from "#core/index.ts";
+import { NotFoundException } from "#utils/http-errors.ts";
+import { PaginationQuery } from "#utils/pagination.ts";
+import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { CategoryCreatePayload, CategoryUpdatePayload } from "./types";
 
 export abstract class CategoriesService {
@@ -127,7 +128,7 @@ export abstract class CategoriesService {
             const skip = (page - 1) * perPage;
 
             const where: Prisma.CategoryWhereInput = {
-                parentId: null, // Sadece ana kategorileri getir
+                parentId: null, 
                 ...(search && {
                     OR: [
                         {
@@ -178,7 +179,6 @@ export abstract class CategoriesService {
                 prisma.category.count({ where }),
             ]);
 
-            // Her ana kategori için top sellers'ı getir
             const dataWithTopSellers = await Promise.all(
                 data.map(async (category) => {
                     const topSellers = await this.getTopSellersByCategory(category.id);
@@ -227,7 +227,6 @@ export abstract class CategoriesService {
                 throw new NotFoundException('Kategori bulunamadı');
             }
 
-            // Top sellers'ı getir
             const topSellers = await this.getTopSellersByCategory(category.id);
 
             return {
@@ -244,7 +243,6 @@ export abstract class CategoriesService {
             // Parent validation
             const parent = await this.validateParentCategory(data.parentId);
             
-            // Depth validation
             await this.validateCategoryDepth(data.parentId);
 
             const category = await prisma.category.create({
@@ -252,7 +250,7 @@ export abstract class CategoriesService {
                     name: data.name,
                     slug: data.slug,
                     order: data.order || 0,
-                    parentId: parent ? parent.id : null, // UUID'den integer ID'ye çevir
+                    parentId: parent ? parent.id : null, 
                 },
                 include: {
                     children: {
@@ -266,7 +264,6 @@ export abstract class CategoriesService {
                 },
             });
 
-            // Top sellers'ı getir
             const topSellers = await this.getTopSellersByCategory(category.id);
 
             return {

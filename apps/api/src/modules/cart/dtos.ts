@@ -34,7 +34,6 @@ const cartResponseSchema = t.Object({
   updated_at: t.Date(),
 });
 
-// GET /cart
 export const getCartDto = {
   headers: headers,
   response: {
@@ -46,7 +45,6 @@ export const getCartDto = {
   },
 } satisfies ControllerHook;
 
-// POST /cart
 export const addToCartDto = {
   headers: headers,
   body: t.Object({
@@ -75,7 +73,6 @@ export const addToCartDto = {
   },
 } satisfies ControllerHook;
 
-// DELETE /cart/items/:item_uuid
 export const deleteFromCartDto = {
   headers: headers,
   params: t.Object({

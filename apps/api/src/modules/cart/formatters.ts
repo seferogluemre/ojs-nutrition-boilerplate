@@ -3,18 +3,8 @@ import type { CartService } from './service';
 type CartPayload = Awaited<ReturnType<typeof CartService.create>>;
 
 type CartItemPayload = CartPayload['items'][0];
-
-/**
- * Sepet verilerini API yanıtları için formatlayan bir yardımcı sınıf.
- * Veritabanı nesnelerini istemci dostu yapılara dönüştürmek için statik metotlar içerir.
- */
 export abstract class CartFormatter {
-  /**
-   * Tek bir sepet öğesini formatlar. Bu metot, ana format metoduna yardımcı olduğu için
-   * 'private' olarak işaretlenmiştir ve sadece sınıf içinden erişilebilir.
-   * @param cartItem - Veritabanından gelen sepet öğesi nesnesi.
-   * @returns İstemci dostu formatlanmış sepet öğesi.
-   */
+  
   static formatItem(cartItem: CartItemPayload) {
     return {
       id: cartItem.uuid,
@@ -34,11 +24,6 @@ export abstract class CartFormatter {
     };
   }
 
-  /**
-   * Tüm sepet nesnesini API yanıtı için formatlar.
-   * @param cart - Service katmanından gelen tam sepet nesnesi.
-   * @returns İstemci dostu formatlanmış sepet.
-   */
   static format(cart: CartPayload) {
     const subtotal = cart.items.reduce((acc, item) => {
       return acc + item.product.price * item.quantity;
