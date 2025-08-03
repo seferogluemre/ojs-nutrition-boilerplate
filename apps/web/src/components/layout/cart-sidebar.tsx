@@ -3,7 +3,7 @@ import { api } from "#lib/api.js";
 import { cn, formatPrice } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
 import React, { useEffect } from "react";
@@ -15,8 +15,14 @@ interface CartSidebarProps {
 
 export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   const { auth } = useAuthStore();
-  const { items: cartItems, setItems, clearCart } = useCartStore();
-  const queryClient = useQueryClient();
+  const { 
+    items: cartItems, 
+    setItems, 
+    clearCart, 
+    optimisticUpdateQuantity,
+    removeItem: removeItemFromStore,
+    revertOptimisticUpdate 
+  } = useCartStore();
   const router = useRouter();
 
   const { data: cartData } = useQuery({
@@ -65,8 +71,11 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
         },
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart-items"] });
+    onSuccess: (response) => {
+      // Optimistic update başarılı oldu, backend response ile senkronize et
+      if (response.data?.items) {
+        setItems(response.data.items);
+      }
     },
   });
 
@@ -82,8 +91,11 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
         },
       );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart-items"] });
+    onSuccess: (response) => {
+      // Optimistic update başarılı oldu, backend response ile senkronize et
+      if (response.data?.items) {
+        setItems(response.data.items);
+      }
     },
   });
 
@@ -98,27 +110,76 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   };
 
   const increaseQuantity = async (item: any) => {
-    await removeItemMutation.mutateAsync(item.id);
-    await addItemMutation.mutateAsync({
-      productId: item.product.id,
-      variantId: item.variant.id,
-      quantity: item.quantity + 1,
-    });
-  };
+    // Önce optimistic update yap (anlık UI güncellemesi)
+    const previousItems = [...cartItems];
+    optimisticUpdateQuantity(item.id, 1);
 
-  const decreaseQuantity = async (item: any) => {
-    if (item.quantity > 1) {
-      await removeItemMutation.mutateAsync(item.id);
+    try {
+      // Backend'e sadece +1 artış gönder
       await addItemMutation.mutateAsync({
         productId: item.product.id,
         variantId: item.variant.id,
-        quantity: item.quantity - 1,
+        quantity: 1,
       });
+    } catch (error) {
+      // Hata durumunda eski haline döndür
+      revertOptimisticUpdate(previousItems);
+      console.error('Adet artırılırken hata oluştu:', error);
+    }
+  };
+
+  const decreaseQuantity = async (item: any) => {
+    if (item.quantity <= 1) return;
+
+    // Önce optimistic update yap (anlık UI güncellemesi)
+    const previousItems = [...cartItems];
+    const updatedItem = optimisticUpdateQuantity(item.id, -1);
+    
+    if (!updatedItem) return;
+
+    try {
+      // Direkt API call yap (mutation callback'lerini bypass et)
+      await api["cart-items"]({ itemId: item.id }).delete(
+        {},
+        {
+          headers: {
+            authorization: `Bearer ${auth.accessToken}`,
+          },
+        },
+      );
+      
+      await api["cart-items"].post(
+        {
+          product_id: item.product.id,
+          product_variant_id: item.variant.id,
+          quantity: updatedItem.quantity,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${auth.accessToken}`,
+          },
+        },
+      );
+    } catch (error) {
+      // Hata durumunda eski haline döndür
+      revertOptimisticUpdate(previousItems);
+      console.error('Adet azaltılırken hata oluştu:', error);
     }
   };
 
   const handleRemoveItem = async (id: string) => {
-    removeItemMutation.mutate(id);
+    // Önce optimistic update yap (anlık UI güncellemesi)
+    const previousItems = [...cartItems];
+    removeItemFromStore(id);
+
+    try {
+      await removeItemMutation.mutateAsync(id);
+    } catch (error) {
+      // Hata durumunda eski haline döndür
+      revertOptimisticUpdate(previousItems);
+      console.error('Ürün silinirken hata oluştu:', error);
+    }
   };
 
   return (
