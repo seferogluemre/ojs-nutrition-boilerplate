@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Body,
@@ -17,16 +18,41 @@ import {
 import { Tailwind } from '@react-email/tailwind';
 
 const tailwindConfig = {
+  darkMode: ['class'],
   theme: {
     extend: {
       colors: {
-        primary: '#1d1c1d',
-        secondary: '#b7b7b7',
-        background: '#f8f9fa', // Daha açık gri
-        success: '#28a745', // Daha koyu yeşil
+        primary: {
+          light: '#1d1c1d',
+          dark: '#ffffff',
+        },
+        secondary: {
+          light: '#b7b7b7',
+          dark: '#8b8b8b',
+        },
+        background: {
+          light: '#ffffff',
+          dark: '#1a1a1a',
+        },
+        card: {
+          light: '#f8f9fa',
+          dark: '#2d2d2d',
+        },
+        success: {
+          light: '#28a745',
+          dark: '#22c55e',
+        },
         text: {
-          DEFAULT: '#000000',
-          muted: '#6c757d',
+          light: '#000000',
+          dark: '#ffffff',
+          muted: {
+            light: '#6c757d',
+            dark: '#a0a0a0',
+          },
+        },
+        border: {
+          light: '#e0e0e0',
+          dark: '#404040',
         },
       },
       spacing: {
@@ -92,6 +118,21 @@ export function OrderConfirmation({
   company,
   footer,
 }: OrderConfirmationProps) {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check for saved theme preference or default to light mode
+    const savedTheme = localStorage.getItem('email-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setIsDarkMode(savedTheme ? savedTheme === 'dark' : prefersDark);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    localStorage.setItem('email-theme', newTheme ? 'dark' : 'light');
+  };
+
   if (!company || !footer || !orderNumber) {
     return null;
   }
@@ -100,120 +141,229 @@ export function OrderConfirmation({
   const socialLinks = footer.socialLinks;
 
   return (
-    <Tailwind config={tailwindConfig}>
-      <Html>
+    <Tailwind config={tailwindConfig as any}>
+      <Html className={isDarkMode ? 'dark' : ''}>
         <Head>
-          <style>{`:root { color-scheme: only light; }`}</style>
+          <style>{`
+            :root { 
+              color-scheme: ${isDarkMode ? 'dark' : 'light'}; 
+            }
+            .theme-toggle {
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              z-index: 1000;
+              background: ${isDarkMode ? '#2d2d2d' : '#ffffff'};
+              border: 2px solid ${isDarkMode ? '#404040' : '#e0e0e0'};
+              border-radius: 50%;
+              width: 50px;
+              height: 50px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+              transition: all 0.3s ease;
+            }
+            .theme-toggle:hover {
+              box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+              transform: translateY(-2px);
+            }
+          `}</style>
         </Head>
         <Preview>Siparişiniz başarıyla alındı - {orderNumber}</Preview>
-        <Body className="m-auto bg-white font-sans">
+        
+        {/* Theme Toggle Button */}
+        <button 
+          className="theme-toggle"
+          onClick={toggleTheme}
+          aria-label={isDarkMode ? 'Light tema' : 'Dark tema'}
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
+
+        <Body className={`m-auto font-sans transition-colors duration-300 ${
+          isDarkMode 
+            ? 'bg-background-dark text-text-dark' 
+            : 'bg-background-light text-text-light'
+        }`}>
           <Container className="mx-auto px-5 max-w-2xl">
             {/* Header with Logo */}
             <Section className="mt-8">
               <Img src={finalLogoUrl} height={50} alt={company.name} />
-              <Text className="text-sm text-text-muted mt-2">Premium Spor Besın Takviyesi</Text>
+              <Text className={`text-sm mt-2 ${
+                isDarkMode ? 'text-text-muted-dark' : 'text-text-muted-light'
+              }`}>Premium Spor Besın Takviyesi</Text>
             </Section>
 
             {/* Success Banner */}
-            <Section className="bg-success text-white text-center py-4 px-6 rounded-lg my-6">
+            <Section className={`text-white text-center py-4 px-6 rounded-lg my-6 ${
+              isDarkMode ? 'bg-success-dark' : 'bg-success-light'
+            }`}>
               <Text className="text-lg font-semibold m-0">✓ Siparişiniz Başarıyla Alındı!</Text>
             </Section>
 
-            <Heading className="text-primary my-6 p-0 text-2xl font-bold">
+            <Heading className={`my-6 p-0 text-2xl font-bold ${
+              isDarkMode ? 'text-primary-dark' : 'text-primary-light'
+            }`}>
               Merhaba {userName},
             </Heading>
             
-            <Text className="mb-6 text-base leading-6">
+            <Text className={`mb-6 text-base leading-6 ${
+              isDarkMode ? 'text-text-dark' : 'text-text-light'
+            }`}>
               Siparişiniz başarıyla alınmıştır. Sipariş detaylarınız aşağıda yer almaktadır.
             </Text>
 
             {/* Order Information */}
-            <Section className="bg-gray-100 p-6 rounded-lg mb-6 border border-gray-200">
-              <Heading className="text-lg font-bold mb-4 text-primary">📋 Sipariş Bilgileri</Heading>
+            <Section className={`p-6 rounded-lg mb-6 border transition-colors duration-300 ${
+              isDarkMode 
+                ? 'bg-card-dark border-border-dark' 
+                : 'bg-card-light border-border-light'
+            }`}>
+              <Heading className={`text-lg font-bold mb-4 ${
+                isDarkMode ? 'text-primary-dark' : 'text-primary-light'
+              }`}>📋 Sipariş Bilgileri</Heading>
               
               <Row className="mb-2">
                 <Column className="w-1/2">
-                  <Text className="font-semibold text-sm">Sipariş Numarası:</Text>
+                  <Text className={`font-semibold text-sm ${
+                    isDarkMode ? 'text-text-dark' : 'text-text-light'
+                  }`}>Sipariş Numarası:</Text>
                 </Column>
                 <Column className="w-1/2">
-                  <Text className="text-sm text-primary font-bold">#{orderNumber}</Text>
+                  <Text className={`text-sm font-bold ${
+                    isDarkMode ? 'text-primary-dark' : 'text-primary-light'
+                  }`}>#{orderNumber}</Text>
                 </Column>
               </Row>
               
               <Row className="mb-2">
                 <Column className="w-1/2">
-                  <Text className="font-semibold text-sm">Sipariş Tarihi:</Text>
+                  <Text className={`font-semibold text-sm ${
+                    isDarkMode ? 'text-text-dark' : 'text-text-light'
+                  }`}>Sipariş Tarihi:</Text>
                 </Column>
                 <Column className="w-1/2">
-                  <Text className="text-sm">{orderDate}</Text>
+                  <Text className={`text-sm ${
+                    isDarkMode ? 'text-text-dark' : 'text-text-light'
+                  }`}>{orderDate}</Text>
                 </Column>
               </Row>
               
               <Row className="mb-2">
                 <Column className="w-1/2">
-                  <Text className="font-semibold text-sm">Durum:</Text>
+                  <Text className={`font-semibold text-sm ${
+                    isDarkMode ? 'text-text-dark' : 'text-text-light'
+                  }`}>Durum:</Text>
                 </Column>
                 <Column className="w-1/2">
-                  <Text className="text-sm text-success font-semibold">✓ Onaylandı</Text>
+                  <Text className={`text-sm font-semibold ${
+                    isDarkMode ? 'text-success-dark' : 'text-success-light'
+                  }`}>✓ Onaylandı</Text>
                 </Column>
               </Row>
             </Section>
 
             {/* Order Items */}
             <Section className="mb-6">
-              <Heading className="text-lg font-bold mb-4 text-primary">🛒 Sipariş Edilen Ürünler</Heading>
+              <Heading className={`text-lg font-bold mb-4 ${
+                isDarkMode ? 'text-primary-dark' : 'text-primary-light'
+              }`}>🛒 Sipariş Edilen Ürünler</Heading>
               
               {items.map((item, index) => (
-                <Row key={index} className="border-b border-gray-300 py-3">
+                <Row key={index} className={`py-3 border-b ${
+                  isDarkMode ? 'border-border-dark' : 'border-border-light'
+                }`}>
                   <Column className="w-1/2">
-                    <Text className="font-semibold text-sm">{item.productName}</Text>
-                    <Text className="text-xs text-text-muted">Adet: {item.quantity}</Text>
+                    <Text className={`font-semibold text-sm ${
+                      isDarkMode ? 'text-text-dark' : 'text-text-light'
+                    }`}>{item.productName}</Text>
+                    <Text className={`text-xs ${
+                      isDarkMode ? 'text-text-muted-dark' : 'text-text-muted-light'
+                    }`}>Adet: {item.quantity}</Text>
                   </Column>
                   <Column className="w-1/2 text-right">
-                    <Text className="font-bold text-sm">{item.totalPrice.toLocaleString('tr-TR')} TL</Text>
-                    <Text className="text-xs text-text-muted">{item.unitPrice.toLocaleString('tr-TR')} TL / Adet</Text>
+                    <Text className={`font-bold text-sm ${
+                      isDarkMode ? 'text-text-dark' : 'text-text-light'
+                    }`}>{item.totalPrice.toLocaleString('tr-TR')} TL</Text>
+                    <Text className={`text-xs ${
+                      isDarkMode ? 'text-text-muted-dark' : 'text-text-muted-light'
+                    }`}>{item.unitPrice.toLocaleString('tr-TR')} TL / Adet</Text>
                   </Column>
                 </Row>
               ))}
               
               {/* Total */}
-              <Row className="pt-4 border-t-2 border-gray-400">
+              <Row className={`pt-4 border-t-2 ${
+                isDarkMode ? 'border-border-dark' : 'border-border-light'
+              }`}>
                 <Column className="w-1/2">
-                  <Text className="font-bold text-lg">Toplam:</Text>
+                  <Text className={`font-bold text-lg ${
+                    isDarkMode ? 'text-text-dark' : 'text-text-light'
+                  }`}>Toplam:</Text>
                 </Column>
                 <Column className="w-1/2 text-right">
-                  <Text className="font-bold text-lg text-primary">{subtotal.toLocaleString('tr-TR')} TL</Text>
+                  <Text className={`font-bold text-lg ${
+                    isDarkMode ? 'text-primary-dark' : 'text-primary-light'
+                  }`}>{subtotal.toLocaleString('tr-TR')} TL</Text>
                 </Column>
               </Row>
             </Section>
 
             {/* Shipping Address */}
             {shippingAddress && (
-              <Section className="bg-gray-100 p-6 rounded-lg mb-6 border border-gray-200">
-                <Heading className="text-lg font-bold mb-4 text-primary">📍 Teslimat Adresi</Heading>
+              <Section className={`p-6 rounded-lg mb-6 border transition-colors duration-300 ${
+                isDarkMode 
+                  ? 'bg-card-dark border-border-dark' 
+                  : 'bg-card-light border-border-light'
+              }`}>
+                <Heading className={`text-lg font-bold mb-4 ${
+                  isDarkMode ? 'text-primary-dark' : 'text-primary-light'
+                }`}>📍 Teslimat Adresi</Heading>
                 
-                <Text className="font-semibold text-sm mb-2">{shippingAddress.title}</Text>
-                <Text className="text-sm mb-1">{shippingAddress.recipientName}</Text>
-                <Text className="text-sm mb-1">{shippingAddress.phone}</Text>
-                <Text className="text-sm mb-1">{shippingAddress.addressLine1}</Text>
+                <Text className={`font-semibold text-sm mb-2 ${
+                  isDarkMode ? 'text-text-dark' : 'text-text-light'
+                }`}>{shippingAddress.title}</Text>
+                <Text className={`text-sm mb-1 ${
+                  isDarkMode ? 'text-text-dark' : 'text-text-light'
+                }`}>{shippingAddress.recipientName}</Text>
+                <Text className={`text-sm mb-1 ${
+                  isDarkMode ? 'text-text-dark' : 'text-text-light'
+                }`}>{shippingAddress.phone}</Text>
+                <Text className={`text-sm mb-1 ${
+                  isDarkMode ? 'text-text-dark' : 'text-text-light'
+                }`}>{shippingAddress.addressLine1}</Text>
                 {shippingAddress.addressLine2 && (
-                  <Text className="text-sm mb-1">{shippingAddress.addressLine2}</Text>
+                  <Text className={`text-sm mb-1 ${
+                    isDarkMode ? 'text-text-dark' : 'text-text-light'
+                  }`}>{shippingAddress.addressLine2}</Text>
                 )}
-                <Text className="text-sm">
+                <Text className={`text-sm ${
+                  isDarkMode ? 'text-text-dark' : 'text-text-light'
+                }`}>
                   {shippingAddress.postalCode} {shippingAddress.city}, {shippingAddress.state} / {shippingAddress.country}
                 </Text>
               </Section>
             )}
 
             {/* Info Box */}
-            <Section className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
-              <Text className="text-sm text-blue-800 m-0">
+            <Section className={`border-l-4 p-4 mb-6 transition-colors duration-300 ${
+              isDarkMode 
+                ? 'bg-blue-900/20 border-blue-400' 
+                : 'bg-blue-50 border-blue-400'
+            }`}>
+              <Text className={`text-sm m-0 ${
+                isDarkMode ? 'text-blue-300' : 'text-blue-800'
+              }`}>
                 💡 <strong>Bilgi:</strong> Siparişiniz 2-3 iş günü içerisinde kargo takip kodu ile tarafınıza iletilecektir. 
                 Kargo takip bilgilerini SMS ve e-posta ile alacaksınız.
               </Text>
             </Section>
 
-            <Text className="text-text-muted text-sm leading-6 mb-8">
+            <Text className={`text-sm leading-6 mb-8 ${
+              isDarkMode ? 'text-text-muted-dark' : 'text-text-muted-light'
+            }`}>
               Herhangi bir sorunuz varsa bizimle iletişime geçmekten çekinmeyin. 
               Siparişiniz için teşekkür ederiz!
             </Text>
@@ -250,7 +400,9 @@ export function OrderConfirmation({
               {footer.links.map((link, index) => (
                 <React.Fragment key={index}>
                   <Link
-                    className="text-text-muted underline"
+                    className={`underline ${
+                      isDarkMode ? 'text-text-muted-dark' : 'text-text-muted-light'
+                    }`}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -261,7 +413,9 @@ export function OrderConfirmation({
                 </React.Fragment>
               ))}
               <pre>
-                <Text className="text-text-muted mb-8 block whitespace-pre-line text-left font-sans text-xs leading-[15px]">
+                <Text className={`mb-8 block whitespace-pre-line text-left font-sans text-xs leading-[15px] ${
+                  isDarkMode ? 'text-text-muted-dark' : 'text-text-muted-light'
+                }`}>
                   {footer.description}
                 </Text>
               </pre>
