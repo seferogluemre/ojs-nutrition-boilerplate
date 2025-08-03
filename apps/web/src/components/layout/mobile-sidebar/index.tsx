@@ -1,5 +1,4 @@
 import { Button } from "#components/ui/button";
-import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
@@ -26,15 +25,12 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const apiAuth = api.auth;
-
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      return await apiAuth["sign-out"].post();
+      return await api.auth["sign-out"].post();
     },
     onSuccess: () => {
-      // Reset auth and cart
       auth.reset();
       clearCart();
       queryClient.clear();
@@ -42,12 +38,10 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
       router.navigate({ to: "/login" });
     },
     onError: (error) => {
-      console.error("Logout request failed:", error);
-      // Even if logout fails, clear local state
       auth.reset();
       clearCart();
       queryClient.clear();
-      onClose(); // Sidebar'ı kapat
+      onClose(); 
       router.navigate({ to: "/login" });
     },
   });
