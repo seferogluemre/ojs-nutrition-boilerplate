@@ -46,7 +46,10 @@ export const PERMISSIONS = {
     INDEX: { key: 'categories:index', description: 'Kategorileri Görüntüle' },
     CREATE: { key: 'categories:create', description: 'Kategori Oluştur' },
     UPDATE: { key: 'categories:update', description: 'Kategori Güncelle' },
-    DESTROY: { key: 'categories:destroy', description: 'Kategori Sil' },    
+    DESTROY: { key: 'categories:destroy', description: 'Kategori Sil' },
+  },
+  ORDERS: {
+    CREATE: { key: 'orders:create', description: 'Sipariş Oluştur' },
   },
 } as const satisfies Record<string, Record<string, GenericPermissionObject>>;
 
@@ -88,7 +91,7 @@ export const PERMISSION_GROUPS = {
     key: 'categories',
     description: 'Kategoriler',
     permissions: Object.values(PERMISSIONS.CATEGORIES),
-  },  
+  },
 } as const satisfies Record<
   string,
   { key: string; description: string; permissions: Array<{ key: string; description: string }> }
