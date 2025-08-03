@@ -8,7 +8,7 @@ import { cn } from "#lib/utils";
 import { SearchProps } from "#types/search";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 interface CategoryNavProps extends React.HTMLAttributes<HTMLElement> {
@@ -23,6 +23,7 @@ interface CategoryDropdownProps {
 
 const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible, onClose }) => {
   const router = useRouter();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   if (!isVisible) return null;
 
@@ -31,44 +32,63 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible
     onClose();
   };
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!dropdownRef.current) return;
+    
+    const rect = dropdownRef.current.getBoundingClientRect();
+    const mouseY = e.clientY;
+    const dropdownBottom = rect.bottom;
+    
+    // Kutunun altına 20px yaklaşınca kapat
+    if (mouseY > dropdownBottom + 20) {
+      onClose();
+    }
+  };
+
   return (
     <>
-      {/* Backdrop Overlay */}
+      {/* Backdrop Overlay - only covers bottom area */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-30 z-30"
-        onClick={onClose}
+        className="fixed left-0 right-0 bottom-0 bg-transparent z-30"
+        style={{ top: '60%' }}
         onMouseEnter={onClose}
       />
       
       {/* Dropdown Content */}
-      <div className="absolute top-full left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-xl z-50 mt-0 w-[750px]">
-        <div className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div 
+        ref={dropdownRef}
+        className="absolute top-full left-1/2 transform -translate-x-1/2 bg-white border-2 border-gray-300 rounded-xl shadow-2xl z-50 mt-2 w-[750px] overflow-hidden"
+        onMouseMove={handleMouseMove}
+      >
+        {/* Top safe zone for hover */}
+        <div className="absolute -top-4 left-0 right-0 h-4 bg-transparent"></div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Sol kısım - Top Sellers */}
             {category.top_sellers && category.top_sellers.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">EN ÇOK SATANLAR</h3>
+                <h3 className="text-lg font-bold mb-5 text-gray-900 border-b border-gray-200 pb-2">EN ÇOK SATANLAR</h3>
                 <div className="space-y-3">
                   {category.top_sellers.map((product, index) => (
                     <div 
                       key={index} 
-                      className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors"
+                      className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm border border-transparent hover:border-gray-200"
                       onClick={() => handleProductClick(product.id)}
                     >
-                      <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0">
+                      <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
                         {product.picture_src && product.picture_src !== "null" ? (
                           <img 
                             src={`/images/${product.picture_src}`} 
                             alt={product.name}
-                            className="w-full h-full object-cover rounded"
+                            className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gray-300 rounded"></div>
+                          <div className="w-full h-full bg-gray-300"></div>
                         )}
                       </div>
                       <div>
-                        <h4 className="font-medium text-sm text-gray-800 hover:text-blue-600 transition-colors">{product.name}</h4>
-                        <p className="text-xs text-gray-600">{product.description}</p>
+                        <h4 className="font-semibold text-sm text-gray-900 hover:text-blue-600 transition-colors">{product.name}</h4>
+                        <p className="text-xs text-gray-500 mt-1">{product.description}</p>
                       </div>
                     </div>
                   ))}
@@ -79,11 +99,11 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible
             {/* Sağ kısım - Alt Kategoriler */}
             {category.children && category.children.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">KATEGORİLER</h3>
+                <h3 className="text-lg font-bold mb-5 text-gray-900 border-b border-gray-200 pb-2">KATEGORİLER</h3>
                 <div className="space-y-4">
                   {category.children.map((child) => (
                     <div key={child.id}>
-                      <h4 className="font-medium text-gray-800 mb-2 hover:text-blue-600 cursor-pointer transition-colors">
+                      <h4 className="font-semibold text-gray-900 mb-3 hover:text-blue-600 cursor-pointer transition-colors">
                         {child.name}
                       </h4>
                       {child.sub_children && child.sub_children.length > 0 && (
@@ -92,7 +112,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible
                             <li key={index}>
                               <a 
                                 href="#" 
-                                className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1 cursor-pointer"
+                                className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   handleProductClick(subChild.id);
@@ -226,7 +246,7 @@ export const CategoryNav = ({
     setIsSearchOpen(false);
   };
 
-  // Click outside effect for search
+  // Click outside effect for search and scroll handling
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
@@ -240,12 +260,25 @@ export const CategoryNav = ({
       }
     };
 
+    const handleScroll = () => {
+      // Close dropdown when scrolling
+      setHoveredCategory(null);
+      setActiveCategory(null);
+    };
+
     if (typeof document !== 'undefined') {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('scroll', handleScroll, true);
+      window.addEventListener('scroll', handleScroll);
+      
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('scroll', handleScroll, true);
+        window.removeEventListener('scroll', handleScroll);
       };
     }
+    
+    return () => {};
   }, []);
 
   return (
@@ -277,9 +310,14 @@ export const CategoryNav = ({
                 >
                   <a
                     href="#"
-                    className="text-white hover:text-gray-300 transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap block py-2 relative z-50"
+                    className="text-white hover:text-gray-300 transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap py-2 relative z-50 flex items-center space-x-1"
                   >
-                    {category}
+                    <span>{category}</span>
+                    <ChevronDown 
+                      className={`w-3 h-3 transition-transform duration-300 ${
+                        hoveredCategory === category ? 'rotate-180' : 'rotate-0'
+                      }`}
+                    />
                   </a>
                 </li>
               ))}
