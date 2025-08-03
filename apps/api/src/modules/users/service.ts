@@ -52,9 +52,9 @@ export abstract class UsersService {
   static async index(query?: UserIndexQuery): Promise<User[]> {
     const filterQuery = query
       ? {
-          ...query,
-          email: query.email === null ? undefined : query.email,
-        }
+        ...query,
+        email: query.email === null ? undefined : query.email,
+      }
       : undefined;
 
     const [hasFilters, filters] = getUserFilters(filterQuery);
@@ -123,7 +123,7 @@ export abstract class UsersService {
       },
       include: {
         addresses: true,
-        orders:true,
+        orders: true,
       },
     });
 
@@ -170,8 +170,8 @@ export abstract class UsersService {
 
       return updatedUser;
     } catch (error) {
-        throw HandleError.handlePrismaError(error, 'user', 'create');
-  
+      throw HandleError.handlePrismaError(error, 'user', 'create');
+
     }
   }
 

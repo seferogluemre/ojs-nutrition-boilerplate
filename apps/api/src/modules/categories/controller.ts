@@ -1,8 +1,8 @@
 import { Elysia } from 'elysia';
 
-import { NotFoundException } from '../../utils';
+import { dtoWithMiddlewares, NotFoundException } from '../../utils';
 import { PaginationService } from '../../utils/pagination';
-import { PERMISSIONS, dtoWithPermission } from '../auth';
+import { PERMISSIONS, dtoWithPermission, withPermission } from '../auth';
 import { auth, authSwagger } from '../auth/authentication/plugin';
 import {
   categoryCreateDto,
@@ -13,6 +13,7 @@ import {
 } from './dtos';
 import { CategoryFormatter } from './formatters';
 import { CategoriesService } from './service';
+import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
 
 const app = new Elysia({ prefix: '/categories', tags: ['Category'] })
   .get(
@@ -46,7 +47,16 @@ const app = new Elysia({ prefix: '/categories', tags: ['Category'] })
           const category = await CategoriesService.store(body);
           return CategoryFormatter.response(category);
         },
-        dtoWithPermission(categoryCreateDto, PERMISSIONS.CATEGORIES.CREATE),
+        dtoWithMiddlewares(
+          categoryCreateDto,
+          withPermission(PERMISSIONS.CATEGORIES.CREATE),
+          withAuditLog<typeof categoryCreateDto>({
+            actionType: AuditLogAction.CREATE,
+            entityType: AuditLogEntity.PRODUCT,
+            getDescription: ({ body }) => `Kategori oluşturuldu: ${body.name}`,
+            getEntityUuid: ({ body }) => body.id,
+          }),
+        ),
       )
       .put(
         '/:uuid',
@@ -55,7 +65,16 @@ const app = new Elysia({ prefix: '/categories', tags: ['Category'] })
           if (!category) throw new NotFoundException('Kategori bulunamadı');
           return CategoryFormatter.response(category);
         },
-        dtoWithPermission(categoryUpdateDto, PERMISSIONS.CATEGORIES.UPDATE),
+        dtoWithMiddlewares(
+          categoryUpdateDto,
+          withPermission(PERMISSIONS.CATEGORIES.UPDATE),
+          withAuditLog<typeof categoryUpdateDto>({
+            actionType: AuditLogAction.CREATE,
+            entityType: AuditLogEntity.PRODUCT,
+            getDescription: ({ body }) => `Kategori güncellendi: ${body.name}`,
+            getEntityUuid: ({ body }) => body.id,
+          }),
+        ),
       )
       .delete(
         '/:uuid',
@@ -64,7 +83,16 @@ const app = new Elysia({ prefix: '/categories', tags: ['Category'] })
           if (!category) throw new NotFoundException('Kategori bulunamadı');
           return { message: 'Kategori başarıyla silindi' };
         },
-        dtoWithPermission(categoryDestroyDto, PERMISSIONS.CATEGORIES.DESTROY),
+        dtoWithMiddlewares(
+          categoryDestroyDto,
+          withPermission(PERMISSIONS.CATEGORIES.DESTROY),
+          withAuditLog<typeof categoryDestroyDto>({
+            actionType: AuditLogAction.DELETE,
+            entityType: AuditLogEntity.PRODUCT,
+            getDescription: ({ params }) => `Kategori silindi: ${params.uuid}`,
+            getEntityUuid: ({ params }) => params.uuid,
+          }),
+        ),
       ),
   );
 

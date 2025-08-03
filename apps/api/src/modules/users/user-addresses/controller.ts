@@ -35,6 +35,15 @@ const app = new Elysia({
     // @ts-ignore - Complex middleware composition
     dtoWithMiddlewares(
       userAddressCreateDto,
+      withAuditLog<typeof userAddressCreateDto>({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.USER,
+        getEntityUuid: (ctx) => {
+          const response = ctx.response as ReturnType<typeof UserAddressFormatter.response>;
+          return response.id;
+        },
+        getDescription: () => 'Yeni kullanıcı adresi oluşturuldu',
+      })
     ),
   )
   .get(

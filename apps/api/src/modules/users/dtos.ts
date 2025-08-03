@@ -83,6 +83,7 @@ export const userUpdateDto = {
     isActive: t.Optional(t.Boolean()),
     gender: t.Optional(t.Enum(Gender)),
     imageFile: t.Optional(__nullable__(t.File())),
+    emailVerified: t.Optional(t.Boolean()),
   }),
   response: {
     200: userResponseSchema,
