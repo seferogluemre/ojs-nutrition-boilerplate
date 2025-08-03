@@ -44,11 +44,12 @@ export const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
       <div 
         className="fixed inset-0 bg-black bg-opacity-40 z-30 transition-opacity duration-200"
         onClick={onClose}
+        style={{ top: '100px' }} // Category nav'ın altından başlasın
       />
       
       {/* Safe hover zone between nav and dropdown */}
       <div 
-        className="absolute top-full left-0 right-0 h-4 bg-transparent z-40"
+        className="absolute top-full z-[-1] left-0 right-0 h-4 bg-transparent  opacity-0 pointer-events-auto"
         onMouseEnter={() => {/* Keep dropdown open */}}
       />
       
