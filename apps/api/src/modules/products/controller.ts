@@ -32,7 +32,7 @@ const app = new Elysia({
     bestSellerProductSchema,
   )
   .get(
-    '', 
+    '',
     async ({ query }) => {
       const { data: products, meta } = await ProductsService.index(query);
       return {
@@ -43,7 +43,7 @@ const app = new Elysia({
     productIndexDto,
   )
   .get(
-    '/:id', 
+    '/:id',
     async ({ params }) => {
       const product = await ProductsService.show(params.id);
       return ProductFormatter.response(product);
@@ -101,7 +101,7 @@ const app = new Elysia({
       )
 
       .delete(
-        '/:id', 
+        '/:id',
         async ({ params }) => {
           await ProductsService.destroy(params.id);
           return { message: 'Ürün başarıyla silindi' };

@@ -101,7 +101,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible
             )}
 
             {/* Sağ kısım - Alt Kategoriler */}
-            {category.children && category.children.length > 0 && (
+            {category.children && category.children.length > 0 ? (
               <div>
                 <h3 className="text-lg font-bold mb-5 text-gray-900 border-b border-gray-200 pb-2">KATEGORİLER</h3>
                 <div className="space-y-4">
@@ -130,6 +130,50 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible
                       )}
                     </div>
                   ))}
+                </div>
+              </div>
+            ) : (
+              /* Debug bilgisi ve fallback kategoriler */
+              <div>
+                <h3 className="text-lg font-bold mb-5 text-gray-900 border-b border-gray-200 pb-2">KATEGORİLER</h3>
+                <div className="space-y-4">
+                  <div className="text-sm text-gray-500">
+                    Debug: Children bulunamadı - {category.name}
+                  </div>
+                  {/* Manual fallback kategoriler - Geçici test için */}
+                  {category.name === 'PROTEİN' && (
+                    <>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-3 hover:text-blue-600 cursor-pointer transition-colors">
+                          Whey Protein
+                        </h4>
+                        <ul className="space-y-1 ml-4">
+                          <li>
+                            <a href="#" className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50">
+                              Whey Protein Isolate
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#" className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50">
+                              Whey Protein Concentrate
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-3 hover:text-blue-600 cursor-pointer transition-colors">
+                          Casein Protein
+                        </h4>
+                        <ul className="space-y-1 ml-4">
+                          <li>
+                            <a href="#" className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50">
+                              Micellar Casein
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -201,16 +245,49 @@ export const CategoryNav = ({
   const getCategoryFromAPI = (categoryName: string): Category | null => {
     if (!categoriesData?.data) return null;
     
+    // Debug: API'den gelen kategori verilerini kontrol et
+    console.log('API Categories Data:', categoriesData.data);
+    console.log('Looking for category:', categoryName);
+    
     const mappings: Record<string, string> = {
       "Proteinler": "PROTEİN",
       "Spor Gıdaları": "SPOR GIDALARI",
       "Sağlık": "SAĞLIK",
-      "Gıda": "GIDA",
+      "Gıda": "GIDA", 
       "Vitamin": "VİTAMİN",
     };
 
+    // İlk önce direct mapping ile dene
     const apiCategoryName = mappings[categoryName] || categoryName;
-    return categoriesData.data.find(cat => cat.name === apiCategoryName) || null;
+    let foundCategory = categoriesData.data.find(cat => cat.name === apiCategoryName);
+    
+    // Eğer bulunamazsa, case-insensitive arama yap
+    if (!foundCategory) {
+      foundCategory = categoriesData.data.find(cat => 
+        cat.name.toLowerCase() === apiCategoryName.toLowerCase() ||
+        cat.name.toLowerCase() === categoryName.toLowerCase()
+      );
+    }
+    
+    // Eğer hala bulunamazsa, partial match dene
+    if (!foundCategory) {
+      foundCategory = categoriesData.data.find(cat => 
+        cat.name.toLowerCase().includes(categoryName.toLowerCase()) ||
+        categoryName.toLowerCase().includes(cat.name.toLowerCase())
+      );
+    }
+    
+    // Debug: Bulunan kategori ve children'ını kontrol et
+    console.log('Found Category:', foundCategory);
+    if (foundCategory) {
+      console.log('Category Children:', foundCategory.children);
+      console.log('Category Top Sellers:', foundCategory.top_sellers);
+    } else {
+      console.log('Category not found! Available categories:');
+      categoriesData.data.forEach(cat => console.log(`- ${cat.name} (${cat.id})`));
+    }
+    
+    return foundCategory || null;
   };
 
   // Category hover handlers

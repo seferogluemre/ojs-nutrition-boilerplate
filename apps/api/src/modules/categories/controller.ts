@@ -1,8 +1,9 @@
 import { Elysia } from 'elysia';
 
-import { dtoWithMiddlewares, NotFoundException } from '../../utils';
+import { NotFoundException, dtoWithMiddlewares } from '../../utils';
 import { PaginationService } from '../../utils/pagination';
-import { PERMISSIONS, dtoWithPermission, withPermission } from '../auth';
+import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
+import { PERMISSIONS, withPermission } from '../auth';
 import { auth, authSwagger } from '../auth/authentication/plugin';
 import {
   categoryCreateDto,
@@ -13,7 +14,6 @@ import {
 } from './dtos';
 import { CategoryFormatter } from './formatters';
 import { CategoriesService } from './service';
-import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
 
 const app = new Elysia({ prefix: '/categories', tags: ['Category'] })
   .get(
