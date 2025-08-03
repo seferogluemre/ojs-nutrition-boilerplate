@@ -1,188 +1,19 @@
 import type { CategoriesApiResponse, Category } from "#components/layout/mobile-sidebar/types";
-import { SearchDropdown } from "#components/layout/search-dropdown";
-import { Button } from "#components/ui/button";
-import { Input } from "#components/ui/input";
 import { useDebounce } from "#hooks/use-debounce";
 import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { SearchProps } from "#types/search";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
-import { ChevronDown, Search } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { CategoryDropdown } from "./category-dropdown";
+import { CategoryItem } from "./category-item";
+import { MobileSearchBar } from "./mobile-search-bar";
 
 interface CategoryNavProps extends React.HTMLAttributes<HTMLElement> {
   ref?: React.Ref<HTMLElement>;
 }
 
-interface CategoryDropdownProps {
-  category: Category;
-  isVisible: boolean;
-  onClose: () => void;
-}
 
-const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible, onClose }) => {
-  const router = useRouter();
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  if (!isVisible) return null;
-
-  const handleProductClick = (productId: string) => {
-    router.navigate({ to: `/products/${productId}` });
-    onClose();
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!dropdownRef.current) return;
-    
-    const rect = dropdownRef.current.getBoundingClientRect();
-    const mouseY = e.clientY;
-    const dropdownBottom = rect.bottom;
-    
-    // Kutunun altına 20px yaklaşınca kapat
-    if (mouseY > dropdownBottom + 20) {
-      onClose();
-    }
-  };
-
-  return (
-    <>
-      {/* Full Screen Backdrop Overlay */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-40 z-30 transition-opacity duration-200"
-        onClick={onClose}
-      />
-      
-      {/* Safe hover zone between nav and dropdown */}
-      <div 
-        className="absolute top-full left-0 right-0 h-4 bg-transparent z-40"
-        onMouseEnter={() => {/* Keep dropdown open */}}
-      />
-      
-      {/* Dropdown Content */}
-      <div 
-        ref={dropdownRef}
-        className="absolute top-full left-1/2 transform -translate-x-1/2 bg-white border-2 border-gray-300 rounded-xl shadow-2xl z-50 mt-4 w-[750px] overflow-hidden transition-all duration-300"
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => {/* Keep dropdown open */}}
-      >
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Sol kısım - Top Sellers */}
-            {category.top_sellers && category.top_sellers.length > 0 && (
-              <div>
-                <h3 className="text-lg font-bold mb-5 text-gray-900 border-b border-gray-200 pb-2">EN ÇOK SATANLAR</h3>
-                <div className="space-y-3">
-                  {category.top_sellers.map((product, index) => (
-                    <div 
-                      key={index} 
-                      className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm border border-transparent hover:border-gray-200"
-                      onClick={() => handleProductClick(product.id)}
-                    >
-                      <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
-                        {product.picture_src && product.picture_src !== "null" ? (
-                          <img 
-                            src={`/images/${product.picture_src}`} 
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gray-300"></div>
-                        )}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-sm text-gray-900 hover:text-blue-600 transition-colors">{product.name}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{product.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Sağ kısım - Alt Kategoriler */}
-            {category.children && category.children.length > 0 ? (
-              <div>
-                <h3 className="text-lg font-bold mb-5 text-gray-900 border-b border-gray-200 pb-2">KATEGORİLER</h3>
-                <div className="space-y-4">
-                  {category.children.map((child) => (
-                    <div key={child.id}>
-                      <h4 className="font-semibold text-gray-900 mb-3 hover:text-blue-600 cursor-pointer transition-colors">
-                        {child.name}
-                      </h4>
-                      {child.sub_children && child.sub_children.length > 0 && (
-                        <ul className="space-y-1 ml-4">
-                          {child.sub_children.map((subChild, index) => (
-                            <li key={index}>
-                              <a 
-                                href="#" 
-                                className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleProductClick(subChild.id);
-                                }}
-                              >
-                                {subChild.name}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              /* Debug bilgisi ve fallback kategoriler */
-              <div>
-                <h3 className="text-lg font-bold mb-5 text-gray-900 border-b border-gray-200 pb-2">KATEGORİLER</h3>
-                <div className="space-y-4">
-                  <div className="text-sm text-gray-500">
-                    Debug: Children bulunamadı - {category.name}
-                  </div>
-                  {/* Manual fallback kategoriler - Geçici test için */}
-                  {category.name === 'PROTEİN' && (
-                    <>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-3 hover:text-blue-600 cursor-pointer transition-colors">
-                          Whey Protein
-                        </h4>
-                        <ul className="space-y-1 ml-4">
-                          <li>
-                            <a href="#" className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50">
-                              Whey Protein Isolate
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50">
-                              Whey Protein Concentrate
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-3 hover:text-blue-600 cursor-pointer transition-colors">
-                          Casein Protein
-                        </h4>
-                        <ul className="space-y-1 ml-4">
-                          <li>
-                            <a href="#" className="text-sm text-gray-600 hover:text-blue-600 transition-colors block py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50">
-                              Micellar Casein
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
 
 const categories = [
   "Proteinler",
@@ -245,23 +76,18 @@ export const CategoryNav = ({
   const getCategoryFromAPI = (categoryName: string): Category | null => {
     if (!categoriesData?.data) return null;
     
-    // Debug: API'den gelen kategori verilerini kontrol et
-    console.log('API Categories Data:', categoriesData.data);
-    console.log('Looking for category:', categoryName);
-    
     const mappings: Record<string, string> = {
       "Proteinler": "PROTEİN",
-      "Spor Gıdaları": "SPOR GIDALARI",
+      "Spor Gıdaları": "SPOR GIDALARI", 
       "Sağlık": "SAĞLIK",
-      "Gıda": "GIDA", 
+      "Gıda": "GIDA",
       "Vitamin": "VİTAMİN",
+      "Tüm Ürünler": "PROTEİN",
     };
 
-    // İlk önce direct mapping ile dene
     const apiCategoryName = mappings[categoryName] || categoryName;
     let foundCategory = categoriesData.data.find(cat => cat.name === apiCategoryName);
     
-    // Eğer bulunamazsa, case-insensitive arama yap
     if (!foundCategory) {
       foundCategory = categoriesData.data.find(cat => 
         cat.name.toLowerCase() === apiCategoryName.toLowerCase() ||
@@ -269,7 +95,6 @@ export const CategoryNav = ({
       );
     }
     
-    // Eğer hala bulunamazsa, partial match dene
     if (!foundCategory) {
       foundCategory = categoriesData.data.find(cat => 
         cat.name.toLowerCase().includes(categoryName.toLowerCase()) ||
@@ -277,22 +102,11 @@ export const CategoryNav = ({
       );
     }
     
-    // Debug: Bulunan kategori ve children'ını kontrol et
-    console.log('Found Category:', foundCategory);
-    if (foundCategory) {
-      console.log('Category Children:', foundCategory.children);
-      console.log('Category Top Sellers:', foundCategory.top_sellers);
-    } else {
-      console.log('Category not found! Available categories:');
-      categoriesData.data.forEach(cat => console.log(`- ${cat.name} (${cat.id})`));
-    }
-    
     return foundCategory || null;
   };
 
   // Category hover handlers
   const handleCategoryMouseEnter = (categoryName: string) => {
-    // Clear any pending close timeout
     if (closeTimeout) {
       clearTimeout(closeTimeout);
       setCloseTimeout(null);
@@ -306,7 +120,6 @@ export const CategoryNav = ({
   };
 
   const handleCategoryMouseLeave = () => {
-    // Add delay before closing
     const timeout = setTimeout(() => {
       setHoveredCategory(null);
       setActiveCategory(null);
@@ -315,7 +128,6 @@ export const CategoryNav = ({
   };
 
   const handleDropdownMouseEnter = () => {
-    // Clear any pending close timeout when entering dropdown
     if (closeTimeout) {
       clearTimeout(closeTimeout);
       setCloseTimeout(null);
@@ -323,7 +135,6 @@ export const CategoryNav = ({
   };
 
   const handleDropdownContainerMouseLeave = () => {
-    // Add delay before closing
     const timeout = setTimeout(() => {
       setHoveredCategory(null);
       setActiveCategory(null);
@@ -362,7 +173,6 @@ export const CategoryNav = ({
         setIsSearchOpen(false);
       }
       
-      // Close category dropdown when clicking outside
       if (categoryNavRef.current && !categoryNavRef.current.contains(event.target as Node)) {
         setHoveredCategory(null);
         setActiveCategory(null);
@@ -370,7 +180,6 @@ export const CategoryNav = ({
     };
 
     const handleScroll = () => {
-      // Close dropdown when scrolling
       setHoveredCategory(null);
       setActiveCategory(null);
     };
@@ -384,7 +193,6 @@ export const CategoryNav = ({
         document.removeEventListener('mousedown', handleClickOutside);
         document.removeEventListener('scroll', handleScroll, true);
         window.removeEventListener('scroll', handleScroll);
-        // Clear any pending timeouts on cleanup
         if (closeTimeout) {
           clearTimeout(closeTimeout);
         }
@@ -405,9 +213,7 @@ export const CategoryNav = ({
     >
       <nav
         className={cn(
-          // Desktop/Tablet: gri arkaplan, Mobile: beyaz arkaplan
           "bg-white md:bg-gray-900 text-white md:border-t md:border-gray-800",
-          // Header ile aynı padding değerleri
           "px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20",
           "py-0 md:py-3",
           "relative z-40",
@@ -419,61 +225,30 @@ export const CategoryNav = ({
           <div className="w-full max-w-7xl mx-auto">
             <ul className="flex items-center justify-between w-full px-6 lg:px-8 xl:px-12 2xl:px-16">
               {categories.map((category) => (
-                <li 
+                <CategoryItem
                   key={category}
+                  category={category}
+                  isHovered={hoveredCategory === category}
                   onMouseEnter={() => handleCategoryMouseEnter(category)}
                   onMouseLeave={handleCategoryMouseLeave}
-                  className="relative z-50"
-                >
-                  <a
-                    href="#"
-                    className={`transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap py-2 relative z-50 flex items-center space-x-1 ${
-                      hoveredCategory === category 
-                        ? 'text-white' 
-                        : 'text-white hover:text-gray-300'
-                    }`}
-                  >
-                    <span>{category}</span>
-                    <ChevronDown 
-                      className={`w-3 h-3 transition-transform duration-300 ${
-                        hoveredCategory === category ? 'rotate-180' : 'rotate-0'
-                      }`}
-                    />
-                  </a>
-                </li>
+                />
               ))}
             </ul>
           </div>
         </div>
 
-        {/* Mobile Search Bar - 768px altı */}
-        <div className="md:hidden bg-white px-4">
-          <div className="relative" ref={searchContainerRef}>
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 rounded-xxl" />
-            <Input
-              type="text"
-              placeholder="ARADIĞINIZ ÜRÜNÜ YAZINIZ..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onFocus={() => searchQuery.length >= 2 && setIsSearchOpen(true)}
-              className="w-full pl-10 pr-16 py-2 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <Button
-              size="lg"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 hover:bg-gray-800 text-white px-2 py-1 h-6 text-xs"
-            >
-              ARA
-            </Button>
-            
-            <SearchDropdown
-              items={searchResults}
-              isLoading={isSearchLoading}
-              isOpen={isSearchOpen}
-              onItemClick={handleSearchItemClick}
-              onClose={handleCloseSearch}
-            />
-          </div>
-        </div>
+        {/* Mobile Search Bar */}
+        <MobileSearchBar
+          searchQuery={searchQuery}
+          searchResults={searchResults}
+          isSearchOpen={isSearchOpen}
+          isSearchLoading={isSearchLoading}
+          searchContainerRef={searchContainerRef}
+          onSearchChange={handleSearchChange}
+          onSearchFocus={() => searchQuery.length >= 2 && setIsSearchOpen(true)}
+          onSearchItemClick={handleSearchItemClick}
+          onCloseSearch={handleCloseSearch}
+        />
       </nav>
 
       {/* Category Dropdown */}
