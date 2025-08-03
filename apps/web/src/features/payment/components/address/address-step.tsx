@@ -8,7 +8,7 @@ import { api } from "#lib/api.js"
 import { useAuthStore } from "#stores/authStore.js"
 import { useQuery } from "@tanstack/react-query"
 import { Plus } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AddressForm } from "./address-form"
 
 interface AddressStepProps {
@@ -36,6 +36,13 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
   const addresses = addressesData?.data || []
   console.log('API Response:', addressesData)
   console.log('Addresses:', addresses)
+
+  // İlk adresin otomatik seçilmesi
+  useEffect(() => {
+    if (addresses.length > 0 && !selectedAddress) {
+      setSelectedAddress(addresses[0])
+    }
+  }, [addresses, selectedAddress, setSelectedAddress])
 
   const handleEditAddress = (address: Address) => {
     setEditingAddress(address)
@@ -98,6 +105,8 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
         onSave={(address) => {
           setSelectedAddress(address)
           handleFormClose()
+          // Query'yi invalidate et ki yeni adres listesinde görünsün
+          // useEffect ile ilk adres otomatik seçilecek
         }}
       />
     )

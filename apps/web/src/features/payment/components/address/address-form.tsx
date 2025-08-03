@@ -1,15 +1,16 @@
 "use client"
 
 import { toast } from "#/hooks/use-toast"
+import { ConfirmDialog } from "#components/confirm-dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "#components/ui/card.js"
 import { api } from "#lib/api.js"
 import { useAuthStore } from "#stores/authStore.js"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import {
-  AddressFormData,
-  AddressFormProps,
-  City
+    AddressFormData,
+    AddressFormProps,
+    City
 } from "../../types"
 import { AddressFormActions } from "./address-form-actions"
 import { AddressFormFields } from "./address-form-fields"
@@ -29,6 +30,7 @@ export const AddressForm = ({ address, onClose, onSave }: AddressFormProps) => {
 
   const [cities, setCities] = useState<City[]>([]);
   const [isLoadingCities, setIsLoadingCities] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   const { auth } = useAuthStore()
   const queryClient = useQueryClient()
@@ -187,8 +189,13 @@ export const AddressForm = ({ address, onClose, onSave }: AddressFormProps) => {
   };
 
   const handleDelete = () => {
-    if (address && window.confirm("Bu adresi silmek istediğinizden emin misiniz?")) {
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = () => {
+    if (address) {
       deleteAddressMutation.mutate();
+      setShowDeleteDialog(false);
     }
   };
 
@@ -222,10 +229,36 @@ export const AddressForm = ({ address, onClose, onSave }: AddressFormProps) => {
               formData={formData}
               onDelete={address ? handleDelete : undefined}
               deleteLoading={deleteAddressMutation.isPending}
+              onCancel={onClose}
             />
           </form>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title="Adresi Sil"
+        desc={
+          <div className="space-y-2">
+            <p>Bu adresi silmek istediğinizden emin misiniz?</p>
+            {address && (
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium text-sm">{address.title}</p>
+                <p className="text-sm text-gray-600">{address.recipientName}</p>
+                <p className="text-sm text-gray-600">{address.addressLine1}</p>
+              </div>
+            )}
+            <p className="text-sm text-red-600">Bu işlem geri alınamaz.</p>
+          </div>
+        }
+        cancelBtnText="İptal"
+        confirmText="Evet, Sil"
+        destructive={true}
+        handleConfirm={confirmDelete}
+        isLoading={deleteAddressMutation.isPending}
+      />
     </div>
   )
 } 

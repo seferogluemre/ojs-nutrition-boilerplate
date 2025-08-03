@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 
 import {
   Body,
@@ -100,6 +99,7 @@ interface OrderConfirmationProps {
       alt?: string;
     }[];
   };
+  isDarkMode?: boolean;
 }
 
 const baseUrl = process.env.CMS_URL;
@@ -117,21 +117,8 @@ export function OrderConfirmation({
   shippingAddress,
   company,
   footer,
+  isDarkMode = false,
 }: OrderConfirmationProps) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    // Check for saved theme preference or default to light mode
-    const savedTheme = localStorage.getItem('email-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDarkMode(savedTheme ? savedTheme === 'dark' : prefersDark);
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = !isDarkMode;
-    setIsDarkMode(newTheme);
-    localStorage.setItem('email-theme', newTheme ? 'dark' : 'light');
-  };
 
   if (!company || !footer || !orderNumber) {
     return null;
@@ -141,46 +128,16 @@ export function OrderConfirmation({
   const socialLinks = footer.socialLinks;
 
   return (
-    <Tailwind config={tailwindConfig as any}>
+    <Tailwind config={tailwindConfig}>
       <Html className={isDarkMode ? 'dark' : ''}>
         <Head>
           <style>{`
             :root { 
               color-scheme: ${isDarkMode ? 'dark' : 'light'}; 
             }
-            .theme-toggle {
-              position: fixed;
-              top: 20px;
-              right: 20px;
-              z-index: 1000;
-              background: ${isDarkMode ? '#2d2d2d' : '#ffffff'};
-              border: 2px solid ${isDarkMode ? '#404040' : '#e0e0e0'};
-              border-radius: 50%;
-              width: 50px;
-              height: 50px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-              transition: all 0.3s ease;
-            }
-            .theme-toggle:hover {
-              box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-              transform: translateY(-2px);
-            }
           `}</style>
         </Head>
         <Preview>Siparişiniz başarıyla alındı - {orderNumber}</Preview>
-        
-        {/* Theme Toggle Button */}
-        <button 
-          className="theme-toggle"
-          onClick={toggleTheme}
-          aria-label={isDarkMode ? 'Light tema' : 'Dark tema'}
-        >
-          {isDarkMode ? '☀️' : '🌙'}
-        </button>
 
         <Body className={`m-auto font-sans transition-colors duration-300 ${
           isDarkMode 
@@ -492,6 +449,7 @@ OrderConfirmation.PreviewProps = {
       },
     ],
   },
+  isDarkMode: false,
 } as OrderConfirmationProps;
 
 export default OrderConfirmation;

@@ -132,7 +132,7 @@ Tüm hakları saklıdır.`,
   const emailHtml = await render(OrderConfirmation(emailData));
 
   const mailOptions = {
-    from: process.env.SMTP_FROM || 'noreply@djsnutrition.com',
+    from: `OnlyJS Nutrition <${process.env.SMTP_FROM || 'noreply@djsnutrition.com'}>`,
     to: data.userEmail,
     subject: `Sipariş Onayı - ${data.orderNumber}`,
     html: emailHtml,

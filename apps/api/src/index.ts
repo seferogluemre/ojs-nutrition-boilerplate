@@ -8,7 +8,6 @@ import { loadEnv } from './config/env';
 import { handleElysiaError } from './config/error-handler';
 import { prepareSwaggerConfig } from './config/swagger.config';
 import routes, { swaggerTags } from './modules';
-import { orderEmailWorker, queueMaintenanceCron, dailyCleanupCron } from './modules/orders';
 
 loadEnv();
 
