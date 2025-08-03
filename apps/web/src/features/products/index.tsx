@@ -7,9 +7,9 @@ import { Product } from "./data/mock-products";
 
 export default function Products() {
   const mainCategory = useMemo(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      return params.get('main_category');
+      return params.get("main_category");
     }
     return null;
   }, []);
@@ -26,12 +26,10 @@ export default function Products() {
   const { data } = useQuery({
     queryKey: ["products", mainCategory],
     queryFn: async () => {
-      const queryParams = mainCategory 
-        ? { main_category: mainCategory } 
-        : {};
-        
-      const response = await api.products.get({ 
-        query: queryParams 
+      const queryParams = mainCategory ? { main_category: mainCategory } : {};
+
+      const response = await api.products.get({
+        query: queryParams,
       });
       return response.data;
     },
@@ -39,28 +37,29 @@ export default function Products() {
 
   const getCategoryTitle = (categoryId?: string | null) => {
     if (!categoryId) return "TÜM ÜRÜNLER";
-    
-    const category = categoriesData?.data?.find((cat: any) => cat.id === categoryId);
+
+    const category = categoriesData?.data?.find(
+      (cat: any) => cat.id === categoryId,
+    );
     return category?.name || "KATEGORİ ÜRÜNLERİ";
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     window.scrollTo(0, 0);
-  },[mainCategory])
-
+  }, [mainCategory]);
 
   return (
     <Main>
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Category Title */}
-        <div className="text-center mb-12">
+        <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
             {getCategoryTitle(mainCategory)}
           </h1>
         </div>
 
         {/* Products Grid - Desktop 4 columns, responsive */}
-        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 justify-items-center">
+        <div className="grid grid-cols-2 items-center gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {data?.data?.map((product: Product) => (
             <ProductCard key={product.id} product={product} />
           ))}
@@ -68,8 +67,8 @@ export default function Products() {
 
         {/* Empty state */}
         {(!data?.data || data?.data?.length === 0) && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
+          <div className="py-12 text-center">
+            <p className="text-lg text-gray-500 dark:text-gray-400">
               Bu kategoride henüz ürün bulunmamaktadır.
             </p>
           </div>
