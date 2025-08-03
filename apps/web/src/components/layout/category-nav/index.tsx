@@ -47,21 +47,25 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ category, isVisible
 
   return (
     <>
-      {/* Backdrop Overlay - only covers bottom area */}
+      {/* Full Screen Backdrop Overlay */}
       <div 
-        className="fixed left-0 right-0 bottom-0 bg-transparent z-30"
-        style={{ top: '60%' }}
-        onMouseEnter={onClose}
+        className="fixed inset-0 bg-black bg-opacity-40 z-30 transition-opacity duration-200"
+        onClick={onClose}
+      />
+      
+      {/* Safe hover zone between nav and dropdown */}
+      <div 
+        className="absolute top-full left-0 right-0 h-4 bg-transparent z-40"
+        onMouseEnter={() => {/* Keep dropdown open */}}
       />
       
       {/* Dropdown Content */}
       <div 
         ref={dropdownRef}
-        className="absolute top-full left-1/2 transform -translate-x-1/2 bg-white border-2 border-gray-300 rounded-xl shadow-2xl z-50 mt-2 w-[750px] overflow-hidden"
+        className="absolute top-full left-1/2 transform -translate-x-1/2 bg-white border-2 border-gray-300 rounded-xl shadow-2xl z-50 mt-4 w-[750px] overflow-hidden transition-all duration-300"
         onMouseMove={handleMouseMove}
+        onMouseEnter={() => {/* Keep dropdown open */}}
       >
-        {/* Top safe zone for hover */}
-        <div className="absolute -top-4 left-0 right-0 h-4 bg-transparent"></div>
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Sol kısım - Top Sellers */}
@@ -160,6 +164,7 @@ export const CategoryNav = ({
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const categoryNavRef = useRef<HTMLDivElement>(null);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
@@ -210,6 +215,12 @@ export const CategoryNav = ({
 
   // Category hover handlers
   const handleCategoryMouseEnter = (categoryName: string) => {
+    // Clear any pending close timeout
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
+
     const category = getCategoryFromAPI(categoryName);
     if (category) {
       setHoveredCategory(categoryName);
@@ -217,9 +228,30 @@ export const CategoryNav = ({
     }
   };
 
+  const handleCategoryMouseLeave = () => {
+    // Add delay before closing
+    const timeout = setTimeout(() => {
+      setHoveredCategory(null);
+      setActiveCategory(null);
+    }, 200);
+    setCloseTimeout(timeout);
+  };
+
+  const handleDropdownMouseEnter = () => {
+    // Clear any pending close timeout when entering dropdown
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
+  };
+
   const handleDropdownContainerMouseLeave = () => {
-    setHoveredCategory(null);
-    setActiveCategory(null);
+    // Add delay before closing
+    const timeout = setTimeout(() => {
+      setHoveredCategory(null);
+      setActiveCategory(null);
+    }, 100);
+    setCloseTimeout(timeout);
   };
 
   // Search handlers
@@ -275,17 +307,24 @@ export const CategoryNav = ({
         document.removeEventListener('mousedown', handleClickOutside);
         document.removeEventListener('scroll', handleScroll, true);
         window.removeEventListener('scroll', handleScroll);
+        // Clear any pending timeouts on cleanup
+        if (closeTimeout) {
+          clearTimeout(closeTimeout);
+        }
       };
     }
     
-    return () => {};
-  }, []);
+    return () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+      }
+    };
+  }, [closeTimeout]);
 
   return (
     <div 
       ref={categoryNavRef} 
       className="relative"
-      onMouseLeave={handleDropdownContainerMouseLeave}
     >
       <nav
         className={cn(
@@ -306,11 +345,16 @@ export const CategoryNav = ({
                 <li 
                   key={category}
                   onMouseEnter={() => handleCategoryMouseEnter(category)}
+                  onMouseLeave={handleCategoryMouseLeave}
                   className="relative z-50"
                 >
                   <a
                     href="#"
-                    className="text-white hover:text-gray-300 transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap py-2 relative z-50 flex items-center space-x-1"
+                    className={`transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap py-2 relative z-50 flex items-center space-x-1 ${
+                      hoveredCategory === category 
+                        ? 'text-white' 
+                        : 'text-white hover:text-gray-300'
+                    }`}
                   >
                     <span>{category}</span>
                     <ChevronDown 
@@ -357,14 +401,23 @@ export const CategoryNav = ({
 
       {/* Category Dropdown */}
       {activeCategory && hoveredCategory && (
-        <CategoryDropdown
-          category={activeCategory}
-          isVisible={!!hoveredCategory}
-          onClose={() => {
-            setHoveredCategory(null);
-            setActiveCategory(null);
-          }}
-        />
+        <div
+          onMouseEnter={handleDropdownMouseEnter}
+          onMouseLeave={handleDropdownContainerMouseLeave}
+        >
+          <CategoryDropdown
+            category={activeCategory}
+            isVisible={!!hoveredCategory}
+            onClose={() => {
+              setHoveredCategory(null);
+              setActiveCategory(null);
+              if (closeTimeout) {
+                clearTimeout(closeTimeout);
+                setCloseTimeout(null);
+              }
+            }}
+          />
+        </div>
       )}
     </div>
   );
