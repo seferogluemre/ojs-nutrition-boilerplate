@@ -44,7 +44,7 @@ export function ProductCommentForm({ productId, productName, onSuccess, onCancel
     setIsSubmitting(true);
 
     try {
-      await api.products({ id: productId }).comments.post({
+      await (api as any).products({ id: productId }).comments.post({
         title: formData.title,
         content: formData.content,
         rating: formData.rating
@@ -79,13 +79,13 @@ export function ProductCommentForm({ productId, productName, onSuccess, onCancel
 
   return (
     <div className="mt-4 animate-in slide-in-from-top-2 duration-300">
-      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6 shadow-sm">
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h4 className="text-lg font-semibold text-gray-900 flex items-center">
-              <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10m0 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2m0 0v10a2 2 0 002 2h8a2 2 0 002-2V8m-9 4h4" />
+              <svg className="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Ürün Yorumu Ekle
             </h4>
@@ -95,7 +95,7 @@ export function ProductCommentForm({ productId, productName, onSuccess, onCancel
           </div>
           <button
             onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-white/50"
+            className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -108,6 +108,9 @@ export function ProductCommentForm({ productId, productName, onSuccess, onCancel
           {/* Rating */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
+              <svg className="w-4 h-4 mr-1 inline text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
               Değerlendirme
             </label>
             <div className="flex items-center space-x-1">
@@ -116,82 +119,82 @@ export function ProductCommentForm({ productId, productName, onSuccess, onCancel
                   key={star}
                   type="button"
                   onClick={() => handleRatingChange(star)}
-                  className="focus:outline-none transition-transform hover:scale-110"
+                  className="focus:outline-none transition-all duration-200 hover:scale-110 focus:scale-110"
                 >
                   <svg
-                    className={`w-7 h-7 transition-colors ${
+                    className={`w-8 h-8 transition-colors ${
                       star <= formData.rating
-                        ? "text-yellow-400 fill-current"
+                        ? "text-yellow-400"
                         : "text-gray-300 hover:text-yellow-300"
                     }`}
-                    stroke="currentColor"
-                    fill={star <= formData.rating ? "currentColor" : "none"}
+                    fill="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                    />
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
                 </button>
               ))}
-              <span className="ml-3 text-sm font-medium text-gray-600 bg-white px-2 py-1 rounded-full">
+              <span className="ml-3 text-sm font-medium text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full">
                 {formData.rating} yıldız
               </span>
             </div>
           </div>
 
-          {/* Title and Content in a grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* Title */}
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                Başlık *
-              </label>
-              <input
-                type="text"
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors placeholder-gray-400"
-                placeholder="Yorumunuz için bir başlık yazın"
-                disabled={isSubmitting}
-              />
-            </div>
+          {/* Title */}
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+              <svg className="w-4 h-4 mr-1 inline text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              Başlık *
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={formData.title}
+              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 placeholder-gray-400 hover:border-gray-400"
+              placeholder="Yorumunuz için bir başlık yazın"
+              disabled={isSubmitting}
+            />
+          </div>
 
-            {/* Content */}
-            <div>
-              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-                Yorum *
-              </label>
-              <textarea
-                id="content"
-                rows={3}
-                value={formData.content}
-                onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors placeholder-gray-400 resize-none"
-                placeholder="Ürün hakkındaki deneyiminizi paylaşın..."
-                disabled={isSubmitting}
-              />
-            </div>
+          {/* Content */}
+          <div>
+            <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
+              <svg className="w-4 h-4 mr-1 inline text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              Yorum *
+            </label>
+            <textarea
+              id="content"
+              rows={4}
+              value={formData.content}
+              onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 placeholder-gray-400 resize-none hover:border-gray-400"
+              placeholder="Ürün hakkındaki deneyiminizi paylaşın..."
+              disabled={isSubmitting}
+            />
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center space-x-3 pt-2">
+          <div className="flex items-center space-x-3 pt-4 border-t border-gray-100">
             <button
               type="button"
               onClick={onCancel}
-              className="px-6 py-2.5 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors font-medium disabled:opacity-50"
+              className="flex-1 px-6 py-3 text-gray-700 bg-gray-100 border border-gray-200 rounded-lg hover:bg-gray-200 hover:border-gray-300 transition-all duration-200 font-medium disabled:opacity-50 flex items-center justify-center"
               disabled={isSubmitting}
             >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
               İptal
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center shadow-sm hover:shadow-md"
+              className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center justify-center shadow-sm hover:shadow-md"
             >
               {isSubmitting ? (
                 <>
@@ -200,8 +203,8 @@ export function ProductCommentForm({ productId, productName, onSuccess, onCancel
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                   </svg>
                   Yorum Ekle
                 </>
