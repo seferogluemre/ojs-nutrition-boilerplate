@@ -15,20 +15,22 @@ export const StepIndicator = ({ currentStep }: StepIndicatorProps) => {
     <div className="space-y-0">
       {steps.map((step, index) => (
         <div key={step.number} className="relative">
-          <div className="flex items-center space-x-3 py-4">
+          <div className="flex items-center space-x-4 py-6">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium relative z-10 ${
+              className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-semibold relative z-10 transition-all duration-300 ${
                 step.completed
-                  ? "bg-green-500 text-white"
+                  ? "bg-green-500 text-white shadow-md"
                   : currentStep === step.number
-                    ? "bg-black text-white"
+                    ? "bg-black text-white shadow-lg"
                     : "bg-gray-300 text-gray-600"
               }`}
             >
-              {step.completed ? <Check className="h-4 w-4" /> : step.number}
+              {step.completed ? <Check className="h-5 w-5" /> : step.number}
             </div>
             <span
-              className={`text-lg font-medium ${currentStep === step.number ? "text-black" : "text-gray-400"}`}
+              className={`text-xl font-semibold transition-colors duration-300 ${
+                currentStep === step.number ? "text-black" : "text-gray-400"
+              }`}
             >
               {step.title}
             </span>
@@ -36,15 +38,20 @@ export const StepIndicator = ({ currentStep }: StepIndicatorProps) => {
           
           {/* Connecting line between steps */}
           {index < steps.length - 1 && (
-            <div 
-              className={`absolute left-4 top-12 w-0.5 h-8 transform -translate-x-0.5 ${
-                step.completed
-                  ? "bg-green-500"
-                  : currentStep === step.number
-                    ? "bg-black"
-                    : "bg-gray-300"
-              }`}
-            />
+            <div className="absolute left-6 top-[4.5rem] transform -translate-x-0.5">
+              {/* Background line */}
+              <div className="w-0.5 h-14 bg-gray-200" />
+              {/* Animated fill line */}
+              <div 
+                className={`absolute top-0 left-0 w-0.5 transition-all duration-500 ease-in-out ${
+                  step.completed
+                    ? "bg-green-500 h-14"
+                    : currentStep === step.number
+                      ? "bg-black h-7"
+                      : "bg-gray-300 h-0"
+                }`}
+              />
+            </div>
           )}
         </div>
       ))}

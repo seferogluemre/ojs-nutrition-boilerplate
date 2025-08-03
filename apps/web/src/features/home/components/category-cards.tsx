@@ -111,7 +111,7 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
     <section className={cn("py-12", className)} {...props}>
       <div className="container mx-auto px-4">
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {categories.map((category) => (
             <div
               key={category.id}

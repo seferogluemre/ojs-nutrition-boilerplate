@@ -21,8 +21,7 @@ export function CustomerReviews() {
       slidesToShow: 4, // Desktop için 4 kart
     },
   });
-
-  // Modal state
+  
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -76,7 +75,7 @@ export function CustomerReviews() {
                   {mockReviews.map((review) => (
                     <div key={review.id} className="blaze-slide">
                       <div 
-                        className="w-[280px] sm:w-[260px] md:w-[280px] lg:w-[260px] xl:w-[280px] h-[180px] p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-100 dark:border-gray-700 transform transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-102 hover:-translate-y-0.5 hover:border-gray-200 dark:hover:border-gray-600 cursor-pointer"
+                        className="w-[280px] sm:w-[260px] md:w-[280px] lg:w-[260px] xl:w-[280px] h-[210px] p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-100 dark:border-gray-700 transform transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-102 hover:-translate-y-0.5 hover:border-gray-200 dark:hover:border-gray-600 cursor-pointer"
                         onClick={() => openModal(review)}
                       >
                         {/* Date */}
