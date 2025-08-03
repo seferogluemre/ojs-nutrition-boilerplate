@@ -48,7 +48,7 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
       <div
         className={cn(
           "relative cursor-pointer overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:border-gray-700 dark:bg-gray-800",
-          "max-w-auto flex h-[420px] w-full flex-col",
+          "max-w-auto flex h-[420px] w-full flex-col ",
           className,
         )}
       >
@@ -66,9 +66,9 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
           />
         </div>
 
-        <div className="flex flex-1 flex-col justify-between bg-white p-4 dark:bg-gray-800">
+        <div className="flex flex-1  flex-col justify-between bg-white pb-20 pt-2 px-2  dark:bg-gray-800">
           <div>
-            <h3 className="mb-2 line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-tight text-gray-900 dark:text-white">
+            <h3 className=" line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-tight text-gray-900 dark:text-white">
               {product.name}
             </h3>
 

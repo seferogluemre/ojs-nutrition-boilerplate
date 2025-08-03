@@ -1,8 +1,6 @@
 import Elysia from 'elysia';
 
 import { dtoWithMiddlewares } from '#utils/middleware-utils.ts';
-import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
-import { PERMISSIONS, withPermission } from '../auth';
 import { auth } from '../auth/authentication/plugin';
 import { completeShoppingDto, getOrderDetailDto, getOrdersDto } from './dtos';
 import { OrderFormatter } from './formatters';
@@ -45,13 +43,6 @@ export const app = new Elysia({
     },
     dtoWithMiddlewares(
       completeShoppingDto,
-      withPermission(PERMISSIONS.ORDERS.CREATE),
-      withAuditLog<typeof completeShoppingDto>({
-        actionType: AuditLogAction.CREATE,
-        entityType: AuditLogEntity.ORDER,
-        getDescription: ({ body }) => `Sipariş oluşturuldu: ${body.name}`,
-        getEntityUuid: ({ body }) => body.id,
-      }),
     )
   );
 
