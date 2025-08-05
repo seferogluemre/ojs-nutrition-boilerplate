@@ -146,7 +146,8 @@ export abstract class ProductsService {
 
   static async show(uuid: string): Promise<ProductWithRelations> {
     try {
-      const product = await prisma.product.findUnique({
+      // First try by UUID, then by slug as fallback
+      let product = await prisma.product.findUnique({
         where: { uuid },
         include: {
           category: {
@@ -184,6 +185,48 @@ export abstract class ProductsService {
           }
         },
       });
+
+      // If not found by UUID, try by slug
+      if (!product) {
+        product = await prisma.product.findUnique({
+          where: { slug: uuid }, // uuid might actually be a slug
+          include: {
+            category: {
+              select: {
+                id: true,
+                uuid: true,
+                name: true,
+                slug: true,
+              },
+            },
+            productVariants: {
+              select: {
+                uuid: true,
+                name: true,
+                size: true,
+                aroma: true,
+                price: true,
+                photoSrc: true,
+                isAvailable: true,
+              },
+            },
+            photos: {
+              select: {
+                uuid: true,
+                url: true,
+                isPrimaryPhoto: true,
+                order: true,
+                fileSize: true,
+              },
+            },
+            comments: {
+              select: {
+                id: true,
+              },
+            }
+          },
+        });
+      }
 
       if (!product) {
         throw new NotFoundException('Ürün Kaldırıldı');

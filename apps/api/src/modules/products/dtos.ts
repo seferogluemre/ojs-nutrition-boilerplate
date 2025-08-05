@@ -1,7 +1,7 @@
-import { CategoryPlain } from '#prismabox/Category';
-import { ProductPlain } from '#prismabox/Product';
-import { ProductPhotoPlain } from '#prismabox/ProductPhoto';
 import { t } from 'elysia';
+import { CategoryPlain } from '../../../prisma/prismabox/Category';
+import { ProductPlain } from '../../../prisma/prismabox/Product';
+import { ProductPhotoPlain } from '../../../prisma/prismabox/ProductPhoto';
 import { headers } from '../../utils';
 import { errorResponseDto } from '../../utils/common-dtos';
 import { type ControllerHook } from '../../utils/elysia-types';
@@ -54,26 +54,34 @@ export const bestSellerProductSchema = {
   detail: { summary: 'Get best seller products', description: 'Retrieves best selling products.' },
 } satisfies ControllerHook;
 
-const nutritionalContentSchema = t.Object({
+const nutritionalContentSchema = t.Optional(t.Object({
   ingredients: t.Optional(t.Array(t.Object({
     aroma: t.Union([t.String(), t.Null()]),
     value: t.String(),
   }))),
   nutrition_facts: t.Optional(t.Object({
-    ingredients: t.Array(t.Object({
+    ingredients: t.Optional(t.Array(t.Object({
       name: t.String(),
-      amounts: t.Array(t.Union([t.String(), t.Null()])),
-    })),
-    portion_sizes: t.Array(t.String()),
+      amounts: t.Optional(t.Union([
+        t.Array(t.Union([t.String(), t.Null()])),
+        t.String(),
+        t.Null()
+      ])),
+    }))),
+    portion_sizes: t.Optional(t.Union([
+      t.Array(t.Union([t.String(), t.Null()])),
+      t.String(),
+      t.Null()
+    ])),
   })),
   amino_acid_facts: t.Optional(t.Any()),
-});
+}));
 
 const explanationSchema = t.Object({
   usage: t.Optional(t.String()),
   features: t.Optional(t.String()),
   description: t.Optional(t.String()),
-  nutritional_content: t.Optional(nutritionalContentSchema),
+  nutritional_content: nutritionalContentSchema,
 });
 
 const variantSchema = t.Object({
