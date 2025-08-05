@@ -1,5 +1,4 @@
-import { prisma } from '#core';
-import { HandleError } from '#shared/error/handle-error';
+import prisma from '../../core/prisma';
 import { BadRequestException } from '#utils';
 import { NotFoundError } from 'elysia';
 

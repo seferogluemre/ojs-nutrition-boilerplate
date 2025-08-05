@@ -62,7 +62,7 @@ const nutritionalContentSchema = t.Object({
   nutrition_facts: t.Optional(t.Object({
     ingredients: t.Array(t.Object({
       name: t.String(),
-      amounts: t.Array(t.String()),
+      amounts: t.Array(t.Union([t.String(), t.Null()])),
     })),
     portion_sizes: t.Array(t.String()),
   })),
@@ -93,7 +93,7 @@ const productBaseSchema = {
   name: t.String({ minLength: 2, maxLength: 100, error: 'Ürün adı 2-100 karakter arasında olmalıdır.' }),
   slug: t.String({ minLength: 2, maxLength: 100, error: 'Slug 2-100 karakter arasında olmalıdır.' }),
   stock: t.Number({ minimum: 0, error: 'Stok sıfır veya pozitif bir sayı olmalıdır.' }),
-  variant: t.Optional(t.String({ maxLength: 100, error: 'Varyant en fazla 100 karakter olmalıdır.' })),
+  variant: t.Optional(t.Union([t.String({ maxLength: 100, error: 'Varyant en fazla 100 karakter olmalıdır.' }), t.Null()])),
   shortDescription: t.String({ maxLength: 50, error: 'Kısa açıklama en fazla 50 karakter olmalıdır.' }),
   longDescription: t.String({ maxLength: 250, error: 'Uzun açıklama en fazla 250 karakter olmalıdır.' }),
   price: t.Number({ minimum: 0, error: 'Fiyat sıfır veya pozitif bir sayı olmalıdır.' }),

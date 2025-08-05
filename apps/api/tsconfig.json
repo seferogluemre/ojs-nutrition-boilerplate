@@ -10,7 +10,11 @@
       "#prismabox/*": ["./prisma/prismabox/*"],
       "#*": ["./src/*"],
       "@core": ["./src/core/*"],
-      "@prisma": ["./prisma/client/*"]
+      "@prisma": ["./prisma/client/*"],
+      "@shared": ["./src/shared/*"],
+      "@core/*": ["src/core/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@config/*": ["./src/config/*"],
     },
     "outDir": "../../dist/apps/api"
   },

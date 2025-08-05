@@ -16,7 +16,7 @@ export abstract class ProductFormatter {
 
       // Mevcut alanlar
       stock: data.stock,
-      variant: data.variant,
+      variant: data.variant || undefined,
       isActive: data.isActive,
       shortDescription: data.shortDescription,
       longDescription: data.longDescription,
