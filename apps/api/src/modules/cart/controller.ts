@@ -64,12 +64,6 @@ export const app = new Elysia({
     dtoWithMiddlewares(
       getCartDto,
       withPermission(PERMISSIONS.CART.INDEX),
-      withAuditLog<typeof getCartDto>({
-        actionType: AuditLogAction.CREATE,
-        entityType: AuditLogEntity.CART,
-        getEntityUuid: () => 'Sepet',
-        getDescription: () => 'Sepet görüntülendi',
-      }),
     ),
   );
 
