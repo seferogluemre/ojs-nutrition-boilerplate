@@ -10,7 +10,7 @@ import { useAuthStore } from "#stores/authStore.js";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Loader2, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Image, Loader2, Star } from "lucide-react";
 import * as React from "react";
 import { useState } from "react";
 import { Review, calculateReviewStats } from "../../data/mock-reviews";
@@ -28,6 +28,12 @@ interface ReviewFormData {
 interface CanReviewResponse {
   canReview: boolean;
   reason?: string;
+}
+
+interface TabType {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
 }
 
 interface ReviewCardProps {
@@ -60,47 +66,54 @@ const mapApiReviewsToReviews = (apiReviews: ProductCommentResponse[]): Review[] 
 // Review Card Component
 const ReviewCard = ({ id, title, content, rating, images, user, createdAt }: ReviewCardProps) => {
   return (
-    <div className="border border-gray-200 rounded-lg p-4 space-y-3">
+    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-900">{user.maskedName}</span>
-            <span className="text-sm text-gray-500">•</span>
-            <RatingDisplay value={rating} size="sm" />
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+            {user.maskedName.charAt(0).toUpperCase()}
           </div>
-          <p className="text-sm text-gray-500">
-            {format(new Date(createdAt), "d MMMM yyyy", { locale: tr })}
-          </p>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-gray-900">{user.maskedName}</span>
+              <RatingDisplay value={rating} size="sm" />
+            </div>
+            <p className="text-xs text-gray-500">
+              {format(new Date(createdAt), "d MMMM yyyy", { locale: tr })}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Title */}
       {title && (
-        <h4 className="font-medium text-gray-900">{title}</h4>
+        <h4 className="font-semibold text-gray-900 mb-2 text-base">{title}</h4>
       )}
 
       {/* Content */}
       {content && (
-        <p className="text-gray-700 text-sm leading-relaxed">{content}</p>
+        <p className="text-gray-700 text-sm leading-relaxed mb-4">{content}</p>
       )}
 
       {/* Images */}
       {images.length > 0 && (
-        <div className="">
+        <div className="flex gap-2 flex-wrap">
           {images.map((imageUrl, index) => (
             <div
               key={index}
-              className="aspect-square rounded-lg overflow-hidden bg-gray-10 w-20 h-20 flex items-center "
+              className="relative group cursor-pointer"
             >
-              <img
-                src={"http://localhost:3000/" + imageUrl}
-                alt={`Yorum fotoğrafı ${index + 1}`}
-                className="w-20 h-20 object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
-                onClick={() => {
-                  window.open(imageUrl, '_blank');
-                }}
-              />
+              <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors">
+                <img
+                  src={"http://localhost:3000" + imageUrl}
+                  alt={`Yorum fotoğrafı ${index + 1}`}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
+                  onClick={() => {
+                    window.open("http://localhost:3000" + imageUrl, '_blank');
+                  }}
+                />
+              </div>
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-lg transition-colors pointer-events-none" />
             </div>
           ))}
         </div>
@@ -301,7 +314,21 @@ export const ProductReviews = ({ productId }: { productId: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [canReview, setCanReview] = useState<CanReviewResponse>({ canReview: false });
+  const [activeTab, setActiveTab] = useState<string>("all");
   const { auth } = useAuthStore();
+
+  const tabs: TabType[] = [
+    {
+      id: "all",
+      label: "Değerlendirmeler",
+      icon: <Star className="w-4 h-4" />
+    },
+    {
+      id: "with-images",
+      label: "Görselli Değerlendirmeler", 
+      icon: <Image className="w-4 h-4" />
+    }
+  ];
 
   const { data, refetch } = useQuery({
     queryKey: ["product-comments", productId],
@@ -362,13 +389,23 @@ export const ProductReviews = ({ productId }: { productId: string }) => {
     createdAt: apiReview.createdAt,
   }));
 
+  // Filter reviews based on active tab
+  const reviewsWithoutImages = realReviews.filter((review: any) => review.images.length === 0);
+  const reviewsWithImages = realReviews.filter((review: any) => review.images.length > 0);
+  
+  const currentTabReviews = activeTab === "with-images" ? reviewsWithImages : reviewsWithoutImages;
+  
   const mappedReviews = mapApiReviewsToReviews(apiReviews);
   const stats = calculateReviewStats(mappedReviews);
-  const totalPages = Math.ceil(realReviews.length / REVIEWS_PER_PAGE);
+  const totalPages = Math.ceil(currentTabReviews.length / REVIEWS_PER_PAGE);
   const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
   const endIndex = startIndex + REVIEWS_PER_PAGE;
-  const currentRealReviews = realReviews.slice(startIndex, endIndex);
-  // const currentReviews = mappedReviews.slice(startIndex, endIndex);
+  const currentRealReviews = currentTabReviews.slice(startIndex, endIndex);
+
+  // Reset page when tab changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
 
   const renderStars = (rating: number, size: "sm" | "lg" = "sm") => {
     const stars = [];
@@ -409,9 +446,35 @@ export const ProductReviews = ({ productId }: { productId: string }) => {
     <section className="mt-12">
       {/* Header */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
           Müşteri Yorumları
         </h2>
+        
+        {/* Tabs */}
+        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                activeTab === tab.id
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-200"
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+              <span className="ml-1 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                {activeTab === tab.id 
+                  ? currentTabReviews.length 
+                  : tab.id === "with-images" 
+                    ? reviewsWithImages.length 
+                    : reviewsWithoutImages.length
+                }
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Rating Overview */}
@@ -493,7 +556,7 @@ export const ProductReviews = ({ productId }: { productId: string }) => {
       </div>
 
       {/* Review Cards */}
-      <div className="space-y-6 mb-8">
+      <div className="space-y-4 mb-8">
         {currentRealReviews.length > 0 ? (
           currentRealReviews.map((review: any) => (
             <ReviewCard
@@ -508,14 +571,33 @@ export const ProductReviews = ({ productId }: { productId: string }) => {
             />
           ))
         ) : (
-          <div className="text-center py-12">
-            <Star className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h4 className="text-lg font-medium text-gray-900 mb-2">
-              Henüz yorum yapılmamış
+          <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+            {activeTab === "with-images" ? (
+              <Image className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            ) : (
+              <Star className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            )}
+            <h4 className="text-xl font-medium text-gray-900 mb-2">
+              {activeTab === "with-images" 
+                ? "Henüz görselli yorum yapılmamış" 
+                : "Henüz yorum yapılmamış"
+              }
             </h4>
-            <p className="text-gray-500">
-              Bu ürün için ilk yorumu siz yapın!
+            <p className="text-gray-500 mb-6">
+              {activeTab === "with-images"
+                ? "Bu ürün için ilk görselli yorumu siz yapın!"
+                : "Bu ürün için ilk yorumu siz yapın!"
+              }
             </p>
+            {canReview.canReview && (
+              <Button
+                onClick={() => setIsFormOpen(true)}
+                className="inline-flex items-center gap-2"
+              >
+                <Star className="w-4 h-4" />
+                Ürünü Değerlendir
+              </Button>
+            )}
           </div>
         )}
       </div>

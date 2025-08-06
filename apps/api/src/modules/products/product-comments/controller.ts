@@ -107,11 +107,8 @@ export const app = new Elysia({
 
       set.status = 201;
       return ProductCommentFormatter.response(comment);
-    },
-{
-      // No middleware for testing
     }
-  )
+)
   .get(
     '/can-review',
     async ({ params }) => {
