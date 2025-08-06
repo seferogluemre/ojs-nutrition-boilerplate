@@ -1,5 +1,8 @@
+import { dtoWithMiddlewares } from '#utils/middleware-utils.ts';
 import Elysia from 'elysia';
 
+import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
+import { PERMISSIONS, withPermission } from '../auth';
 import { auth } from '../auth/authentication/plugin';
 import { addToCartDto, deleteFromCartDto, getCartDto } from './dtos';
 import { CartFormatter } from './formatters';
@@ -19,7 +22,16 @@ export const app = new Elysia({
       });
       return CartFormatter.format(cart!);
     },
-    addToCartDto,
+    dtoWithMiddlewares(
+      addToCartDto,
+      withPermission(PERMISSIONS.CART.CREATE),
+      withAuditLog<typeof addToCartDto>({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.CART,
+        getEntityUuid: ({ body }) => body.item_uuid,
+        getDescription: ({ body }) => `Sepete ${body.quantity} adet ${body.item_name} eklendi`,
+      }),
+    ),
   )
   .delete(
     '/:item_uuid',
@@ -30,7 +42,16 @@ export const app = new Elysia({
       });
       return CartFormatter.format(cart!);
     },
-    deleteFromCartDto,
+    dtoWithMiddlewares(
+      deleteFromCartDto,
+      withPermission(PERMISSIONS.CART.DESTROY),
+      withAuditLog<typeof deleteFromCartDto>({
+        actionType: AuditLogAction.DELETE,
+        entityType: AuditLogEntity.CART,
+        getEntityUuid: ({ params }) => params.item_uuid,
+        getDescription: ({ params }) => `Sepetten ${params.item_uuid} silindi`,
+      }),
+    ),
   )
   .get(
     '/',
@@ -40,7 +61,16 @@ export const app = new Elysia({
       });
       return CartFormatter.format(cart!);
     },
-    getCartDto,
+    dtoWithMiddlewares(
+      getCartDto,
+      withPermission(PERMISSIONS.CART.INDEX),
+      withAuditLog<typeof getCartDto>({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.CART,
+        getEntityUuid: () => 'Sepet',
+        getDescription: () => 'Sepet görüntülendi',
+      }),
+    ),
   );
 
 export default app;

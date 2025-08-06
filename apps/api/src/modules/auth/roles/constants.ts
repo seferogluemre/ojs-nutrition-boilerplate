@@ -42,6 +42,20 @@ export const PERMISSIONS = {
     UPDATE: { key: 'products:update', description: 'Ürün Güncelle' },
     DESTROY: { key: 'products:destroy', description: 'Ürün Sil' },
   },
+  PRODUCTS_COMMENTS: {
+    INDEX: { key: 'products-comments:index', description: 'Ürünleri Görüntüle' },
+    CREATE: { key: 'products-comments:create', description: 'Ürün Oluştur' },
+  },
+  PRODUCTS_VARIANTS: {
+    INDEX: { key: 'products-comments:index', description: 'Ürünleri Görüntüle' },
+    CREATE: { key: 'products-comments:create', description: 'Ürün Oluştur' },
+  },
+  CART: {
+    INDEX: { key: 'cart:index', description: 'Sepeti Görüntüle' },
+    CREATE: { key: 'cart:create', description: 'Sepete ürün ekle' },
+    UPDATE: { key: 'categories:update', description: 'Sepeti Güncelle' },
+    DESTROY: { key: 'categories:destroy', description: 'Sepeti Sil' },
+  },
   CATEGORIES: {
     INDEX: { key: 'categories:index', description: 'Kategorileri Görüntüle' },
     CREATE: { key: 'categories:create', description: 'Kategori Oluştur' },
