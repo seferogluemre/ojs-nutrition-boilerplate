@@ -31,6 +31,7 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
     queryFn: () => api.products["best-sellers"].get(),
   });
 
+
   return (
     <section className={cn("py-12 bg-white dark:bg-[#010819]", className)} {...props}>
       <div className="container mx-auto px-4">
@@ -59,8 +60,7 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
                 <div className="flex h-[168px] w-[168px] items-center justify-center overflow-hidden rounded-lg bg-gray-100">
                   <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200">
                     <img
-                      src={product.image || "/images/collagen.jpg"}
-                      alt={product.name}
+                      src={product.photo_src}
                       className="h-full w-full object-cover"
                     />
                   </div>

@@ -264,7 +264,7 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
           >
             <div className="flex items-center space-x-3">
               <img
-                src={`/images/collagen.jpg`}
+                src={subChild.picture_src}
                 alt={subChild.name}
                 className="h-8 w-8 rounded-md"
               />
@@ -301,7 +301,7 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
               <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-gray-200">
                 {product.picture_src && product.picture_src !== "null" ? (
                   <img
-                    src={`/images/collagen.jpg`}
+                    src={product.picture_src}
                     alt={product.name}
                     className="h-full w-full rounded-lg object-cover"
                   />

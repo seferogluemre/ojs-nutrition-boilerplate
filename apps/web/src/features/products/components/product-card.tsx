@@ -60,8 +60,7 @@ export const ProductCard = ({ product, className }: ProductCardProps) => {
 
         <div className="m-0 flex h-[180px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-t-lg bg-gray-50 dark:bg-gray-700">
           <img
-            src={product.image || "/images/collagen.jpg"}
-            alt={product.name}
+            src={product.photo_src}
             className="m-0 h-full w-full object-cover p-0 transition-transform duration-300 hover:scale-100"
           />
         </div>

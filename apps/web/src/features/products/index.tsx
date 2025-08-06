@@ -20,7 +20,7 @@ export default function Products() {
       const response = await api.categories.get();
       return response.data;
     },
-    enabled: false, // API'ye istek atma, sadece cache'den oku
+    enabled: false, 
   });
 
   const { data } = useQuery({
