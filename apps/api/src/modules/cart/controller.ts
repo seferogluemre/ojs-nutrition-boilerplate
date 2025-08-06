@@ -28,8 +28,8 @@ export const app = new Elysia({
       withAuditLog<typeof addToCartDto>({
         actionType: AuditLogAction.CREATE,
         entityType: AuditLogEntity.CART,
-        getEntityUuid: ({ body }) => body.item_uuid,
-        getDescription: ({ body }) => `Sepete ${body.quantity} adet ${body.item_name} eklendi`,
+        getEntityUuid: ({ body }) => body.product_id,
+        getDescription: ({ body }) => `Sepete ${body.quantity} adet ürün eklendi`,
       }),
     ),
   )

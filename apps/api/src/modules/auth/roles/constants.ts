@@ -15,6 +15,13 @@ export const PERMISSIONS = {
     REVOKE_SESSIONS: { key: 'users:revoke-sessions', description: 'Oturumları İptal Et' },
     IMPERSONATE: { key: 'users:impersonate', description: 'Kullanıcıyı Taklit Et' },
   },
+  USER_ADDRESSES: {
+    INDEX: { key: 'user-addresses:index', description: 'Kullanıcı Adreslerini Görüntüle' },
+    SHOW: { key: 'user-addresses:show', description: 'Kullanıcı Adresini Görüntüle' },
+    CREATE: { key: 'user-addresses:create', description: 'Kullanıcı Adresi Oluştur' },
+    UPDATE: { key: 'user-addresses:update', description: 'Kullanıcı Adresini Güncelle' },
+    DESTROY: { key: 'user-addresses:destroy', description: 'Kullanıcı Adresini Sil' },
+  },
   ROLES: {
     SHOW: { key: 'roles:show', description: 'Rolleri Görüntüle' },
     UPDATE: { key: 'roles:update', description: 'Rolleri Güncelle' },
@@ -43,18 +50,20 @@ export const PERMISSIONS = {
     DESTROY: { key: 'products:destroy', description: 'Ürün Sil' },
   },
   PRODUCTS_COMMENTS: {
-    INDEX: { key: 'products-comments:index', description: 'Ürünleri Görüntüle' },
-    CREATE: { key: 'products-comments:create', description: 'Ürün Oluştur' },
+    INDEX: { key: 'products-comments:index', description: 'Ürün Yorumlarını Görüntüle' },
+    CREATE: { key: 'products-comments:create', description: 'Ürün Yorumu Oluştur' },
   },
   PRODUCTS_VARIANTS: {
-    INDEX: { key: 'products-comments:index', description: 'Ürünleri Görüntüle' },
-    CREATE: { key: 'products-comments:create', description: 'Ürün Oluştur' },
+    INDEX: { key: 'products-variants:index', description: 'Ürün Varyantlarını Görüntüle' },
+    CREATE: { key: 'products-variants:create', description: 'Ürün Varyantı Oluştur' },
+    UPDATE: { key: 'products-variants:update', description: 'Ürün Varyantı Güncelle' },
+    DESTROY: { key: 'products-variants:destroy', description: 'Ürün Varyantı Sil' },
   },
   CART: {
     INDEX: { key: 'cart:index', description: 'Sepeti Görüntüle' },
-    CREATE: { key: 'cart:create', description: 'Sepete ürün ekle' },
-    UPDATE: { key: 'categories:update', description: 'Sepeti Güncelle' },
-    DESTROY: { key: 'categories:destroy', description: 'Sepeti Sil' },
+    CREATE: { key: 'cart:create', description: 'Sepete Ürün Ekle' },
+    UPDATE: { key: 'cart:update', description: 'Sepeti Güncelle' },
+    DESTROY: { key: 'cart:destroy', description: 'Sepeti Sil' },
   },
   CATEGORIES: {
     INDEX: { key: 'categories:index', description: 'Kategorileri Görüntüle' },
@@ -63,7 +72,11 @@ export const PERMISSIONS = {
     DESTROY: { key: 'categories:destroy', description: 'Kategori Sil' },
   },
   ORDERS: {
+    INDEX: { key: 'orders:index', description: 'Siparişleri Görüntüle' },
+    SHOW: { key: 'orders:show', description: 'Sipariş Görüntüle' },
     CREATE: { key: 'orders:create', description: 'Sipariş Oluştur' },
+    UPDATE: { key: 'orders:update', description: 'Sipariş Güncelle' },
+    DESTROY: { key: 'orders:destroy', description: 'Sipariş Sil' },
   },
 } as const satisfies Record<string, Record<string, GenericPermissionObject>>;
 
@@ -101,12 +114,64 @@ export const PERMISSION_GROUPS = {
     description: 'Ürünler',
     permissions: Object.values(PERMISSIONS.PRODUCTS),
   },
+  PRODUCTS_COMMENTS: {
+    key: 'products-comments',
+    description: 'Ürün Yorumları',
+    permissions: Object.values(PERMISSIONS.PRODUCTS_COMMENTS),
+  },
+  PRODUCTS_VARIANTS: {
+    key: 'products-variants',
+    description: 'Ürün Varyantları',
+    permissions: Object.values(PERMISSIONS.PRODUCTS_VARIANTS),
+  },
+  CART: {
+    key: 'cart',
+    description: 'Sepet',
+    permissions: Object.values(PERMISSIONS.CART),
+  },
   CATEGORIES: {
     key: 'categories',
     description: 'Kategoriler',
     permissions: Object.values(PERMISSIONS.CATEGORIES),
   },
+  ORDERS: {
+    key: 'orders',
+    description: 'Siparişler',
+    permissions: Object.values(PERMISSIONS.ORDERS),
+  },
 } as const satisfies Record<
   string,
   { key: string; description: string; permissions: Array<{ key: string; description: string }> }
 >;
+
+// Normal kullanıcı için izin listesi
+export const USER_PERMISSIONS = [
+  PERMISSIONS.USER_ADDRESSES.INDEX.key,
+  PERMISSIONS.USER_ADDRESSES.SHOW.key,
+  PERMISSIONS.USER_ADDRESSES.CREATE.key,
+  PERMISSIONS.USER_ADDRESSES.UPDATE.key,
+  PERMISSIONS.USER_ADDRESSES.DESTROY.key,
+
+  // Sepet izinleri
+  PERMISSIONS.CART.INDEX.key,
+  PERMISSIONS.CART.CREATE.key,
+  PERMISSIONS.CART.DESTROY.key,
+  
+  // Sipariş izinleri
+  PERMISSIONS.ORDERS.INDEX.key,
+  PERMISSIONS.ORDERS.SHOW.key,
+  PERMISSIONS.ORDERS.CREATE.key,
+  PERMISSIONS.ORDERS.UPDATE.key,
+  PERMISSIONS.ORDERS.DESTROY.key,
+  
+  // Ürün izinleri (sadece görüntüleme)
+  PERMISSIONS.PRODUCTS.INDEX.key,
+  PERMISSIONS.PRODUCTS.SHOW.key,
+  
+  // Ürün yorumları (görüntüleme ve oluşturma)
+  PERMISSIONS.PRODUCTS_COMMENTS.INDEX.key,
+  PERMISSIONS.PRODUCTS_COMMENTS.CREATE.key,
+  
+  // Kategori izinleri (sadece görüntüleme)
+  PERMISSIONS.CATEGORIES.INDEX.key,
+] as const;

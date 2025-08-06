@@ -221,6 +221,24 @@ export const admin = <O extends AdminOptions>(options?: O) => {
                     },
                   };
                 },
+                async after(user) {
+                  console.log('🔄 User creation AFTER hook triggered for user:', user.id);
+                  if (options?.defaultRole === false) {
+                    console.log('❌ Default role is disabled');
+                    return;
+                  }
+                  const adapter = getAdminAdapter(ctx);
+                  const defaultRole = await adapter.findRoleBySlug(options?.defaultRole ?? 'user');
+                  if (!defaultRole) {
+                    console.log('❌ Default role not found');
+                    return;
+                  }
+                  console.log('✅ Found default role:', defaultRole.name, 'ID:', defaultRole.id);
+                  
+                  // user_roles tablosuna kayıt ekle
+                  await adapter.assignRoleToUser(user.id, defaultRole.id);
+                  console.log('✅ Role assignment completed for user:', user.id);
+                },
               },
             },
             session: {

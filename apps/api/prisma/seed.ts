@@ -1,5 +1,6 @@
 import { loadEnv } from '#config/env';
 import prisma from '#core/prisma';
+import { USER_PERMISSIONS } from '#modules/auth/roles/constants';
 import { RolesService } from '#modules/auth/roles/service';
 import { Gender } from '#prisma/client';
 import { faker } from '@faker-js/faker';
@@ -38,11 +39,15 @@ async function main() {
     userRole = await RolesService.store({
       name: 'User',
       description: 'Normal kullanıcı',
-      permissions: ['products:index', 'products:show', 'categories:index'],
+      permissions: [...USER_PERMISSIONS],
     });
     console.log('✅ User role created:', userRole);
   } else {
-    console.log('✅ User role already exists:', userRole);
+    // Mevcut user rolünün permission'larını güncelle
+    userRole = await RolesService.update(userRole.uuid, {
+      permissions: [...USER_PERMISSIONS],
+    });
+    console.log('✅ User role permissions updated:', userRole);
   }
 
   console.log('🌍 Seeding world data...');

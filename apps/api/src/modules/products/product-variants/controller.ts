@@ -1,6 +1,10 @@
+import { AuditLogAction, AuditLogEntity } from '#modules/audit-logs/constants.ts';
+import { withAuditLog } from '#modules/audit-logs/middleware.ts';
+import { auth } from '#modules/auth/authentication/plugin.ts';
+import { PERMISSIONS, withPermission } from '#modules/auth/index.ts';
+import { dtoWithMiddlewares } from '#utils/middleware-utils.ts';
 import Elysia from 'elysia';
 
-import { auth } from '#modules/auth/authentication/plugin.ts';
 import {
   createVariantDto,
   deleteVariantDto,
@@ -35,9 +39,17 @@ export const app = new Elysia({
       set.status = 201;
       return ProductVariantFormatter.format(variant);
     },
-    createVariantDto,
+    dtoWithMiddlewares(
+      createVariantDto,
+      withPermission(PERMISSIONS.PRODUCTS_VARIANTS.CREATE),
+      withAuditLog<typeof createVariantDto>({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.PRODUCT,
+        getEntityUuid: ({ params }) => params.id,
+        getDescription: () => 'Ürün varyantı oluşturuldu',
+      }),
+    ),
   )
-
   .put(
     '/:id',
     async ({ params, body }) => {
@@ -47,7 +59,16 @@ export const app = new Elysia({
       });
       return ProductVariantFormatter.format(variant);
     },
-    updateVariantDto,
+    dtoWithMiddlewares(
+      updateVariantDto,
+      withPermission(PERMISSIONS.PRODUCTS_VARIANTS.UPDATE),
+      withAuditLog<typeof updateVariantDto>({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.PRODUCT,
+        getEntityUuid: ({ params }) => params.id,
+        getDescription: () => 'Ürün varyantı güncellendi',
+      }),
+    ),
   )
   .delete(
     '/:id',
@@ -58,5 +79,14 @@ export const app = new Elysia({
       });
       return result;
     },
-    deleteVariantDto,
+    dtoWithMiddlewares(
+      deleteVariantDto,
+      withPermission(PERMISSIONS.PRODUCTS_VARIANTS.DESTROY),
+      withAuditLog<typeof deleteVariantDto>({
+        actionType: AuditLogAction.DELETE,
+        entityType: AuditLogEntity.PRODUCT,
+        getEntityUuid: ({ params }) => params.id,
+        getDescription: () => 'Ürün varyantı silindi',
+      }),
+    ),
   );

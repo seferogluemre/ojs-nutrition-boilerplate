@@ -7,9 +7,7 @@ export function withPermission(permission?: PermissionIdentifier) {
     return {
         beforeHandle: async ({ user, set }: AuthContext) => {
             if (!permission) return;
-
             const userHasPermission = await isPermissionGrantedToUser(user, permission);
-
             if (!userHasPermission) {
                 const exception = new UnauthorizedException('Bu işlem için yetkiniz yok');
                 set.status = exception.statusCode;

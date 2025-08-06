@@ -4,6 +4,7 @@ import { Elysia } from 'elysia';
 
 import { AuditLogAction, AuditLogEntity } from '#modules/audit-logs/constants.ts';
 import { withAuditLog } from '#modules/audit-logs/middleware.ts';
+import { PERMISSIONS, withPermission } from '#modules/auth/index.ts';
 import { dtoWithMiddlewares } from '#utils/middleware-utils.ts';
 import {
   userAddressCreateDto,
@@ -35,6 +36,7 @@ const app = new Elysia({
     // @ts-ignore - Complex middleware composition
     dtoWithMiddlewares(
       userAddressCreateDto,
+      withPermission(PERMISSIONS.USER_ADDRESSES.CREATE),
       withAuditLog<typeof userAddressCreateDto>({
         actionType: AuditLogAction.CREATE,
         entityType: AuditLogEntity.USER,
@@ -52,8 +54,17 @@ const app = new Elysia({
       const userAddresses = await UserAddressesService.index({ userId: user.id });
       const response = userAddresses.map(UserAddressFormatter.response);
       return response;
-    },
-    userAddressIndexDto,
+    },  
+    dtoWithMiddlewares(
+      userAddressIndexDto,
+      withPermission(PERMISSIONS.USER_ADDRESSES.INDEX),
+      withAuditLog<typeof userAddressIndexDto>({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.USER,
+        getEntityUuid: () => 'Kullanıcı adresi',
+        getDescription: () => 'Kullanıcı adresleri görüntülendi',
+      }),
+    ),
   )
   .get(
     '/:id', 
@@ -65,7 +76,16 @@ const app = new Elysia({
       const response = UserAddressFormatter.response(userAddress);
       return response;
     },
-    userAddressShowDto,
+    dtoWithMiddlewares(
+      userAddressShowDto,
+      withPermission(PERMISSIONS.USER_ADDRESSES.SHOW),
+      withAuditLog<typeof userAddressShowDto>({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.USER,
+        getEntityUuid: ({ params }) => params.id,
+        getDescription: () => 'Kullanıcı adresi görüntülendi',
+      }),
+    ),
   )
   .patch(
     '/:id', 

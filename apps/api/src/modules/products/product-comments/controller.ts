@@ -1,6 +1,10 @@
 import { Elysia } from 'elysia';
 
+import { AuditLogAction, AuditLogEntity } from '#modules/audit-logs/constants.ts';
+import { withAuditLog } from '#modules/audit-logs/middleware.ts';
 import { auth } from '#modules/auth/authentication/plugin.ts';
+import { PERMISSIONS, withPermission } from '#modules/auth/index.ts';
+import { dtoWithMiddlewares } from '#utils/middleware-utils.ts';
 import { commentCreateDto, commentIndexDto } from './dto';
 import { ProductCommentFormatter } from './formatter';
 import { ProductCommentService } from './service';
@@ -48,5 +52,14 @@ export const app = new Elysia({
       set.status = 201;
       return ProductCommentFormatter.response(comment);
     },
-    commentCreateDto,
+    dtoWithMiddlewares(
+      commentCreateDto,
+      withPermission(PERMISSIONS.PRODUCTS_COMMENTS.CREATE),
+      withAuditLog<typeof commentCreateDto>({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.PRODUCT,
+        getEntityUuid: ({ params }) => params.id,
+        getDescription: () => 'Ürün yorumu oluşturuldu',
+      }),
+    ),
   );
