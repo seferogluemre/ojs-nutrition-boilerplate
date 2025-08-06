@@ -8,6 +8,5 @@ export { ProductPricing, ProductVariants } from './product-selection';
 export { ProductBenefits, ProductDetails } from './product-extra';
 
 // Review Components
-export { ProductReviews } from './product-reviews';
+export { ProductReviews } from './product-comments';
 export { RecentlyViewedProducts } from './recently-viewed-products';
-

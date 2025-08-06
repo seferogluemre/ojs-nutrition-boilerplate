@@ -52,12 +52,9 @@ export const app = new Elysia({
       const contentType = request.headers.get('content-type');
       
       if (contentType?.includes('multipart/form-data')) {
-        // Handle multipart/form-data
         try {
           const formData = await request.formData();
           const files: File[] = [];
-          
-          // Parse form fields
           for (const [key, value] of formData.entries()) {
             if (key === 'images' && typeof value === 'object' && 'name' in value) {
               files.push(value as File);

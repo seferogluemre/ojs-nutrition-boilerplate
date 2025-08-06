@@ -12,11 +12,11 @@ import {
   ProductImage,
   ProductInfo,
   ProductPricing,
+  ProductReviews,
   ProductTags,
   ProductVariants,
   RecentlyViewedProducts,
 } from "./components";
-import { ProductReviews } from "./components/product-reviews";
 
 export default function ProductDetail() {
   const { productId } = useParams({ from: "/_authenticated/products/$productId" });
