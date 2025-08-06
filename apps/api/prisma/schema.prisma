@@ -627,6 +627,9 @@ model ProductComments {
   /// @prismabox.options{minimum:1,maximum:5}
   rating Int
 
+  /// Yorum fotoğrafları (max 3 adet)
+  images String[] @default([]) @map("images")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

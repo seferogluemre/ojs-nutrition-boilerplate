@@ -10,9 +10,11 @@ export const commentResponseSchema = t.Object({
   title: t.Union([t.String(), t.Null()]),
   content: t.Union([t.String(), t.Null()]),
   rating: ProductCommentsPlain.properties.rating,
+  images: t.Array(t.String()), // Yorum fotoğrafları
   user: t.Object({
     id: t.String(),
     name: t.String(),
+    maskedName: t.String(), // Maskelenmiş isim (Emre S*****)
   }),
   createdAt: t.Date(),
   updatedAt: t.Date(),
@@ -62,6 +64,12 @@ export const commentCreateSchema = t.Object({
     maximum: 5,
     error: 'Değerlendirme 1-5 arasında olmalıdır.',
   }),
+  images: t.Optional(
+    t.Array(t.String(), {
+      maxItems: 3,
+      error: 'En fazla 3 fotoğraf yükleyebilirsiniz.',
+    }),
+  ),
 });
 
 export const commentIndexDto = {
@@ -95,11 +103,35 @@ export const commentCreateDto = {
     201: commentResponseSchema,
     400: errorResponseDto[400],
     401: errorResponseDto[401],
+    403: errorResponseDto[403],
     404: errorResponseDto[404],
     422: errorResponseDto[422],
   },
   detail: {
     summary: 'Create a product comment',
     description: 'Creates a new comment for a specific product.',
+  },
+} satisfies ControllerHook;
+
+// Sipariş kontrolü endpoint'i için DTO
+export const canReviewDto = {
+  headers: headers,
+  params: t.Object({
+    id: t.String({
+      format: 'uuid',
+      error: 'Ürün ID geçerli bir UUID olmalıdır.',
+    }),
+  }),
+  response: {
+    200: t.Object({
+      canReview: t.Boolean(),
+      reason: t.Optional(t.String()),
+    }),
+    401: errorResponseDto[401],
+    404: errorResponseDto[404],
+  },
+  detail: {
+    summary: 'Check if user can review product',
+    description: 'Checks if the authenticated user can review a specific product.',
   },
 } satisfies ControllerHook;

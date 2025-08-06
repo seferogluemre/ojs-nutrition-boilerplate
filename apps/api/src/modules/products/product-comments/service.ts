@@ -92,6 +92,7 @@ export abstract class ProductCommentService {
           title: data.title || '',
           content: data.content,
           rating: data.rating,
+          images: data.images || [], // Fotoğraf URL'leri
         },
         include: {
           user: {

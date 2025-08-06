@@ -15,6 +15,7 @@ export interface CommentCreatePayload {
   title?: string;
   content?: string;
   rating: number;
+  images?: string[]; // Fotoğraf URL'leri
 }
 
 export interface CommentResponse {
@@ -22,9 +23,11 @@ export interface CommentResponse {
   title: string | null;
   content: string | null;
   rating: number;
+  images: string[]; // Fotoğraf URL'leri
   user: {
     id: string;
     name: string;
+    maskedName: string; // Maskelenmiş isim
   };
   createdAt: Date;
   updatedAt: Date;
@@ -33,8 +36,8 @@ export interface CommentResponse {
 // Service method parameters
 export interface GetCommentsParams {
   productId: string;
+  page?: number;
   limit?: number;
-  offset?: number;
 }
 
 export interface CreateCommentParams {

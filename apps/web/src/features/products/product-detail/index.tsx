@@ -12,11 +12,11 @@ import {
   ProductImage,
   ProductInfo,
   ProductPricing,
-  ProductReviews,
   ProductTags,
   ProductVariants,
-  RecentlyViewedProducts
+  RecentlyViewedProducts,
 } from "./components";
+import { ProductReviews } from "./components/product-reviews";
 
 export default function ProductDetail() {
   const { productId } = useParams({ from: "/_authenticated/products/$productId" });
@@ -111,7 +111,7 @@ export default function ProductDetail() {
 
       {/* Product Reviews Section */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <ProductReviews  productId={productId}/>
+        <ProductReviews productId={productId} />
       </div>
 
       {/* Best Sellers Section */}
