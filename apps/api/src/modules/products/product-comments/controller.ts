@@ -36,7 +36,7 @@ export const app = new Elysia({
     },
     commentIndexDto,
   )
-  .post(
+  .post( // TODO !! Burada kodlar refaktör edilip clean code yapılcak ek olarak auth durumu kontrol edilcek
     '',
     async ({ request, params, set }) => {
       let imagePaths: string[] = [];
