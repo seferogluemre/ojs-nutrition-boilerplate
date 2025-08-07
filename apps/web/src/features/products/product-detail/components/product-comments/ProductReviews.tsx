@@ -8,9 +8,10 @@ import {
 import { api } from "#lib/api.js";
 import { useAuthStore } from "#stores/authStore.js";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Image, Star } from "lucide-react";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Review, calculateReviewStats } from "../../../data/mock-reviews";
 import { ProductCommentResponse } from "../../types";
 import { ReviewCard } from "./ReviewCard";
@@ -42,11 +43,13 @@ const mapApiReviewsToReviews = (
 export function ProductReviews({ productId }: { productId: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [showInlineForm, setShowInlineForm] = useState(false);
   const [canReview, setCanReview] = useState<CanReviewResponse>({
     canReview: false,
   });
   const [activeTab, setActiveTab] = useState<string>("all");
   const { auth } = useAuthStore();
+  const router = useRouter();
 
   const { data, refetch } = useQuery({
     queryKey: ["product-comments", productId],
@@ -91,10 +94,48 @@ export function ProductReviews({ productId }: { productId: string }) {
     checkCanReview();
   }, [checkCanReview]);
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('comment') === 'true') {
+      setShowInlineForm(true);
+      // Reviews section'a scroll yap
+      setTimeout(() => {
+        const reviewsSection = document.querySelector('[data-reviews-section]');
+        if (reviewsSection) {
+          reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, []);
+
   const handleReviewSuccess = () => {
     setIsFormOpen(false);
+    setShowInlineForm(false);
     refetch(); // Refresh reviews
     checkCanReview(); // Update review eligibility
+    
+    // URL'den comment parametresini temizle
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('comment');
+    window.history.replaceState({}, '', currentUrl.toString());
+    
+    // Reviews listesinin başına scroll yap
+    setTimeout(() => {
+      const reviewsSection = document.querySelector('[data-reviews-section]');
+      if (reviewsSection) {
+        reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
+
+  const handleFormCancel = () => {
+    setIsFormOpen(false);
+    setShowInlineForm(false);
+    
+    // URL'den comment parametresini temizle
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('comment');
+    window.history.replaceState({}, '', currentUrl.toString());
   };
 
   const apiReviews = data?.data || [];
@@ -169,7 +210,7 @@ export function ProductReviews({ productId }: { productId: string }) {
   };
 
   return (
-    <section className="mt-12">
+    <section className="mt-12" data-reviews-section>
       {/* Header */}
       <div className="mb-8">
         <h2 className="mb-6 text-2xl font-bold text-gray-900">
@@ -215,7 +256,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                 <ReviewForm
                   productId={productId}
                   onSuccess={handleReviewSuccess}
-                  onCancel={() => setIsFormOpen(false)}
+                  onCancel={handleFormCancel}
                 />
               </DialogContent>
             </Dialog>
@@ -302,6 +343,27 @@ export function ProductReviews({ productId }: { productId: string }) {
           </div>
         )}
       </div>
+
+      {/* Inline Comment Form - Yorumların altında göster */}
+      {showInlineForm && canReview.canReview && (
+        <div className="mb-8">
+          <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-1">
+            <div className="rounded-md bg-white p-6">
+              <div className="mb-4 flex items-center">
+                <Star className="mr-2 h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Ürünü Değerlendir
+                </h3>
+              </div>
+              <ReviewForm
+                productId={productId}
+                onSuccess={handleReviewSuccess}
+                onCancel={handleFormCancel}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && currentRealReviews.length > 0 && (

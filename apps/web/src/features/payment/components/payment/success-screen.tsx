@@ -1,15 +1,28 @@
 "use client"
 
 import { Button } from "#/components/ui/button"
+import { useRouter } from "@tanstack/react-router"
 import { ArrowRight, CheckCircle, Package } from "lucide-react"
 
 interface SuccessScreenProps {
   showContent: boolean
   orderNumber: string
-  onContinueToOrders: () => void
+  onContinueToOrders?: () => void 
 }
 
 export function SuccessScreen({ showContent, orderNumber, onContinueToOrders }: SuccessScreenProps) {
+  const router = useRouter();
+
+  const handleOrdersRedirect = () => {
+    if (onContinueToOrders) {
+      onContinueToOrders();
+    } else {
+      router.navigate({
+        to: '/account',
+        search: { orders: 'true', orderNumber }
+      });
+    }
+  };
   return (
     <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-lg">
       {/* Success Icon with Animation */}
@@ -39,7 +52,7 @@ export function SuccessScreen({ showContent, orderNumber, onContinueToOrders }: 
         </div>
 
         <div className="pt-4 space-y-3">
-          <Button onClick={onContinueToOrders} className="bg-black hover:bg-gray-800 px-6">
+          <Button onClick={handleOrdersRedirect} className="bg-black hover:bg-gray-800 px-6">
             Siparişlerim
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>

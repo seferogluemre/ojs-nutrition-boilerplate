@@ -1,24 +1,15 @@
-import { useEffect, useState } from "react";
+import { useRouter } from "@tanstack/react-router";
 import { OrderSummaryProps } from "../types";
-import { ProductCommentForm } from "./components/product-comment-form";
 
 export function OrderSummary({ order }: OrderSummaryProps) {
-  const [activeCommentProductId, setActiveCommentProductId] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleOpenCommentForm = (productId: string) => {
-    setActiveCommentProductId(productId);
+  const handleCommentRedirect = (productId: string) => {
+    router.navigate({
+      to: `/products/${productId}`,
+      search: { comment: 'true' }
+    });
   };
-
-  const handleCloseCommentForm = () => {
-    setActiveCommentProductId(null);
-  };
-
-  useEffect(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-  }, [activeCommentProductId]);
 
 
   const isDelivered = order.status === "Teslim Edildi";
@@ -63,28 +54,19 @@ export function OrderSummary({ order }: OrderSummaryProps) {
                   {/* Comment button for delivered orders */}
                   {isDelivered && (
                     <button
-                      onClick={() => handleOpenCommentForm(product.productId || product.id)}
+                      onClick={() => handleCommentRedirect(product.productId || product.id)}
                       className="mt-2 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-lg text-green-700 bg-green-100 hover:bg-green-200 transition-all duration-200 hover:shadow-sm"
-                      disabled={activeCommentProductId === (product.productId || product.id)}
                     >
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10m0 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2m0 0v10a2 2 0 002 2h8a2 2 0 002-2V8m-9 4h4" />
                       </svg>
-                      {activeCommentProductId === (product.productId || product.id) ? 'Form Açık' : 'Yorum Ekle'}
+                      Yorum Ekle
                     </button>
                   )}
                 </div>
               </div>
               
-              {/* Inline Comment Form */}
-              {activeCommentProductId === (product.productId || product.id) && (
-                <ProductCommentForm
-                  productId={product.productId || product.id}
-                  productName={product.name}
-                  onSuccess={handleCloseCommentForm}
-                  onCancel={handleCloseCommentForm}
-                />
-              )}  
+
             </div>
           ))}
         </div>

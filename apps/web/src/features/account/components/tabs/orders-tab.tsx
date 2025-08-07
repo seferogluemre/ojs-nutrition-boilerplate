@@ -8,23 +8,24 @@ import { OrderFromAPI } from "../../types";
 
 export function OrdersTab() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [highlightOrderNumber, setHighlightOrderNumber] = useState<string | null>(null);
   const { auth } = useAuthStore();
 
   useEffect(() => {
     const checkUrlParams = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const orderId = urlParams.get("orderId");
+      const orderNumber = urlParams.get("orderNumber");
       setSelectedOrderId(orderId);
+      setHighlightOrderNumber(orderNumber);
     };
 
     checkUrlParams();
 
-    // Listen for popstate events (back/forward navigation)
     window.addEventListener("popstate", checkUrlParams);
     return () => window.removeEventListener("popstate", checkUrlParams);
   }, []);
 
-  // Function to navigate to order detail
   const handleViewOrderDetail = (orderId: string) => {
     const url = new URL(window.location.href);
     url.searchParams.set("orderId", orderId);
@@ -32,7 +33,6 @@ export function OrdersTab() {
     setSelectedOrderId(orderId);
   };
 
-  // Function to go back to orders list
   const handleBackToOrders = () => {
     const url = new URL(window.location.href);
     url.searchParams.delete("orderId");
@@ -40,7 +40,7 @@ export function OrdersTab() {
     setSelectedOrderId(null);
   };
 
-  // API call for orders list
+
   const { data: ordersData, isLoading } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
@@ -140,11 +140,8 @@ export function OrdersTab() {
             key={order.id}
             className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md hover:border-gray-300"
           >
-            {/* Desktop Layout */}
             <div className="hidden items-center justify-between sm:flex">
-              {/* Sol taraf - Görsel ve Bilgiler */}
               <div className="flex items-center space-x-6">
-                {/* Ürün Görseli */}
                 <div className="flex-shrink-0">
                   <img
                     src={"/images/collagen.jpg"}
@@ -165,7 +162,6 @@ export function OrdersTab() {
                     </span>
                   </div>
 
-                  {/* Ürün Adı */}
                   <h4 className="mb-2 text-lg font-semibold text-gray-900">
                     {order.productName}
                   </h4>
