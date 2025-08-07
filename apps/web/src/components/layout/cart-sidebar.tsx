@@ -99,8 +99,16 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     },
   });
 
+  const getItemPrice = (item: any) => {
+    // Variant price'ı kullan (discounted_price varsa onu, yoksa total_price)
+    return item.variant?.price?.discounted_price || 
+           item.variant?.price?.total_price || 
+           item.product.price;
+  };
+
   const totalAmount = cartItems.reduce((total: number, item: any) => {
-    return total + item.product.price * item.quantity;
+    const itemPrice = getItemPrice(item);
+    return total + itemPrice * item.quantity;
   }, 0);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -265,15 +273,30 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                         <p className="text-xs text-gray-600">
                           {item.variant.name}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          Birim: {formatPrice(item.product.price)}
-                        </p>
+                        <div className="text-xs text-gray-500">
+                          {item.variant?.price?.discounted_price ? (
+                            <>
+                              <span className="line-through text-gray-400">
+                                Birim: {formatPrice(item.variant.price.total_price)}
+                              </span>
+                              <br />
+                              <span className="text-green-600 font-medium">
+                                Birim: {formatPrice(item.variant.price.discounted_price)} 
+                                {item.variant.price.discount_percentage && (
+                                  <span className="ml-1">(%{item.variant.price.discount_percentage} indirim)</span>
+                                )}
+                              </span>
+                            </>
+                          ) : (
+                            <span>Birim: {formatPrice(getItemPrice(item))}</span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Price */}
                       <div className="text-right">
                         <p className="text-sm font-bold text-gray-900">
-                          {formatPrice(item.product.price * item.quantity)}
+                          {formatPrice(getItemPrice(item) * item.quantity)}
                         </p>
                       </div>
                     </div>

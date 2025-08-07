@@ -116,7 +116,15 @@ export abstract class CartService {
           items: {
             include: {
               product: true,
-              productVariant: true,
+              productVariant: {
+                select: {
+                  uuid: true,
+                  name: true,
+                  price: true, // Variant price bilgisini include et
+                  size: true,
+                  aroma: true,
+                },
+              },
             },
           },
           user: true,

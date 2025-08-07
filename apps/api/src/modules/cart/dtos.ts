@@ -20,6 +20,9 @@ const formattedCartItemSchema = t.Object({
   variant: t.Object({
     id: ProductVariantPlain.properties.uuid,
     name: ProductVariantPlain.properties.name,
+    price: ProductVariantPlain.properties.price, // Variant price bilgisini ekle
+    size: ProductVariantPlain.properties.size,
+    aroma: ProductVariantPlain.properties.aroma,
   }),
 });
 

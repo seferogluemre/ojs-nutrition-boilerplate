@@ -19,6 +19,9 @@ export abstract class CartFormatter {
       variant: {
         id: cartItem.productVariant.uuid,
         name: cartItem.productVariant.name,
+        price: cartItem.productVariant.price, // Variant price bilgisini ekle
+        size: cartItem.productVariant.size,
+        aroma: cartItem.productVariant.aroma,
       },
       added_at: cartItem.createdAt,
     };
@@ -26,7 +29,10 @@ export abstract class CartFormatter {
 
   static format(cart: CartPayload) {
     const subtotal = cart.items.reduce((acc, item) => {
-      return acc + item.product.price * item.quantity;
+      // Variant price'ı kullan (discounted_price varsa onu, yoksa total_price)
+      const variantPrice = item.productVariant.price;
+      const itemPrice = variantPrice?.discounted_price || variantPrice?.total_price || item.product.price;
+      return acc + itemPrice * item.quantity;
     }, 0);
 
     return {
