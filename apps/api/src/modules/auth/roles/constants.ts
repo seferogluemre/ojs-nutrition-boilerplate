@@ -89,6 +89,7 @@ export const PERMISSIONS = {
     VALIDATE_QR: { key: 'parcels:validate-qr', description: 'QR Kod Doğrula' },
     TRACK: { key: 'parcels:track', description: 'Kargo Takip Et' },
     ASSIGN_COURIER: { key: 'parcels:assign-courier', description: 'Kurye Ata' },
+    DESTROY: { key: 'parcels:destroy', description: 'Kargo Sil' },
   },
   COURIER: {
     VIEW_ASSIGNED_PARCELS: {

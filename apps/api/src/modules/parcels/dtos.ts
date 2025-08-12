@@ -1,6 +1,4 @@
 import { t } from 'elysia';
-import { withPermission } from '../auth/roles/middleware';
-import { PERMISSIONS } from '../auth/roles/constants';
 
 // ===== Base Schemas =====
 const parcelStatusEnum = t.Union([
@@ -44,7 +42,6 @@ const paginationMetaSchema = t.Object({
 
 // GET /parcels
 export const parcelIndexDto = {
-  beforeHandle: withPermission(PERMISSIONS.PARCELS.INDEX.key),
   query: t.Object({
     page: t.Optional(t.Numeric()),
     limit: t.Optional(t.Numeric()),
@@ -68,7 +65,6 @@ export const parcelIndexDto = {
 
 // GET /parcels/:uuid
 export const parcelShowDto = {
-  beforeHandle: withPermission(PERMISSIONS.PARCELS.SHOW.key),
   params: t.Object({
     uuid: t.String(),
   }),
@@ -126,7 +122,7 @@ export const parcelAssignCourierDto = {
 // PATCH /parcels/:id/status
 export const parcelStatusUpdateDto = {
   params: t.Object({
-    id: t.Numeric(),
+    id: t.String(),
   }),
   body: t.Object({
     status: parcelStatusEnum,
@@ -198,7 +194,7 @@ export const parcelCourierAssignedDto = {
 // POST /parcels/:id/location
 export const parcelLocationUpdateDto = {
   params: t.Object({
-    id: t.Numeric(),
+    id: t.String(),
   }),
   body: t.Object({
     coordinates: coordinatesSchema,

@@ -1,28 +1,29 @@
 import { Elysia } from 'elysia';
-import { dtoWithMiddlewares } from '../../utils';
+
+import { dtoWithMiddlewares, NotFoundException } from '../../utils';
 import { PaginationService } from '../../utils/pagination';
 import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
 import { auth } from '../auth/authentication/plugin';
 import { PERMISSIONS } from '../auth/roles/constants';
 import { withPermission } from '../auth/roles/middleware';
 import {
-    parcelAssignCourierDto,
-    parcelCourierAssignedDto,
-    parcelCreateDto,
-    parcelDestroyDto,
-    parcelIndexDto,
-    parcelLocationUpdateDto,
-    parcelShowDto,
-    parcelStatusUpdateDto,
-    parcelTrackDto,
-    parcelUpdateDto,
+  parcelAssignCourierDto,
+  parcelCourierAssignedDto,
+  parcelCreateDto,
+  parcelDestroyDto,
+  parcelIndexDto,
+  parcelLocationUpdateDto,
+  parcelShowDto,
+  parcelStatusUpdateDto,
+  parcelTrackDto,
+  parcelUpdateDto,
 } from './dtos';
 import { ParcelFormatter } from './formatters';
 import { ParcelService } from './service';
 import { ParcelStatus } from './types';
 
 const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
-  // Kargo listesi (Admin/Courier)
+  // Listeleme
   .get(
     '/',
     async ({ query }) => {
@@ -34,25 +35,31 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         formatter: ParcelFormatter.listResponse,
       });
     },
-    parcelIndexDto,
+    dtoWithMiddlewares(
+      parcelIndexDto,
+      withPermission(PERMISSIONS.PARCELS.INDEX),
+    ),
   )
 
-  // Kargo detayı
+  // Detay
   .get(
     '/:uuid',
     async ({ params }) => {
       const parcel = await ParcelService.show(params.uuid);
+      if (!parcel) throw new NotFoundException('Kargo bulunamadı');
       return ParcelFormatter.response(parcel);
     },
-    parcelShowDto,
+    dtoWithMiddlewares(
+      parcelShowDto,
+      withPermission(PERMISSIONS.PARCELS.SHOW),
+    ),
   )
 
-  // Kargo takip et (Public - tracking number ile)
+  // Takip (public)
   .get(
     '/track/:trackingNumber',
     async ({ params }) => {
       const trackingInfo = await ParcelService.getTrackingInfo(params.trackingNumber);
-      
       return {
         success: true,
         data: ParcelFormatter.trackingResponse(trackingInfo),
@@ -63,7 +70,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
 
   .use(auth())
 
-  // Kargo oluştur (Admin)
+  // Oluştur (Admin)
   .post(
     '/',
     async ({ body }) => {
@@ -73,7 +80,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         route: body.route,
         estimatedDelivery: body.estimatedDelivery ? new Date(body.estimatedDelivery) : undefined,
       });
-
       return ParcelFormatter.response(parcel);
     },
     dtoWithMiddlewares(
@@ -83,7 +89,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         actionType: AuditLogAction.CREATE,
         entityType: AuditLogEntity.PARCEL,
         getEntityUuid: (ctx) => {
-          const response = ctx.response as any;
+          const response = ctx.response as ReturnType<typeof ParcelFormatter.response>;
           return response.uuid;
         },
         getDescription: () => 'Yeni kargo oluşturuldu',
@@ -91,7 +97,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
-  // Kargo güncelle (Admin)
+  // Güncelle (Admin)
   .put(
     '/:uuid',
     async ({ params, body }) => {
@@ -101,7 +107,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         route: body.route,
         estimatedDelivery: body.estimatedDelivery ? new Date(body.estimatedDelivery) : undefined,
       });
-
+      if (!parcel) throw new NotFoundException('Kargo bulunamadı');
       return {
         ...ParcelFormatter.response(parcel),
         message: 'Kargo başarıyla güncellendi',
@@ -120,15 +126,12 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
-  // Kuryeye ata (Admin)
+  // Kurye atama (Admin)
   .patch(
     '/:id/assign-courier',
     async ({ params, body }) => {
-      const parcel = await ParcelService.assignCourier(
-        parseInt(params.id),
-        body.courierId
-      );
-
+      const parcel = await ParcelService.assignCourier(parseInt(params.id), body.courierId);
+      if (!parcel) throw new NotFoundException('Kargo bulunamadı');
       return {
         ...ParcelFormatter.response(parcel),
         message: 'Kurye başarıyla atandı',
@@ -146,7 +149,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
-  // Status güncelle (Courier/Admin)
+  // Durum güncelleme (Courier/Admin)
   .patch(
     '/:id/status',
     async ({ params, body, user }) => {
@@ -156,9 +159,9 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         body.location,
         body.coordinates,
         body.description,
-        user?.id
+        user?.id,
       );
-
+      if (!parcel) throw new NotFoundException('Kargo bulunamadı');
       return {
         uuid: parcel.uuid,
         status: parcel.status,
@@ -177,15 +180,12 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
+  // Kurye kendi atanmış kargolarını listeleme
   .get(
     '/courier/assigned',
     async ({ user, query }) => {
-      if (!user?.id) {
-        throw new Error('Kullanıcı bilgisi bulunamadı');
-      }
-
+      if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
       const { data, total } = await ParcelService.getCourierAssignedParcels(user.id, query);
-      
       return PaginationService.createPaginatedResponse({
         data,
         total,
@@ -199,21 +199,17 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
-  // Kurye konumunu güncelle (Courier)
+  // Kurye konum güncelleme
   .post(
     '/:id/location',
     async ({ params, body, user }) => {
-      if (!user?.id) {
-        throw new Error('Kullanıcı bilgisi bulunamadı');
-      }
-
+      if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
       const location = await ParcelService.updateCourierLocation(
         user.id,
         parseInt(params.id),
         body.coordinates,
-        body.address
+        body.address,
       );
-
       return {
         success: true,
         data: ParcelFormatter.locationResponse(location),
@@ -232,11 +228,12 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
-  // Kargo sil (Admin)
+  // Silme (Admin)
   .delete(
     '/:uuid',
     async ({ params }) => {
-      await ParcelService.destroy(params.uuid);
+      const deleted = await ParcelService.destroy(params.uuid);
+      if (!deleted) throw new NotFoundException('Kargo bulunamadı');
       return { message: 'Kargo başarıyla silindi' };
     },
     dtoWithMiddlewares(
