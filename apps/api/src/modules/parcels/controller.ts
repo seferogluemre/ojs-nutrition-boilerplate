@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 
-import { dtoWithMiddlewares, NotFoundException } from '../../utils';
+import { NotFoundException, dtoWithMiddlewares } from '../../utils';
 import { PaginationService } from '../../utils/pagination';
 import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
 import { auth } from '../auth/authentication/plugin';
@@ -15,7 +15,7 @@ import {
   parcelShowDto,
   parcelStatusUpdateDto,
   parcelTrackDto,
-  parcelUpdateDto
+  parcelUpdateDto,
 } from './dtos';
 import { ParcelFormatter } from './formatters';
 import { ParcelService } from './service';
@@ -34,10 +34,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         formatter: ParcelFormatter.listResponse,
       });
     },
-    dtoWithMiddlewares(
-      parcelIndexDto,
-      withPermission(PERMISSIONS.PARCELS.INDEX),
-    ),
+    parcelIndexDto,
   )
 
   // Detay
@@ -48,10 +45,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       if (!parcel) throw new NotFoundException('Kargo bulunamadı');
       return ParcelFormatter.response(parcel);
     },
-    dtoWithMiddlewares(
-      parcelShowDto,
-      withPermission(PERMISSIONS.PARCELS.SHOW),
-    ),
+    parcelShowDto,
   )
 
   // Takip (public)
@@ -115,7 +109,8 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         actionType: AuditLogAction.UPDATE,
         entityType: AuditLogEntity.PARCEL,
         getEntityUuid: ({ params }) => params.uuid,
-        getDescription: ({ body }) => `Kargo güncellendi: ${Object.keys(body as object).join(', ')}`,
+        getDescription: ({ body }) =>
+          `Kargo güncellendi: ${Object.keys(body as object).join(', ')}`,
         getMetadata: ({ body }) => ({ updatedFields: body }),
       }),
     ),
@@ -171,7 +166,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
-  // Kurye kendi atanmış kargolarını listeleme
   .get(
     '/courier/assigned',
     async ({ user, query }) => {
@@ -190,7 +184,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
-  // Kurye konum güncelleme
   .post(
     '/:id/location',
     async ({ params, body, user }) => {
@@ -219,7 +212,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
 
-  // Silme (Admin)
   .delete(
     '/:uuid',
     async ({ params }) => {
