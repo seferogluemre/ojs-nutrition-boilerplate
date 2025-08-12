@@ -93,8 +93,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     //   }),
     // ),
   )
-
-  // Güncelle (Admin)
   .put(
     '/:uuid',
     async ({ params, body }) => {
@@ -122,8 +120,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       }),
     ),
   )
-
-  // Kurye atama (Admin)
   .patch(
     '/:id/assign-courier',
     async ({ params, body }) => {
@@ -145,8 +141,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       }),
     ),
   )
-
-  // Durum güncelleme (Courier/Admin)
   .patch(
     '/:id/status',
     async ({ params, body, user }) => {

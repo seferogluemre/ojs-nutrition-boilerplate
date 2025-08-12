@@ -284,7 +284,6 @@ export class ParcelService {
 
     const previousStatus = parcel.status as ParcelStatus;
 
-    // Status transition kontrolü
     if (!this.isValidStatusTransition(previousStatus, status)) {
       throw new BadRequestException(`${previousStatus} durumundan ${status} durumuna geçiş yapılamaz`);
     }
@@ -564,7 +563,6 @@ export class ParcelService {
     return trackingNumber;
   }
 
-  // Status transition kontrolü
   private static isValidStatusTransition(from: ParcelStatus, to: ParcelStatus): boolean {
     const validTransitions: Record<ParcelStatus, ParcelStatus[]> = {
       [ParcelStatus.CREATED]: [ParcelStatus.ASSIGNED, ParcelStatus.CANCELLED],
