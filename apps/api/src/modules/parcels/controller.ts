@@ -1,4 +1,4 @@
-import { Elysia, t } from 'elysia';
+import { Elysia } from 'elysia';
 
 import { NotFoundException, dtoWithMiddlewares } from '../../utils';
 import { PaginationService } from '../../utils/pagination';
@@ -8,8 +8,10 @@ import { PERMISSIONS } from '../auth/roles/constants';
 import { withPermission } from '../auth/roles/middleware';
 import {
   parcelAssignCourierDto,
+  parcelAutoLocationDto,
   parcelCourierAssignedDto,
   parcelDestroyDto,
+  parcelGenerateQrDto,
   parcelIndexDto,
   parcelLocationUpdateDto,
   parcelQrCodeDto,
@@ -17,6 +19,7 @@ import {
   parcelStatusUpdateDto,
   parcelTrackDto,
   parcelUpdateDto,
+  parcelValidateQrDto
 } from './dtos';
 import { ParcelFormatter } from './formatters';
 import { LocationService } from './location-service';
@@ -162,7 +165,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       }),
     ),
   )
-
   .get(
     '/courier/assigned',
     async ({ user, query }) => {
@@ -180,7 +182,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       withPermission(PERMISSIONS.COURIER.VIEW_ASSIGNED_PARCELS),
     ),
   )
-
   .post(
     '/:id/location',
     async ({ params, body, user }) => {
@@ -208,7 +209,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       }),
     ),
   )
-
   .delete(
     '/:uuid',
     async ({ params }) => {
@@ -240,26 +240,16 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         message: 'QR kod başarıyla oluşturuldu'
       };
     },
-    {
-      params: t.Object({
-        id: t.String(),
+    dtoWithMiddlewares(
+      parcelGenerateQrDto,
+      withPermission(PERMISSIONS.COURIER.SEND_QR_EMAIL),
+      withAuditLog({
+        actionType: AuditLogAction.CREATE,
+        entityType: AuditLogEntity.PARCEL,
+        getEntityUuid: ({ params }) => params.id,
+        getDescription: () => 'QR kod oluşturuldu',
       }),
-      beforeHandle: withPermission(PERMISSIONS.COURIER.SEND_QR_EMAIL.key),
-      response: t.Object({
-        success: t.Boolean(),
-        data: t.Object({
-          token: t.String(),
-          qrCode: t.String(),
-          expiresAt: t.String(),
-          parcel: t.Object({
-            trackingNumber: t.String(),
-            customerName: t.String(),
-            customerEmail: t.String(),
-          }),
-        }),
-        message: t.String(),
-      }),
-    },
+    ),
   )
   .post(
     '/validate-qr',
@@ -268,7 +258,15 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       
       return result;
     },
-    parcelValidateQrDto,
+    dtoWithMiddlewares(
+      parcelValidateQrDto,
+      withAuditLog({
+        actionType: AuditLogAction.UPDATE,
+        entityType: AuditLogEntity.PARCEL,
+        getEntityUuid: ({ body }) => body.token,
+        getDescription: () => 'QR kod doğrulandı',
+      }),
+    ),
   )
   .get(
     '/qr-info/:token',
@@ -282,7 +280,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     },
     parcelQrCodeDto,
   )
-
   .post(
     '/:id/auto-location',
     async ({ params, body, user }) => {
@@ -293,44 +290,18 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         body,
         user.id
       );
-      
       return result;
     },
-    {
-      params: t.Object({
-        id: t.String(),
+    dtoWithMiddlewares(
+      parcelAutoLocationDto,
+      withPermission(PERMISSIONS.COURIER.UPDATE_LOCATION),
+      withAuditLog({
+        actionType: AuditLogAction.UPDATE,
+        entityType: AuditLogEntity.PARCEL,
+        getEntityUuid: ({ params }) => params.id,
+        getDescription: () => 'Otomatik konum tespiti yapıldı',
       }),
-      body: t.Object({
-        coordinates: t.Object({
-          lat: t.Number(),
-          lng: t.Number(),
-          accuracy: t.Optional(t.Number()),
-        }),
-        address: t.Optional(t.String()),
-        city: t.Optional(t.String()),
-        deviceInfo: t.Optional(t.Any()),
-      }),
-      beforeHandle: withPermission(PERMISSIONS.COURIER.UPDATE_LOCATION.key),
-      response: t.Object({
-        success: t.Boolean(),
-        location: t.Object({
-          uuid: t.String(),
-          coordinates: t.Object({
-            lat: t.Number(),
-            lng: t.Number(),
-            accuracy: t.Optional(t.Number()),
-          }),
-          detectedCity: t.String(),
-          address: t.Optional(t.String()),
-          timestamp: t.String(),
-        }),
-        event: t.Object({
-          description: t.String(),
-          location: t.String(),
-        }),
-        message: t.String(),
-      }),
-    },
+    ),
   );
 
 export default app;

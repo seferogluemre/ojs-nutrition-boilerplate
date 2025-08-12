@@ -187,7 +187,6 @@ export const parcelCourierAssignedDto = {
   }),
 };
 
-// POST /parcels/:id/location
 export const parcelLocationUpdateDto = {
   params: t.Object({
     id: t.String(),
@@ -209,7 +208,6 @@ export const parcelLocationUpdateDto = {
   }),
 };
 
-// PUT /parcels/:uuid
 export const parcelUpdateDto = {
   params: t.Object({
     uuid: t.String(),
@@ -271,5 +269,60 @@ export const parcelValidateQrDto = {
   }),
   response: t.Object({
     success: t.Boolean(),
+  }),
+};
+
+export const parcelGenerateQrDto = {
+  params: t.Object({
+    id: t.String(),
+  }),
+  response: t.Object({
+    success: t.Boolean(),
+    data: t.Object({
+      token: t.String(),
+      qrCode: t.String(),
+      expiresAt: t.String(),
+      parcel: t.Object({
+        trackingNumber: t.String(),
+        customerName: t.String(),
+        customerEmail: t.String(),
+      }),
+    }),
+    message: t.String(),
+  }),
+};
+
+export const parcelAutoLocationDto = {
+  params: t.Object({
+    id: t.String(),
+  }),
+  body: t.Object({
+    coordinates: t.Object({
+      lat: t.Number(),
+      lng: t.Number(),
+      accuracy: t.Optional(t.Number()),
+    }),
+    address: t.Optional(t.String()),
+    city: t.Optional(t.String()),
+    deviceInfo: t.Optional(t.Any()),
+  }),
+  response: t.Object({
+    success: t.Boolean(),
+    location: t.Object({
+      uuid: t.String(),
+      coordinates: t.Object({
+        lat: t.Number(),
+        lng: t.Number(),
+        accuracy: t.Optional(t.Number()),
+      }),
+      detectedCity: t.String(),
+      address: t.Optional(t.String()),
+      timestamp: t.String(),
+    }),
+    event: t.Object({
+      description: t.String(),
+      location: t.String(),
+    }),
+    message: t.String(),
   }),
 };
