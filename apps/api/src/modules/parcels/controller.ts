@@ -22,7 +22,6 @@ import { ParcelService } from './service';
 import { ParcelStatus } from './types';
 
 const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
-  // Listeleme
   .get(
     '/',
     async ({ query }) => {
@@ -36,8 +35,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     },
     parcelIndexDto,
   )
-
-  // Detay
   .get(
     '/:uuid',
     async ({ params }) => {
@@ -47,8 +44,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     },
     parcelShowDto,
   )
-
-  // Takip (public)
   .get(
     '/track/:trackingNumber',
     async ({ params }) => {
@@ -60,7 +55,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     },
     parcelTrackDto,
   )
-
   .use(auth())
   .post(
     '/',

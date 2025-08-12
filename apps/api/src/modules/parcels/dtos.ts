@@ -1,6 +1,5 @@
 import { t } from 'elysia';
 
-// ===== Base Schemas =====
 const parcelStatusEnum = t.Union([
   t.Literal('CREATED'),
   t.Literal('ASSIGNED'),
@@ -32,15 +31,12 @@ const parcelEventSchema = t.Object({
 });
 
 const paginationMetaSchema = t.Object({
-  total: t.Number(),
-  page: t.Number(),
-  limit: t.Number(),
-  totalPages: t.Number(),
+  total: t.Optional(t.Number()),
+  page: t.Optional(t.Number()),
+  limit: t.Optional(t.Number()),
+  totalPages: t.Optional(t.Number()),
 });
 
-// ===== Endpoint DTOs =====
-
-// GET /parcels
 export const parcelIndexDto = {
   query: t.Object({
     page: t.Optional(t.Numeric()),
@@ -50,20 +46,21 @@ export const parcelIndexDto = {
     search: t.Optional(t.String()),
   }),
   response: t.Object({
-    data: t.Array(t.Object({
-      uuid: t.String(),
-      trackingNumber: t.String(),
-      status: t.String(),
-      orderId: t.String(),
-      courier: t.Optional(courierSchema),
-      estimatedDelivery: t.Optional(t.String()),
-      createdAt: t.String(),
-    })),
+    data: t.Array(
+      t.Object({
+        uuid: t.String(),
+        trackingNumber: t.String(),
+        status: t.String(),
+        orderId: t.String(),
+        courier: t.Optional(courierSchema),
+        estimatedDelivery: t.Optional(t.String()),
+        createdAt: t.String(),
+      }),
+    ),
     meta: paginationMetaSchema,
   }),
 };
 
-// GET /parcels/:uuid
 export const parcelShowDto = {
   params: t.Object({
     uuid: t.String(),
@@ -84,7 +81,6 @@ export const parcelShowDto = {
   }),
 };
 
-// POST /parcels
 export const parcelCreateDto = {
   body: t.Object({
     orderId: t.String(),
@@ -102,7 +98,6 @@ export const parcelCreateDto = {
   }),
 };
 
-// PATCH /parcels/:id/assign-courier
 export const parcelAssignCourierDto = {
   params: t.Object({
     id: t.Numeric(),
@@ -119,7 +114,6 @@ export const parcelAssignCourierDto = {
   }),
 };
 
-// PATCH /parcels/:id/status
 export const parcelStatusUpdateDto = {
   params: t.Object({
     id: t.String(),
@@ -137,7 +131,6 @@ export const parcelStatusUpdateDto = {
   }),
 };
 
-// GET /parcels/track/:trackingNumber (Public)
 export const parcelTrackDto = {
   params: t.Object({
     trackingNumber: t.String(),
@@ -153,17 +146,18 @@ export const parcelTrackDto = {
         actualDelivery: t.Optional(t.String()),
       }),
       events: t.Array(parcelEventSchema),
-      currentLocation: t.Optional(t.Object({
-        latitude: t.Number(),
-        longitude: t.Number(),
-        address: t.Optional(t.String()),
-        city: t.Optional(t.String()),
-      })),
+      currentLocation: t.Optional(
+        t.Object({
+          latitude: t.Number(),
+          longitude: t.Number(),
+          address: t.Optional(t.String()),
+          city: t.Optional(t.String()),
+        }),
+      ),
     }),
   }),
 };
 
-// GET /parcels/courier/assigned
 export const parcelCourierAssignedDto = {
   query: t.Object({
     status: t.Optional(t.String()),
@@ -171,22 +165,24 @@ export const parcelCourierAssignedDto = {
     limit: t.Optional(t.Numeric()),
   }),
   response: t.Object({
-    data: t.Array(t.Object({
-      uuid: t.String(),
-      trackingNumber: t.String(),
-      status: t.String(),
-      order: t.Object({
+    data: t.Array(
+      t.Object({
         uuid: t.String(),
-        orderNumber: t.String(),
-        user: t.Object({
-          firstName: t.String(),
-          lastName: t.String(),
+        trackingNumber: t.String(),
+        status: t.String(),
+        order: t.Object({
+          uuid: t.String(),
+          orderNumber: t.String(),
+          user: t.Object({
+            firstName: t.String(),
+            lastName: t.String(),
+          }),
         }),
+        shippingAddress: t.Any(),
+        estimatedDelivery: t.Optional(t.String()),
+        createdAt: t.String(),
       }),
-      shippingAddress: t.Any(),
-      estimatedDelivery: t.Optional(t.String()),
-      createdAt: t.String(),
-    })),
+    ),
     meta: paginationMetaSchema,
   }),
 };
