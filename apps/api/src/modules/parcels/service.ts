@@ -1,5 +1,6 @@
 import { prisma } from '#core';
 import { BadRequestException, NotFoundException } from '../../utils';
+import { RouteOptimizationService } from './route-optimization';
 import { ParcelStatus, type CourierAssignedQuery, type ParcelCoordinates, type ParcelEventMetadata, type ParcelIndexQuery, type ParcelRoute } from './types';
 
 export class ParcelService {
@@ -106,11 +107,29 @@ export class ParcelService {
     // Tracking number oluştur
     const trackingNumber = await this.generateTrackingNumber();
 
-    // Route bilgisini hazırla
-    const routeData: ParcelRoute = {
-      cities: data.route || ['İstanbul', 'Zonguldak', 'Samsun', 'Ordu', 'Rize'],
-      currentCityIndex: 0,
-    };
+    // Route bilgisini hazırla - otomatik optimizasyon
+    let routeData: any;
+    
+    if (data.route && data.route.length > 0 && data.route[0] !== '') {
+      // Manuel route verilmişse kullan
+      routeData = {
+        cities: data.route,
+        currentCityIndex: 0,
+        isOptimized: false,
+      };
+    } else {
+      // Otomatik route oluştur - sadece bu siparişin şehri
+      const destinationCity = RouteOptimizationService.extractCityFromAddress(order.shippingAddress);
+      const cities = destinationCity ? [destinationCity] : [];
+      
+      const optimizedRoute = RouteOptimizationService.generateOptimalRoute(cities);
+      routeData = {
+        ...optimizedRoute,
+        currentCityIndex: 0,
+      };
+      
+      console.log(`📍 Auto-generated route for order ${order.orderNumber}:`, optimizedRoute.cities);
+    }
 
     const parcel = await prisma.parcel.create({
       data: {
@@ -238,6 +257,9 @@ export class ParcelService {
         previousStatus: ParcelStatus.CREATED 
       }
     });
+
+    // Kuryenin tüm kargolarının rotasını yeniden hesapla
+    await this.updateCourierParcelsRoute(courierId);
 
     return parcel;
   }
@@ -405,6 +427,95 @@ export class ParcelService {
       where: { uuid },
       data: { deletedAt: new Date() }
     });
+  }
+
+  // Kuryenin tüm aktif kargolarının rotasını yeniden hesapla
+  static async updateCourierParcelsRoute(courierId: string) {
+    try {
+      // Kuryenin aktif kargolarını al
+      const activeParcels = await prisma.parcel.findMany({
+        where: {
+          courierId,
+          status: {
+            in: [ParcelStatus.ASSIGNED, ParcelStatus.PICKED_UP, ParcelStatus.IN_TRANSIT, ParcelStatus.OUT_FOR_DELIVERY]
+          },
+          deletedAt: null
+        },
+        include: {
+          order: true
+        }
+      });
+
+      if (activeParcels.length === 0) {
+        console.log(`ℹ️ Kurye ${courierId} için aktif kargo bulunamadı`);
+        return;
+      }
+
+      // Teslimat şehirlerini topla
+      const destinationCities: string[] = [];
+      
+      for (const parcel of activeParcels) {
+        const city = RouteOptimizationService.extractCityFromAddress(parcel.order.shippingAddress);
+        if (city && !destinationCities.includes(city)) {
+          destinationCities.push(city);
+        }
+      }
+
+      if (destinationCities.length === 0) {
+        console.log(`⚠️ Kurye ${courierId} için teslimat şehri bulunamadı`);
+        return;
+      }
+
+      // Optimal rota oluştur
+      const optimizedRoute = RouteOptimizationService.generateOptimalRoute(destinationCities);
+      
+      console.log(`🗺️ Kurye ${courierId} için yeni rota oluşturuldu:`, {
+        cities: optimizedRoute.cities,
+        totalDistance: optimizedRoute.totalDistance,
+        estimatedDuration: optimizedRoute.estimatedDuration
+      });
+
+      // Tüm aktif kargoların rotasını güncelle
+      const updatePromises = activeParcels.map(parcel => 
+        prisma.parcel.update({
+          where: { id: parcel.id },
+          data: {
+            route: {
+              ...optimizedRoute,
+              currentCityIndex: 0, // Yeniden başla
+            }
+          }
+        })
+      );
+
+      await Promise.all(updatePromises);
+
+      // Log event'i oluştur
+      const eventPromises = activeParcels.map(parcel =>
+        this.createEvent(parcel.id, {
+          eventType: 'ROUTE_OPTIMIZED',
+          description: `Rota güncellendi: ${optimizedRoute.cities.join(' → ')}`,
+          courierId,
+          metadata: {
+            oldRoute: (parcel.route as any)?.cities || [],
+            newRoute: optimizedRoute.cities,
+            optimization: {
+              totalDistance: optimizedRoute.totalDistance,
+              estimatedDuration: optimizedRoute.estimatedDuration,
+              isOptimized: true
+            }
+          }
+        })
+      );
+
+      await Promise.all(eventPromises);
+
+      console.log(`✅ ${activeParcels.length} kargo için rota güncellendi`);
+
+    } catch (error) {
+      console.error('❌ Kurye kargoları rota güncelleme hatası:', error);
+      // Hata kullanıcıyı etkilemesin, sadece log
+    }
   }
 
   // Event oluştur

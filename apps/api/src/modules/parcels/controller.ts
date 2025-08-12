@@ -9,14 +9,13 @@ import { withPermission } from '../auth/roles/middleware';
 import {
   parcelAssignCourierDto,
   parcelCourierAssignedDto,
-  parcelCreateDto,
   parcelDestroyDto,
   parcelIndexDto,
   parcelLocationUpdateDto,
   parcelShowDto,
   parcelStatusUpdateDto,
   parcelTrackDto,
-  parcelUpdateDto,
+  parcelUpdateDto
 } from './dtos';
 import { ParcelFormatter } from './formatters';
 import { ParcelService } from './service';
@@ -69,8 +68,6 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
   )
 
   .use(auth())
-
-  // Oluştur (Admin)
   .post(
     '/',
     async ({ body }) => {
@@ -82,19 +79,19 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       });
       return ParcelFormatter.response(parcel);
     },
-    dtoWithMiddlewares(
-      parcelCreateDto,
-      withPermission(PERMISSIONS.PARCELS.CREATE),
-      withAuditLog({
-        actionType: AuditLogAction.CREATE,
-        entityType: AuditLogEntity.PARCEL,
-        getEntityUuid: (ctx) => {
-          const response = ctx.response as ReturnType<typeof ParcelFormatter.response>;
-          return response.uuid;
-        },
-        getDescription: () => 'Yeni kargo oluşturuldu',
-      }),
-    ),
+    // dtoWithMiddlewares(
+    //   parcelCreateDto,
+    //   withPermission(PERMISSIONS.PARCELS.CREATE),
+    //   withAuditLog({
+    //     actionType: AuditLogAction.CREATE,
+    //     entityType: AuditLogEntity.PARCEL,
+    //     getEntityUuid: (ctx) => {
+    //       const response = ctx.response as ReturnType<typeof ParcelFormatter.response>;
+    //       return response.uuid;
+    //     },
+    //     getDescription: () => 'Yeni kargo oluşturuldu',
+    //   }),
+    // ),
   )
 
   // Güncelle (Admin)
