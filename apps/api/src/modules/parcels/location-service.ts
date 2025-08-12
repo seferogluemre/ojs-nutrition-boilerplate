@@ -145,7 +145,7 @@ export class LocationService {
     }
 
     return {
-      lat: Number(lat.toFixed(6)), // 6 ondalık yeterli
+      lat: Number(lat.toFixed(6)),
       lng: Number(lng.toFixed(6)),
       accuracy: accuracy ? Number(accuracy.toFixed(2)) : undefined
     };
@@ -238,19 +238,37 @@ export class LocationService {
   }
 
   private static generateLocationDescription(city: string, courierName?: string, detailedLocation?: any): string {
-    const courier = courierName ? `${courierName.split(' ')[0]} ${courierName.split(' ')[1]?.charAt(0)}${'*'.repeat(5)}` : 'Kuryemiz';
+    let courier = 'Kuryemiz';
+    if (courierName) {
+      const nameParts = courierName.split(' ').filter(part => part && part.trim() !== '');
+      if (nameParts.length >= 2) {
+        courier = `${nameParts[0]} ${nameParts[1].charAt(0)}${'*'.repeat(5)}`;
+      } else if (nameParts.length === 1) {
+        courier = `${nameParts[0]} ${'*'.repeat(6)}`;
+      }
+    }
 
     if (city === 'Bilinmeyen Konum') {
       return `${courier} konumu güncellendi`;
     }
 
-    // Use detailed location info if available
     if (detailedLocation) {
-      const { county, village, province } = detailedLocation;
-      if (village && county) {
-        return `${courier} ${county} ${village}'ye ulaştı`;
+      const { county, village, city: detectedCity } = detailedLocation;
+      
+      if (county && village) {
+        const normalizedCounty = county.toLowerCase().replace(/\s+/g, '');
+        const normalizedVillage = village.toLowerCase().replace(/\s+/g, '');
+        const normalizedCity = detectedCity?.toLowerCase().replace(/\s+/g, '');
+        
+        if (normalizedCounty.includes(normalizedVillage) || normalizedVillage.includes(normalizedCounty)) {
+          return `${courier} ${county}'ye ulaştı`;
+        } else {
+          return `${courier} ${county} ${village}'ye ulaştı`;
+        }
       } else if (county) {
         return `${courier} ${county}'ye ulaştı`;
+      } else if (village) {
+        return `${courier} ${village}'ye ulaştı`;
       }
     }
 
@@ -258,7 +276,15 @@ export class LocationService {
   }
 
   static generateDeliveryStatusDescription(courierName?: string, location?: any): string {
-    const courier = courierName ? `${courierName.split(' ')[0]} ${courierName.split(' ')[1]?.charAt(0)}${'*'.repeat(5)}` : 'Kuryemiz';
+    let courier = 'Kuryemiz';
+    if (courierName) {
+      const nameParts = courierName.split(' ').filter(part => part && part.trim() !== '');
+      if (nameParts.length >= 2) {
+        courier = `${nameParts[0]} ${nameParts[1].charAt(0)}${'*'.repeat(5)}`;
+      } else if (nameParts.length === 1) {
+        courier = `${nameParts[0]} ${'*'.repeat(6)}`;
+      }
+    }
     
     if (location?.county) {
       return `${courier} ${location.county}'de dağıtıma çıkmıştır`;
