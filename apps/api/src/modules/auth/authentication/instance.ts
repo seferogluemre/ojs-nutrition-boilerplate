@@ -121,6 +121,35 @@ export const betterAuth = betterAuthBase({
                         },
                     };
                 },
+                after: async (user) => {
+                    try {
+                        // Default User rolünü bul
+                        const userRole = await prisma.role.findFirst({
+                            where: { name: 'User' }
+                        });
+
+                        if (userRole) {
+                            // User rolünü kullanıcıya ata
+                            await prisma.userRole.create({
+                                data: {
+                                    userId: user.id,
+                                    roleId: userRole.id,
+                                }
+                            });
+
+                            // rolesSlugs'ı güncelle
+                            await prisma.user.update({
+                                where: { id: user.id },
+                                data: {
+                                    rolesSlugs: [userRole.slug],
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error assigning default role to user:', error);
+                        // Hook hatası kullanıcı oluşumunu engellemez
+                    }
+                },
             },
         },
     }

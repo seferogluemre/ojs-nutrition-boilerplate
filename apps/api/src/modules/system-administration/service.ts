@@ -1,7 +1,7 @@
 import { prisma } from '#core';
 
 import { GoneException } from '../../utils';
-import { COURIER_PERMISSIONS } from '../auth';
+import { COURIER_PERMISSIONS, USER_PERMISSIONS } from '../auth';
 import { betterAuth } from '../auth/authentication/instance';
 import { RolesService } from '../auth/roles/service';
 
@@ -67,7 +67,7 @@ export class SystemAdministrationService {
       userRole = await RolesService.store({
         name: 'User',
         description: 'Normal kullanıcı',
-        permissions: [],
+        permissions: USER_PERMISSIONS,
       });
     }
 
