@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 
 import { NotFoundException, dtoWithMiddlewares } from '../../utils';
 import { PaginationService } from '../../utils/pagination';
@@ -12,12 +12,15 @@ import {
   parcelDestroyDto,
   parcelIndexDto,
   parcelLocationUpdateDto,
+  parcelQrCodeDto,
   parcelShowDto,
   parcelStatusUpdateDto,
   parcelTrackDto,
   parcelUpdateDto,
 } from './dtos';
 import { ParcelFormatter } from './formatters';
+import { LocationService } from './location-service';
+import { QRService } from './qr-service';
 import { ParcelService } from './service';
 import { ParcelStatus } from './types';
 
@@ -223,6 +226,111 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         getDescription: () => 'Kargo silindi',
       }),
     ),
+  )
+  .post(
+    '/:id/generate-qr',
+    async ({ params, user }) => {
+      if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
+      
+      const qrData = await QRService.generateQRToken(parseInt(params.id));
+      
+      return {
+        success: true,
+        data: qrData,
+        message: 'QR kod başarıyla oluşturuldu'
+      };
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+      beforeHandle: withPermission(PERMISSIONS.COURIER.SEND_QR_EMAIL.key),
+      response: t.Object({
+        success: t.Boolean(),
+        data: t.Object({
+          token: t.String(),
+          qrCode: t.String(),
+          expiresAt: t.String(),
+          parcel: t.Object({
+            trackingNumber: t.String(),
+            customerName: t.String(),
+            customerEmail: t.String(),
+          }),
+        }),
+        message: t.String(),
+      }),
+    },
+  )
+  .post(
+    '/validate-qr',
+    async ({ body, user }) => {
+      const result = await QRService.validateQRToken(body.token, user?.id);
+      
+      return result;
+    },
+    parcelValidateQrDto,
+  )
+  .get(
+    '/qr-info/:token',
+    async ({ params }) => {
+      const qrInfo = await QRService.getQRTokenInfo(params.token);
+      
+      return {
+        success: true,
+        data: qrInfo
+      };
+    },
+    parcelQrCodeDto,
+  )
+
+  .post(
+    '/:id/auto-location',
+    async ({ params, body, user }) => {
+      if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
+      
+      const result = await LocationService.autoDetectAndLogLocation(
+        parseInt(params.id),
+        body,
+        user.id
+      );
+      
+      return result;
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+      body: t.Object({
+        coordinates: t.Object({
+          lat: t.Number(),
+          lng: t.Number(),
+          accuracy: t.Optional(t.Number()),
+        }),
+        address: t.Optional(t.String()),
+        city: t.Optional(t.String()),
+        deviceInfo: t.Optional(t.Any()),
+      }),
+      beforeHandle: withPermission(PERMISSIONS.COURIER.UPDATE_LOCATION.key),
+      response: t.Object({
+        success: t.Boolean(),
+        location: t.Object({
+          uuid: t.String(),
+          coordinates: t.Object({
+            lat: t.Number(),
+            lng: t.Number(),
+            accuracy: t.Optional(t.Number()),
+          }),
+          detectedCity: t.String(),
+          address: t.Optional(t.String()),
+          timestamp: t.String(),
+        }),
+        event: t.Object({
+          description: t.String(),
+          location: t.String(),
+        }),
+        message: t.String(),
+      }),
+    },
   );
 
 export default app;

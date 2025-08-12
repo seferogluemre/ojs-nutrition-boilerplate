@@ -229,12 +229,47 @@ export const parcelUpdateDto = {
   }),
 };
 
-// DELETE /parcels/:uuid
 export const parcelDestroyDto = {
   params: t.Object({
     uuid: t.String(),
   }),
   response: t.Object({
     message: t.String(),
+  }),
+};
+
+export const parcelQrCodeDto = {
+  params: t.Object({
+    token: t.String(),
+  }),
+  response: t.Object({
+    success: t.Boolean(),
+    data: t.Object({
+      token: t.String(),
+      qrCode: t.String(),
+      expiresAt: t.String(),
+      isUsed: t.Boolean(),
+      parcel: t.Object({
+        trackingNumber: t.String(),
+        customerName: t.String(),
+        shippingAddress: t.Any(),
+        courier: t.Optional(
+          t.Object({
+            name: t.String(),
+            phone: t.String(),
+          }),
+        ),
+      }),
+    }),
+  }),
+};
+
+
+export const parcelValidateQrDto = {
+  body: t.Object({
+    token: t.String(),
+  }),
+  response: t.Object({
+    success: t.Boolean(),
   }),
 };
