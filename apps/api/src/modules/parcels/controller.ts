@@ -256,7 +256,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     async ({ body, user }) => {
       const result = await QRService.validateQRToken(body.token, user?.id);
       
-      return result;
+      return result;  
     },
     dtoWithMiddlewares(
       parcelValidateQrDto,
