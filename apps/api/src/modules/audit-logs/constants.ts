@@ -15,4 +15,5 @@ export const AuditLogEntity = {
   CATEGORY: 'Category',
   ORDER: 'Order',
   CART: 'Cart',
+  PARCEL: 'Parcel',
 } as const satisfies Record<string, PrismaModelNamePascalCase>;

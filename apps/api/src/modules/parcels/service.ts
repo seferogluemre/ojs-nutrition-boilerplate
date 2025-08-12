@@ -1,31 +1,112 @@
 import { prisma } from '#core';
-
 import { BadRequestException, NotFoundException } from '../../utils';
-import {
-  type ParcelCoordinates,
-  type ParcelEventMetadata,
-  type ParcelRoute,
-  ParcelStatus,
-} from './types';
+import { ParcelStatus, type CourierAssignedQuery, type ParcelCoordinates, type ParcelEventMetadata, type ParcelIndexQuery, type ParcelRoute } from './types';
 
 export class ParcelService {
+  // Kargo listesi (Admin/Courier)
+  static async index(query: ParcelIndexQuery) {
+    const page = query.page || 1;
+    const limit = query.limit || 10;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    if (query.courierId) {
+      where.courierId = query.courierId;
+    }
+
+    if (query.search) {
+      where.OR = [
+        { trackingNumber: { contains: query.search, mode: 'insensitive' } },
+        { order: { orderNumber: { contains: query.search, mode: 'insensitive' } } },
+      ];
+    }
+
+    where.deletedAt = null;
+
+    const [parcels, total] = await Promise.all([
+      prisma.parcel.findMany({
+        where,
+        include: {
+          courier: true,
+          order: {
+            include: { user: true }
+          }
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.parcel.count({ where }),
+    ]);
+
+    return {
+      data: parcels,
+      total,
+    };
+  }
+
+  // Kargo detayını getir
+  static async show(uuid: string) {
+    const parcel = await prisma.parcel.findUnique({
+      where: { uuid, deletedAt: null },
+      include: {
+        courier: true,
+        order: {
+          include: { user: true }
+        },
+        events: {
+          orderBy: { createdAt: 'asc' },
+          include: { courier: true }
+        },
+        courierLocations: {
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+        }
+      }
+    });
+
+    if (!parcel) {
+      throw new NotFoundException('Kargo bulunamadı');
+    }
+
+    return parcel;
+  }
+
+  // Kargo oluştur (sipariş verildiğinde otomatik çağrılır)
   static async create(data: {
     orderId: string;
     courierId?: string;
     route?: string[];
     estimatedDelivery?: Date;
   }) {
+    // Order'ı kontrol et
     const order = await prisma.order.findUnique({
       where: { uuid: data.orderId },
-      include: { user: true },
+      include: { user: true }
     });
 
     if (!order) {
       throw new NotFoundException('Sipariş bulunamadı');
     }
 
+    // Mevcut kargo var mı kontrol et
+    const existingParcel = await prisma.parcel.findUnique({
+      where: { orderId: data.orderId }
+    });
+
+    if (existingParcel) {
+      throw new BadRequestException('Bu sipariş için zaten kargo oluşturulmuş');
+    }
+
+    // Tracking number oluştur
     const trackingNumber = await this.generateTrackingNumber();
 
+    // Route bilgisini hazırla
     const routeData: ParcelRoute = {
       cities: data.route || ['İstanbul', 'Zonguldak', 'Samsun', 'Ordu', 'Rize'],
       currentCityIndex: 0,
@@ -44,26 +125,94 @@ export class ParcelService {
       include: {
         order: { include: { user: true } },
         courier: true,
-      },
+      }
     });
 
+    // İlk event'i oluştur
     await this.createEvent(parcel.id, {
       eventType: 'STATUS_CHANGE',
       description: 'Kargo oluşturuldu ve işleme alındı',
       location: routeData.cities[0],
-      metadata: { status: ParcelStatus.CREATED },
+      metadata: { status: ParcelStatus.CREATED }
     });
 
     return parcel;
   }
 
+  // Kargo güncelle
+  static async update(uuid: string, data: {
+    courierId?: string;
+    status?: ParcelStatus;
+    route?: string[];
+    estimatedDelivery?: Date;
+  }) {
+    const parcel = await prisma.parcel.findUnique({
+      where: { uuid, deletedAt: null },
+      include: { courier: true }
+    });
+
+    if (!parcel) {
+      throw new NotFoundException('Kargo bulunamadı');
+    }
+
+    const updateData: any = {};
+
+    if (data.courierId !== undefined) {
+      updateData.courierId = data.courierId;
+    }
+
+    if (data.status !== undefined) {
+      // Status transition kontrolü
+      if (!this.isValidStatusTransition(parcel.status as ParcelStatus, data.status)) {
+        throw new BadRequestException(`${parcel.status} durumundan ${data.status} durumuna geçiş yapılamaz`);
+      }
+      updateData.status = data.status;
+    }
+
+    if (data.route !== undefined) {
+      const routeData: ParcelRoute = {
+        cities: data.route,
+        currentCityIndex: (parcel.route as any)?.currentCityIndex || 0,
+      };
+      updateData.route = routeData;
+    }
+
+    if (data.estimatedDelivery !== undefined) {
+      updateData.estimatedDelivery = data.estimatedDelivery;
+    }
+
+    const updatedParcel = await prisma.parcel.update({
+      where: { uuid },
+      data: updateData,
+      include: {
+        courier: true,
+        order: { include: { user: true } }
+      }
+    });
+
+    // Status değişikliği varsa event oluştur
+    if (data.status && data.status !== parcel.status) {
+      await this.createEvent(updatedParcel.id, {
+        eventType: 'STATUS_CHANGE',
+        description: this.getStatusDescription(data.status),
+        metadata: { 
+          previousStatus: parcel.status,
+          updatedManually: true 
+        }
+      });
+    }
+
+    return updatedParcel;
+  }
+
+  // Kuryeye ata
   static async assignCourier(parcelId: number, courierId: string) {
     const courier = await prisma.user.findUnique({
       where: { id: courierId },
-      include: { userRoles: { include: { role: true } } },
+      include: { userRoles: { include: { role: true } } }
     });
 
-    if (!courier || !courier.userRoles.some((ur) => ur.role.name === 'Courier')) {
+    if (!courier || !courier.userRoles.some(ur => ur.role.name === 'Courier')) {
       throw new BadRequestException('Geçerli bir kurye bulunamadı');
     }
 
@@ -76,33 +225,35 @@ export class ParcelService {
       include: {
         order: { include: { user: true } },
         courier: true,
-      },
+      }
     });
 
+    // Event oluştur
     await this.createEvent(parcelId, {
       eventType: 'COURIER_ASSIGNED',
       description: `Kargo ${courier.firstName} ${courier.lastName.charAt(0)}****** kuryesine atandı`,
       courierId,
-      metadata: {
+      metadata: { 
         courierName: `${courier.firstName} ${courier.lastName.charAt(0)}******`,
-        previousStatus: ParcelStatus.CREATED,
-      },
+        previousStatus: ParcelStatus.CREATED 
+      }
     });
 
     return parcel;
   }
 
+  // Status güncelle
   static async updateStatus(
-    parcelId: number,
-    status: ParcelStatus,
+    parcelId: number, 
+    status: ParcelStatus, 
     location?: string,
     coordinates?: ParcelCoordinates,
     description?: string,
-    courierId?: string,
+    courierId?: string
   ) {
     const parcel = await prisma.parcel.findUnique({
       where: { id: parcelId },
-      include: { courier: true },
+      include: { courier: true }
     });
 
     if (!parcel) {
@@ -111,12 +262,12 @@ export class ParcelService {
 
     const previousStatus = parcel.status as ParcelStatus;
 
+    // Status transition kontrolü
     if (!this.isValidStatusTransition(previousStatus, status)) {
-      throw new BadRequestException(
-        `${previousStatus} durumundan ${status} durumuna geçiş yapılamaz`,
-      );
+      throw new BadRequestException(`${previousStatus} durumundan ${status} durumuna geçiş yapılamaz`);
     }
 
+    // Parcel'ı güncelle
     const updatedParcel = await prisma.parcel.update({
       where: { id: parcelId },
       data: {
@@ -125,6 +276,7 @@ export class ParcelService {
       },
     });
 
+    // Event oluştur
     let eventDescription = description;
     if (!eventDescription) {
       eventDescription = this.getStatusDescription(status, location, parcel.courier?.firstName);
@@ -136,14 +288,13 @@ export class ParcelService {
       location,
       coordinates,
       courierId: courierId || parcel.courierId,
-      metadata: {
-        previousStatus,
-        courierName: parcel.courier
-          ? `${parcel.courier.firstName} ${parcel.courier.lastName.charAt(0)}******`
-          : undefined,
-      },
+      metadata: { 
+        previousStatus, 
+        courierName: parcel.courier ? `${parcel.courier.firstName} ${parcel.courier.lastName.charAt(0)}******` : undefined 
+      }
     });
 
+    // Konum güncelle (eğer kurye koordinat gönderiyorsa)
     if (coordinates && parcel.courierId) {
       await this.updateCourierLocation(parcel.courierId, parcelId, coordinates, location);
     }
@@ -151,11 +302,12 @@ export class ParcelService {
     return updatedParcel;
   }
 
+  // Kurye konumunu güncelle
   static async updateCourierLocation(
     courierId: string,
     parcelId: number,
     coordinates: ParcelCoordinates,
-    address?: string,
+    address?: string
   ) {
     return await prisma.courierLocation.create({
       data: {
@@ -165,17 +317,18 @@ export class ParcelService {
         longitude: coordinates.lng,
         address,
         city: address?.split(',').pop()?.trim(),
-      },
+      }
     });
   }
 
+  // Tracking bilgilerini getir
   static async getTrackingInfo(trackingNumber: string) {
     const parcel = await prisma.parcel.findUnique({
       where: { trackingNumber },
       include: {
         events: {
           orderBy: { createdAt: 'asc' },
-          include: { courier: true },
+          include: { courier: true }
         },
         courierLocations: {
           orderBy: { createdAt: 'desc' },
@@ -183,7 +336,7 @@ export class ParcelService {
         },
         order: { include: { user: true } },
         courier: true,
-      },
+      }
     });
 
     if (!parcel) {
@@ -191,31 +344,70 @@ export class ParcelService {
     }
 
     return {
-      parcel: {
-        uuid: parcel.uuid,
-        trackingNumber: parcel.trackingNumber,
-        status: parcel.status,
-        estimatedDelivery: parcel.estimatedDelivery,
-        actualDelivery: parcel.actualDelivery,
-      },
-      events: parcel.events.map((event) => ({
-        uuid: event.uuid,
-        eventType: event.eventType,
-        description: event.description,
-        location: event.location,
-        createdAt: event.createdAt,
-      })),
-      currentLocation: parcel.courierLocations[0]
-        ? {
-            latitude: Number(parcel.courierLocations[0].latitude),
-            longitude: Number(parcel.courierLocations[0].longitude),
-            address: parcel.courierLocations[0].address,
-            city: parcel.courierLocations[0].city,
-          }
-        : null,
+      parcel,
+      events: parcel.events,
+      currentLocation: parcel.courierLocations[0] || null,
     };
   }
 
+  // Kuryenin atanan kargolarını getir
+  static async getCourierAssignedParcels(courierId: string, query: CourierAssignedQuery) {
+    const page = query.page || 1;
+    const limit = query.limit || 10;
+    const skip = (page - 1) * limit;
+
+    const where: any = {
+      courierId,
+      deletedAt: null,
+    };
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    const [parcels, total] = await Promise.all([
+      prisma.parcel.findMany({
+        where,
+        include: {
+          order: {
+            include: { user: true }
+          }
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.parcel.count({ where }),
+    ]);
+
+    return {
+      data: parcels,
+      total,
+    };
+  }
+
+  // Kargo sil (soft delete)
+  static async destroy(uuid: string) {
+    const parcel = await prisma.parcel.findUnique({
+      where: { uuid, deletedAt: null }
+    });
+
+    if (!parcel) {
+      throw new NotFoundException('Kargo bulunamadı');
+    }
+
+    // Teslim edilmiş kargoları silemez
+    if (parcel.status === ParcelStatus.DELIVERED) {
+      throw new BadRequestException('Teslim edilmiş kargo silinemez');
+    }
+
+    return await prisma.parcel.update({
+      where: { uuid },
+      data: { deletedAt: new Date() }
+    });
+  }
+
+  // Event oluştur
   private static async createEvent(
     parcelId: number,
     data: {
@@ -225,7 +417,7 @@ export class ParcelService {
       coordinates?: ParcelCoordinates;
       courierId?: string | null;
       metadata?: ParcelEventMetadata;
-    },
+    }
   ) {
     return await prisma.parcelEvent.create({
       data: {
@@ -236,17 +428,32 @@ export class ParcelService {
         coordinates: data.coordinates,
         courierId: data.courierId,
         metadata: data.metadata,
-      },
+      }
     });
   }
 
+  // Tracking number oluştur
   private static async generateTrackingNumber(): Promise<string> {
-    const prefix = 'OJS';
-    const timestamp = Date.now().toString().slice(-8);
-    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return `${prefix}${timestamp}${random}`;
+    let trackingNumber: string;
+    let isUnique = false;
+
+    do {
+      const prefix = 'OJS';
+      const timestamp = Date.now().toString().slice(-8);
+      const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+      trackingNumber = `${prefix}${timestamp}${random}`;
+
+      const existing = await prisma.parcel.findUnique({
+        where: { trackingNumber }
+      });
+
+      isUnique = !existing;
+    } while (!isUnique);
+
+    return trackingNumber;
   }
 
+  // Status transition kontrolü
   private static isValidStatusTransition(from: ParcelStatus, to: ParcelStatus): boolean {
     const validTransitions: Record<ParcelStatus, ParcelStatus[]> = {
       [ParcelStatus.CREATED]: [ParcelStatus.ASSIGNED, ParcelStatus.CANCELLED],
@@ -262,26 +469,23 @@ export class ParcelService {
     return validTransitions[from]?.includes(to) || false;
   }
 
+  // Status açıklaması oluştur
   private static getStatusDescription(
-    status: ParcelStatus,
-    location?: string,
-    courierName?: string,
+    status: ParcelStatus, 
+    location?: string, 
+    courierName?: string
   ): string {
     const courier = courierName ? `${courierName} ******` : 'Kuryemiz';
-
+    
     switch (status) {
       case ParcelStatus.ASSIGNED:
         return `Kargo ${courier} kuryesine atandı`;
       case ParcelStatus.PICKED_UP:
         return `${courier} kargo merkezinden paketinizi aldı`;
       case ParcelStatus.IN_TRANSIT:
-        return location
-          ? `${courier} ${location} şehrine doğru yola çıktı`
-          : `${courier} hedefinize doğru yola çıktı`;
+        return location ? `${courier} ${location} şehrine doğru yola çıktı` : `${courier} hedefinize doğru yola çıktı`;
       case ParcelStatus.OUT_FOR_DELIVERY:
-        return location
-          ? `${courier} ${location} şubesine ulaştı ve dağıtıma çıktı`
-          : `${courier} dağıtıma çıktı`;
+        return location ? `${courier} ${location} şubesine ulaştı ve dağıtıma çıktı` : `${courier} dağıtıma çıktı`;
       case ParcelStatus.DELIVERED:
         return 'Paketiniz başarıyla teslim edildi';
       case ParcelStatus.CANCELLED:

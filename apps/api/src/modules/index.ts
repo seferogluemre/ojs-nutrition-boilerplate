@@ -6,6 +6,7 @@ import { categoriesController } from './categories';
 import { fileLibraryAssetsController } from './file-library-assets';
 import { locationsController } from './locations';
 import { ordersController } from './orders';
+import { parcelController } from './parcels';
 import { postsController } from './posts';
 import productsController from './products';
 import { productCommentController } from './products/product-comments';
@@ -25,6 +26,7 @@ const app = new Elysia()
   .use(userAddressesController)
   .use(cartController)
   .use(ordersController)
+  .use(parcelController)
   .use(productsController)
   .use(categoriesController)
   .use(productVariantController)
@@ -62,6 +64,7 @@ export const swaggerTags: { name: string; description: string }[] = [
   { name: 'Category', description: 'Category management endpoints' },
   { name: 'Cart', description: 'Shopping cart endpoints' },
   { name: 'Orders', description: 'Order management endpoints' },
+  { name: 'Parcel', description: 'Cargo tracking and management endpoints' },
   { name: 'Product Variants', description: 'Product variant management endpoints' },
   { name: 'Product Comments', description: 'Product comment management endpoints' },
 ];
