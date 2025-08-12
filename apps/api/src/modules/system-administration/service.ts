@@ -59,6 +59,18 @@ export class SystemAdministrationService {
       });
     }
 
+    let userRole = await prisma.role.findFirst({
+      where: { name: 'User' },
+    });
+
+    if (!userRole) {
+      userRole = await RolesService.store({
+        name: 'User',
+        description: 'Normal kullanıcı',
+        permissions: [],
+      });
+    }
+
     const signUpResult = await betterAuth.api.signUpEmail({
       body: {
         email: 'admin@example.com',

@@ -102,7 +102,6 @@ export abstract class RolesService {
                 return cachedRole;
             }
         }
-
         const role = await prisma.role.findUnique({
             where: { uuid, slug },
         });

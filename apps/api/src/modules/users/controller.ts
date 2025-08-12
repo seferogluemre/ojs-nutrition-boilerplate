@@ -7,7 +7,7 @@ import { auth, authSwagger } from '../auth/authentication/plugin';
 import { PERMISSIONS } from '../auth/roles/constants';
 import { ensureUserHasPermission } from '../auth/roles/helpers';
 import { withPermission } from '../auth/roles/middleware';
-import { userCreateDto, userDestroyDto, userIndexDto, userShowDto } from './dtos';
+import { userDestroyDto, userIndexDto, userShowDto } from './dtos';
 import { UserFormatter } from './formatters';
 import { UsersService } from './service';
 import { userRolesApp } from './user-roles';
@@ -18,30 +18,32 @@ const app = new Elysia({
     tags: ['User'],
   },
 })
+.post(
+  '', 
+  async ({ body }) => {
+    console.log('body', body);
+    const user = await UsersService.store(body);
+    return UserFormatter.response(user);
+  },
+  // dtoWithMiddlewares(
+  //   userCreateDto,
+  //   withPermission(PERMISSIONS.USERS.CREATE), 
+  //   withAuditLog({
+  //     actionType: AuditLogAction.CREATE,
+  //     entityType: AuditLogEntity.USER,
+  //     getEntityUuid: (ctx) => {
+  //       const response = ctx.response as ReturnType<typeof UserFormatter.response>;
+  //       return response.id;
+  //     },
+  //     getDescription: () => 'Yeni kullanıcı oluşturuldu',
+  //   }),
+  // ),
+)
   .use(userRolesApp)
   .guard(authSwagger, (app) =>
     app
       .use(auth())
-      .post(
-        '', 
-        async ({ body }) => {
-          const user = await UsersService.store(body);
-          return UserFormatter.response(user);
-        },
-        dtoWithMiddlewares(
-          userCreateDto,
-          withPermission(PERMISSIONS.USERS.CREATE), 
-          withAuditLog<typeof userCreateDto>({
-            actionType: AuditLogAction.CREATE,
-            entityType: AuditLogEntity.USER,
-            getEntityUuid: (ctx) => {
-              const response = ctx.response as ReturnType<typeof UserFormatter.response>;
-              return response.id;
-            },
-            getDescription: () => 'Yeni kullanıcı oluşturuldu',
-          }),
-        ),
-      )
+      
       .get(
         '', // index
         async ({ query }) => {
