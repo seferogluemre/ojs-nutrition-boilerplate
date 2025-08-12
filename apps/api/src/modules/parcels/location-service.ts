@@ -15,6 +15,34 @@ interface LocationData {
   deviceInfo?: any;
 }
 
+interface OpenCageResponse {
+  results: Array<{
+    components: {
+      _normalized_city?: string;
+      _type?: string;
+      continent?: string;
+      country?: string;
+      country_code?: string;
+      county?: string;
+      province?: string;
+      region?: string;
+      road?: string;
+      road_type?: string;
+      state?: string;
+      village?: string;
+    };
+    formatted: string;
+    geometry: {
+      lat: number;
+      lng: number;
+    };
+  }>;
+  status: {
+    code: number;
+    message: string;
+  };
+}
+
 export class LocationService {
   static async autoDetectAndLogLocation(parcelId: number, locationData: LocationData, courierId: string) {
     const parcel = await prisma.parcel.findUnique({
@@ -35,7 +63,8 @@ export class LocationService {
 
     const validatedCoords = this.validateGPSCoordinates(locationData.coordinates);
     
-    const detectedCity = await this.detectCityFromLocation(locationData);
+    const detailedLocation = await this.getLocationFromOpenCage(validatedCoords);
+    const detectedCity = detailedLocation?.city || detailedLocation?.village || detailedLocation?.county || 'Bilinmeyen Konum';
     
     const courierLocation = await prisma.courierLocation.create({
       data: {
@@ -44,24 +73,24 @@ export class LocationService {
         latitude: validatedCoords.lat,
         longitude: validatedCoords.lng,
         accuracy: validatedCoords.accuracy,
-        address: locationData.address,
+        address: detailedLocation?.formattedAddress || locationData.address,
         city: detectedCity,
         deviceInfo: locationData.deviceInfo
       }
     });
 
-    const eventDescription = this.generateLocationDescription(detectedCity, parcel.courier?.firstName);
+    const eventDescription = this.generateLocationDescription(detectedCity, parcel.courier?.firstName, detailedLocation);
     
     await this.createLocationEvent(parcelId, {
       eventType: 'LOCATION_UPDATE',
       description: eventDescription,
-      location: detectedCity,
+      location: detailedLocation?.formattedAddress || detectedCity,
       coordinates: validatedCoords,
       courierId,
       metadata: {
         autoDetected: true,
         accuracy: validatedCoords.accuracy,
-        address: locationData.address,
+        detailedLocation,
         timestamp: new Date().toISOString()
       }
     });
@@ -77,13 +106,20 @@ export class LocationService {
           lng: Number(courierLocation.longitude),
           accuracy: courierLocation.accuracy
         },
-        detectedCity,
-        address: courierLocation.address,
-        timestamp: courierLocation.createdAt
+        detectedLocation: {
+          country: detailedLocation?.country || '',
+          province: detailedLocation?.province || '',
+          county: detailedLocation?.county || '',
+          village: detailedLocation?.village || '',
+          city: detailedLocation?.city || '',
+          road: detailedLocation?.road || '',
+          formattedAddress: detailedLocation?.formattedAddress || ''
+        },
+        timestamp: courierLocation.createdAt.toISOString()
       },
       event: {
         description: eventDescription,
-        location: detectedCity
+        location: detailedLocation?.formattedAddress || detectedCity
       },
       message: 'Konum başarıyla tespit edildi ve log eklendi'
     };
@@ -157,33 +193,11 @@ export class LocationService {
 
   private static async reverseGeocode(coords: GPSCoordinates): Promise<string | null> {
     try {
-      const { lat, lng } = coords;
-      if (lat >= 40.8 && lat <= 41.4 && lng >= 28.5 && lng <= 29.3) {
-        return 'İstanbul';
+      const locationInfo = await this.getLocationFromOpenCage(coords);
+      if (locationInfo) {
+        const { county, village, city } = locationInfo;
+        return city || village || county || 'Bilinmeyen Konum';
       }
-
-      if (lat >= 39.7 && lat <= 40.1 && lng >= 32.4 && lng <= 33.0) {
-        return 'Ankara';
-      }
-
-      if (lat >= 38.2 && lat <= 38.6 && lng >= 26.8 && lng <= 27.3) {
-        return 'İzmir';
-      }
-
-      if (lat >= 40.5 && lat <= 41.5 && lng >= 35.0 && lng <= 42.0) {
-        if (lng >= 40.0) return 'Rize';
-        if (lng >= 39.0) return 'Trabzon';
-        if (lng >= 37.0) return 'Ordu';
-        if (lng >= 35.0) return 'Samsun';
-      }
-
-      if (lat >= 38.5 && lat <= 40.5 && lng >= 38.0 && lng <= 42.0) {
-        if (lng >= 40.5) return 'Erzurum';
-        if (lng >= 39.0) return 'Elazığ';
-      }
-      // TODO: Daha detaylı koordinat tablosu eklenebilir
-      // Veya Google Maps/OpenStreetMap API kullanılabilir
-
       return null;
     } catch (error) {
       console.error('Reverse geocoding hatası:', error);
@@ -191,14 +205,66 @@ export class LocationService {
     }
   }
 
-  private static generateLocationDescription(city: string, courierName?: string): string {
-    const courier = courierName ? `${courierName} ******` : 'Kuryemiz';
+  static async getLocationFromOpenCage(coords: GPSCoordinates) {
+    try {
+      const { lat, lng } = coords;
+      const apiKey = '416fc3eda9674c9183d0902d1dac1e82'; 
+      const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}&language=tr&pretty=1`;
+      
+      const response = await fetch(url);
+      const data: OpenCageResponse = await response.json();
+      
+      if (data.status.code === 200 && data.results.length > 0) {
+        const result = data.results[0];
+        const components = result.components;
+        
+        return {
+          country: components.country || '',
+          province: components.province || components.state || '',
+          county: components.county || '',
+          village: components.village || components._normalized_city || '',
+          city: components._normalized_city || '',
+          road: components.road || '',
+          formattedAddress: result.formatted,
+          coordinates: result.geometry
+        };
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('OpenCage API hatası:', error);
+      return null;
+    }
+  }
+
+  private static generateLocationDescription(city: string, courierName?: string, detailedLocation?: any): string {
+    const courier = courierName ? `${courierName.split(' ')[0]} ${courierName.split(' ')[1]?.charAt(0)}${'*'.repeat(5)}` : 'Kuryemiz';
 
     if (city === 'Bilinmeyen Konum') {
       return `${courier} konumu güncellendi`;
     }
 
+    // Use detailed location info if available
+    if (detailedLocation) {
+      const { county, village, province } = detailedLocation;
+      if (village && county) {
+        return `${courier} ${county} ${village}'ye ulaştı`;
+      } else if (county) {
+        return `${courier} ${county}'ye ulaştı`;
+      }
+    }
+
     return `${courier} ${city} bölgesinde bulunuyor`;
+  }
+
+  static generateDeliveryStatusDescription(courierName?: string, location?: any): string {
+    const courier = courierName ? `${courierName.split(' ')[0]} ${courierName.split(' ')[1]?.charAt(0)}${'*'.repeat(5)}` : 'Kuryemiz';
+    
+    if (location?.county) {
+      return `${courier} ${location.county}'de dağıtıma çıkmıştır`;
+    }
+    
+    return `${courier} dağıtıma çıkmıştır`;
   }
 
   private static async createLocationEvent(
@@ -230,7 +296,7 @@ export class LocationService {
       const route = parcel.route as any;
       
       if (!route || !route.cities) {
-        console.log('ℹ️ Parcel route bilgisi bulunamadı');
+        console.warn('ℹ️ Parcel route bilgisi bulunamadı');
         return;
       }
 
@@ -251,7 +317,7 @@ export class LocationService {
           }
         });
 
-        console.log(`📍 Route progress güncellendi: ${currentCity} (${cityIndex + 1}/${route.cities.length})`);
+        console.warn(`📍 Route progress güncellendi: ${currentCity} (${cityIndex + 1}/${route.cities.length})`);
       }
     } catch (error) {
       console.error('Route progress güncelleme hatası:', error);

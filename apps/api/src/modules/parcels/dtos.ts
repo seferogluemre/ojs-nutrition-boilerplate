@@ -302,8 +302,6 @@ export const parcelAutoLocationDto = {
       lng: t.Number(),
       accuracy: t.Optional(t.Number()),
     }),
-    address: t.Optional(t.String()),
-    city: t.Optional(t.String()),
     deviceInfo: t.Optional(t.Any()),
   }),
   response: t.Object({
@@ -315,8 +313,15 @@ export const parcelAutoLocationDto = {
         lng: t.Number(),
         accuracy: t.Optional(t.Number()),
       }),
-      detectedCity: t.String(),
-      address: t.Optional(t.String()),
+      detectedLocation: t.Object({
+        country: t.String(),
+        province: t.String(),
+        county: t.String(),
+        village: t.Optional(t.String()),
+        city: t.Optional(t.String()),
+        road: t.Optional(t.String()),
+        formattedAddress: t.String(),
+      }),
       timestamp: t.String(),
     }),
     event: t.Object({
