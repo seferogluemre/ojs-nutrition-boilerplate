@@ -176,7 +176,6 @@ export const PERMISSION_GROUPS = {
   { key: string; description: string; permissions: Array<{ key: string; description: string }> }
 >;
 
-// Normal kullanıcı için izin listesi
 export const USER_PERMISSIONS = [
   PERMISSIONS.USER_ADDRESSES.INDEX.key,
   PERMISSIONS.USER_ADDRESSES.SHOW.key,
@@ -206,18 +205,21 @@ export const USER_PERMISSIONS = [
 
   // Kategori izinleri (sadece görüntüleme)
   PERMISSIONS.CATEGORIES.INDEX.key,
+] as const;
 
+export const COURIER_PERMISSIONS = [
   PERMISSIONS.COURIER.VIEW_ASSIGNED_PARCELS.key,
   PERMISSIONS.COURIER.UPDATE_LOCATION.key,
   PERMISSIONS.COURIER.SCAN_QR.key,
   PERMISSIONS.COURIER.SEND_QR_EMAIL.key,
   PERMISSIONS.COURIER.COMPLETE_DELIVERY.key,
 
-  // Kargo ile ilgili temel izinler
   PERMISSIONS.PARCELS.SHOW.key,
   PERMISSIONS.PARCELS.UPDATE_STATUS.key,
   PERMISSIONS.PARCELS.UPDATE_LOCATION.key,
   PERMISSIONS.PARCELS.GENERATE_QR.key,
   PERMISSIONS.PARCELS.VALIDATE_QR.key,
   PERMISSIONS.PARCELS.TRACK.key,
+
+  PERMISSIONS.ORDERS.SHOW.key,
 ] as const;
