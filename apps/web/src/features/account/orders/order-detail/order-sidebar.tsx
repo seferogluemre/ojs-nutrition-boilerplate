@@ -1,4 +1,4 @@
-import { OrderSidebarProps } from "../types";
+import { OrderSidebarProps } from "../../types";
 
 
 export function OrderSidebar({ order }: OrderSidebarProps) {

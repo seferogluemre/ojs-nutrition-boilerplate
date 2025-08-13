@@ -15,7 +15,6 @@ export function Account() {
     }
   }, [auth.user, auth.accessToken, router]);
 
-  // URL query parametrelerini kontrol et
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('orders') === 'true') {

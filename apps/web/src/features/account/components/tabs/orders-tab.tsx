@@ -3,7 +3,7 @@ import { getOrderStatus } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { OrderDetail } from "../../orders/order-detail";
+import { OrderDetail } from "../../orders/order-detail/order-detail";
 import { OrderFromAPI } from "../../types";
 
 export function OrdersTab() {

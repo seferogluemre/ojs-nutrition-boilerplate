@@ -1,5 +1,5 @@
 import { useRouter } from "@tanstack/react-router";
-import { OrderSummaryProps } from "../types";
+import { OrderSummaryProps } from "../../types";
 
 export function OrderSummary({ order }: OrderSummaryProps) {
   const router = useRouter();
@@ -10,7 +10,6 @@ export function OrderSummary({ order }: OrderSummaryProps) {
       search: { comment: 'true' }
     });
   };
-
 
   const isDelivered = order.status === "Teslim Edildi";
   return (
