@@ -1,3 +1,4 @@
+import { parcelShowDto } from '#modules/parcels/dtos.ts';
 import { OrderPlain } from '#prismabox/Order';
 import { OrderItemPlain } from '#prismabox/OrderItem';
 import { ProductPlain } from '#prismabox/Product';
@@ -78,6 +79,7 @@ const orderResponseSchema = t.Object({
   createdAt: t.Date(),
   updatedAt: t.Date(),
   user: userSummarySchema,
+  parcels: t.Optional(t.Array(parcelShowDto.response)),
 });
 
 

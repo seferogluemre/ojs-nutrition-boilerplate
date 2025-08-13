@@ -45,15 +45,43 @@ export abstract class OrderFormatter {
       subtotal: order?.subtotal,
       shippingAddress: order?.shippingAddress as ShippingAddress,
       items: order?.items.map(OrderFormatter.formatItem),
-      createdAt: order?.createdAt,
-      updatedAt: order?.updatedAt,
+      createdAt: order?.createdAt instanceof Date ? order.createdAt.toISOString() : order?.createdAt,
+      updatedAt: order?.updatedAt instanceof Date ? order.updatedAt.toISOString() : order?.updatedAt,
       user: {
         id: order?.user?.id || '',
         name: order?.user?.name || '',
         email: order?.user?.email || '',
       },
+      parcels: order?.parcels.map(parcel => ({
+        ...parcel,
+        estimatedDelivery: parcel.estimatedDelivery instanceof Date
+          ? parcel.estimatedDelivery.toISOString()
+          : parcel.estimatedDelivery,
+        actualDelivery: parcel.actualDelivery instanceof Date
+          ? parcel.actualDelivery.toISOString()
+          : parcel.actualDelivery,
+        createdAt: parcel.createdAt instanceof Date
+          ? parcel.createdAt.toISOString()
+          : parcel.createdAt,
+        updatedAt: parcel.updatedAt instanceof Date
+          ? parcel.updatedAt.toISOString()
+          : parcel.updatedAt,
+        events: parcel.events.map(event => ({
+          ...event,
+          createdAt: event.createdAt instanceof Date
+            ? event.createdAt.toISOString()
+            : event.createdAt,
+          actualDelivery: event.actualDelivery instanceof Date
+            ? event.actualDelivery.toISOString()
+            : event.actualDelivery || "Teslimat tarihi bilinmiyor",
+          estimatedDelivery: event.estimatedDelivery instanceof Date
+            ? event.estimatedDelivery.toISOString()
+            : event.estimatedDelivery || "Tahmini teslimat tarihi bilinmiyor",
+        })),
+      })),
     };
   }
+  
 
   /**
    * Sipariş listesi için formatlar (özet bilgiler).

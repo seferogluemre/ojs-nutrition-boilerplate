@@ -1,6 +1,7 @@
 import { dtoWithMiddlewares } from '#utils/middleware-utils.ts';
 import Elysia from 'elysia';
 
+import { NotFoundException } from '#utils/http-errors.ts';
 import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
 import { PERMISSIONS, withPermission } from '../auth';
 import { auth } from '../auth/authentication/plugin';
@@ -39,6 +40,7 @@ export const app = new Elysia({
         user_id: user.id,
         order_id: params.id,
       });
+      if (!order) throw new NotFoundException('Sipariş bulunamadı');
       return OrderFormatter.format(order);
     },
     dtoWithMiddlewares(

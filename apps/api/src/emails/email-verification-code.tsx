@@ -66,9 +66,11 @@ export function EmailVerificationCode({
   company,
   footer,
 }: EmailVerificationCodeProps) {
+  
   if (!company || !footer || !validationCode) {
     return null;
   }
+  
   const finalLogoUrl = getUrl(company.logoUrl);
   const socialLinks = footer.socialLinks;
 

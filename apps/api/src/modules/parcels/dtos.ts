@@ -26,7 +26,7 @@ const parcelEventSchema = t.Object({
   uuid: t.String(),
   eventType: t.String(),
   description: t.String(),
-  location: t.Optional(t.String()),
+  location: t.Nullable(t.Optional(t.String())),
   createdAt: t.String(),
 });
 
@@ -73,8 +73,8 @@ export const parcelShowDto = {
     courier: t.Optional(courierSchema),
     shippingAddress: t.Any(),
     route: t.Optional(t.Any()),
-    estimatedDelivery: t.Optional(t.String()),
-    actualDelivery: t.Optional(t.String()),
+    estimatedDelivery: t.Optional(t.Nullable(t.String())),
+    actualDelivery: t.Optional(t.Nullable(t.String())),
     events: t.Array(parcelEventSchema),
     createdAt: t.String(),
     updatedAt: t.String(),

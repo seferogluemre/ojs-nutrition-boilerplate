@@ -1,6 +1,7 @@
-import prisma from '../../core/prisma';
 import { BadRequestException } from '#utils';
 import { NotFoundError } from 'elysia';
+import prisma from '../../core/prisma';
+import { HandleError } from "../../shared/error/handle-error";
 
 import { OrderQueueService } from './queue/service';
 import { CompleteOrderParams, GetOrderDetailParams, GetUserOrdersParams } from './types';
@@ -52,7 +53,7 @@ export abstract class OrderService {
       const order = await prisma.order.findFirst({
         where: {
           uuid: order_id,
-          userId: user_id, // Sadece kullanıcının kendi siparişine erişebilir
+          userId: user_id, 
         },
         include: {
           items: {
@@ -68,7 +69,22 @@ export abstract class OrderService {
         throw new NotFoundError('Sipariş bulunamadı.');
       }
 
-      return order;
+      const parcels = await prisma.parcel.findMany({
+        where: {
+          trackingNumber: order.orderNumber,
+        },
+        include: {
+          events: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      return {
+        ...order,
+        parcels,
+      };
     } catch (error) {
       throw HandleError.handlePrismaError(error, 'order', 'find');
     }
