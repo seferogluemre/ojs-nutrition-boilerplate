@@ -804,20 +804,15 @@ model Parcel {
   trackingNumber String       @unique @map("tracking_number")
   status         ParcelStatus @default(CREATED)
 
-  // Adres bilgileri (Order'dan kopyalanır)
   shippingAddress Json @map("shipping_address") @db.JsonB
 
-  // Rota bilgileri
-  route Json? @map("route") @db.JsonB // ["İstanbul", "Zonguldak", "Samsun", "Ordu", "Rize"]
+  route Json? @map("route") @db.JsonB 
 
-  // QR token (teslimat için)
   qrToken     QRToken?
 
-  // Zaman bilgileri
   estimatedDelivery DateTime? @map("estimated_delivery")
   actualDelivery    DateTime? @map("actual_delivery")
 
-  // İlişkiler
   events           ParcelEvent[]
   courierLocations CourierLocation[]
 

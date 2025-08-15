@@ -10,6 +10,7 @@ import {
   parcelAssignCourierDto,
   parcelAutoLocationDto,
   parcelCourierAssignedDto,
+  parcelCreateDto,
   parcelDestroyDto,
   parcelGenerateQrDto,
   parcelIndexDto,
@@ -73,19 +74,10 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       });
       return ParcelFormatter.response(parcel);
     },
-    // dtoWithMiddlewares(
-    //   parcelCreateDto,
-    //   withPermission(PERMISSIONS.PARCELS.CREATE),
-    //   withAuditLog({
-    //     actionType: AuditLogAction.CREATE,
-    //     entityType: AuditLogEntity.PARCEL,
-    //     getEntityUuid: (ctx) => {
-    //       const response = ctx.response as ReturnType<typeof ParcelFormatter.response>;
-    //       return response.uuid;
-    //     },
-    //     getDescription: () => 'Yeni kargo oluşturuldu',
-    //   }),
-    // ),
+    dtoWithMiddlewares(
+      parcelCreateDto,
+      withPermission(PERMISSIONS.PARCELS.CREATE),
+    ),
   )
   .put(
     '/:uuid',
@@ -231,9 +223,9 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     '/:id/generate-qr',
     async ({ params, user }) => {
       if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
-      
+
       const qrData = await QRService.generateQRToken(parseInt(params.id));
-      
+
       return {
         success: true,
         data: qrData,
@@ -255,8 +247,8 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     '/validate-qr',
     async ({ body, user }) => {
       const result = await QRService.validateQRToken(body.token, user?.id);
-      
-      return result;  
+
+      return result;
     },
     dtoWithMiddlewares(
       parcelValidateQrDto,
@@ -272,7 +264,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     '/qr-info/:token',
     async ({ params }) => {
       const qrInfo = await QRService.getQRTokenInfo(params.token);
-      
+
       return {
         success: true,
         data: qrInfo
@@ -284,7 +276,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     '/:id/auto-location',
     async ({ params, body, user }) => {
       if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
-      
+
       const result = await LocationService.autoDetectAndLogLocation(
         parseInt(params.id),
         body,

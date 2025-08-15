@@ -62,6 +62,7 @@ export const app = new Elysia({
         user_id: user.id,
       });
       return OrderFormatter.format(order);
+      // !TODO > 
     },
     dtoWithMiddlewares(
       completeShoppingDto,

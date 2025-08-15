@@ -1,5 +1,4 @@
 import Elysia from 'elysia';
-
 import { authenticationController, rolesController } from './auth';
 import { cartController } from './cart';
 import { categoriesController } from './categories';

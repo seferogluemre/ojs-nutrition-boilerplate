@@ -16,7 +16,6 @@ export const Route = createRootRouteWithContext<{
   component: () => {
     const { auth } = useAuthStore();
     const { setItems, clearCart } = useCartStore();
-    
 
     const { data: authData } = useQuery({
       queryKey: ["auth-me"],
@@ -48,7 +47,6 @@ export const Route = createRootRouteWithContext<{
       },
       enabled: !!auth.accessToken,
     });
-    
     useEffect(() => {
       if (authData) {
         auth.setUser(authData);

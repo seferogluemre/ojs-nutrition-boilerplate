@@ -119,15 +119,10 @@ export class RouteOptimizationService {
       .trim();
   }
 
-  /**
-   * Adres objesinden şehir adını çıkarır
-   */
   static extractCityFromAddress(shippingAddress: any): string | null {
     if (!shippingAddress) return null;
     
-    // Farklı format olasılıkları
     if (typeof shippingAddress === 'string') {
-      // JSON string ise parse et
       try {
         const parsed = JSON.parse(shippingAddress);
         return parsed.city || parsed.il || parsed.sehir || null;
@@ -136,7 +131,6 @@ export class RouteOptimizationService {
       }
     }
     
-    // Object ise direkt oku
     if (typeof shippingAddress === 'object') {
       return shippingAddress.city || shippingAddress.il || shippingAddress.sehir || null;
     }
@@ -144,9 +138,6 @@ export class RouteOptimizationService {
     return null;
   }
 
-  /**
-   * Verilen şehirler listesini coğrafi optimizasyon ile sıralar
-   */
   static generateOptimalRoute(destinationCities: string[]): OptimizedRoute {
     if (destinationCities.length === 0) {
       return {
@@ -157,7 +148,6 @@ export class RouteOptimizationService {
       };
     }
 
-    // 1. Şehirleri bölgelere grupla
     const regionGroups: Record<string, string[]> = {};
     const unrecognizedCities: string[] = [];
 
@@ -173,23 +163,19 @@ export class RouteOptimizationService {
       }
     });
 
-    // 2. Bölgeleri routeOrder'a göre sırala
     const sortedRegions = Object.keys(regionGroups).sort((a, b) => {
       return TURKEY_REGIONS[a].routeOrder - TURKEY_REGIONS[b].routeOrder;
     });
 
-    // 3. Rota oluştur
-    const finalRoute: string[] = ['İstanbul']; // Her zaman İstanbul'dan başla
+    const finalRoute: string[] = ['İstanbul']; 
     const usedRegions: string[] = ['MARMARA'];
 
     let currentRegion = 'MARMARA';
 
     for (const targetRegion of sortedRegions) {
-      // Ara geçiş şehirlerini ekle
       const transitionCities = this.getTransitionCities(currentRegion, targetRegion);
       finalRoute.push(...transitionCities);
 
-      // Hedef bölgedeki şehirleri ekle (alfabetik sıralı)
       const regionCities = regionGroups[targetRegion].sort();
       finalRoute.push(...regionCities);
 
@@ -199,15 +185,12 @@ export class RouteOptimizationService {
       currentRegion = targetRegion;
     }
 
-    // 4. Tanınmayan şehirleri sona ekle
     if (unrecognizedCities.length > 0) {
       finalRoute.push(...unrecognizedCities.sort());
     }
 
-    // 5. Duplikasyonları temizle ama sırayı koru
     const uniqueRoute = this.removeDuplicatesKeepOrder(finalRoute);
 
-    // 6. Mesafe ve süre tahmini (basit hesaplama)
     const totalDistance = this.estimateDistance(usedRegions);
     const estimatedDuration = this.estimateDuration(totalDistance);
 
@@ -221,35 +204,26 @@ export class RouteOptimizationService {
     };
   }
 
-  /**
-   * İki bölge arasındaki geçiş şehirlerini bulur
-   */
   private static getTransitionCities(fromRegion: string, toRegion: string): string[] {
     if (fromRegion === toRegion) return [];
     
-    // Direkt geçiş var mı?
     const directTransition = REGION_TRANSITIONS[fromRegion]?.[toRegion];
     if (directTransition) {
       return directTransition;
     }
 
-    // Ters yönde geçiş var mı?
     const reverseTransition = REGION_TRANSITIONS[toRegion]?.[fromRegion];
     if (reverseTransition) {
       return reverseTransition;
     }
 
-    // Ara bölge üzerinden geçiş gerekli mi? (basit mantık)
     if (fromRegion === 'MARMARA' && ['DOGU_ANADOLU', 'GUNEYDOGU_ANADOLU'].includes(toRegion)) {
-      return ['Ankara']; // İç Anadolu üzerinden
+      return ['Ankara']; 
     }
 
-    return []; // Direkt geçiş
+    return []; 
   }
 
-  /**
-   * Array'den duplikasyonları kaldırır ama sırayı korur
-   */
   private static removeDuplicatesKeepOrder(arr: string[]): string[] {
     const seen = new Set<string>();
     return arr.filter(item => {
@@ -261,29 +235,20 @@ export class RouteOptimizationService {
     });
   }
 
-  /**
-   * Bölgeler bazında basit mesafe tahmini (km)
-   */
   private static estimateDistance(regions: string[]): number {
-    const baseDistance = 500; // İstanbul'dan ilk bölgeye
-    const interRegionDistance = 300; // Bölgeler arası ortalama
+    const baseDistance = 500; 
+    const interRegionDistance = 300; 
     
     return baseDistance + (regions.length - 1) * interRegionDistance;
   }
 
-  /**
-   * Mesafeye göre süre tahmini (saat)
-   */
   private static estimateDuration(distance: number): number {
-    const averageSpeed = 80; // km/h ortalama hız
-    const restTime = 2; // dinlenme/yükleme süresi
+    const averageSpeed = 80; 
+    const restTime = 2; 
     
     return Math.ceil(distance / averageSpeed) + restTime;
   }
 
-  /**
-   * Debug için rota bilgilerini yazdır
-   */
   static debugRoute(route: OptimizedRoute): void {
     console.log('🗺️ Optimized Route Debug:', {
       cities: route.cities,

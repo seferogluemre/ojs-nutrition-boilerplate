@@ -67,9 +67,6 @@ export class QRService {
     };
   }
 
-  /**
-   * QR token'ı validate et ve teslimatı tamamla
-   */
   static async validateQRToken(token: string, courierId?: string) {
     // QR token'ı bul
     const qrToken = await prisma.qRToken.findUnique({
@@ -142,9 +139,6 @@ export class QRService {
     };
   }
 
-  /**
-   * QR token bilgilerini getir (email için)
-   */
   static async getQRTokenInfo(token: string) {
     const qrToken = await prisma.qRToken.findUnique({
       where: { token },
@@ -179,9 +173,6 @@ export class QRService {
     };
   }
 
-  /**
-   * Parcel'ın aktif QR token'ını getir
-   */
   static async getActiveQRToken(parcelId: number) {
     const qrToken = await prisma.qRToken.findFirst({
       where: {
@@ -194,9 +185,6 @@ export class QRService {
     return qrToken;
   }
 
-  /**
-   * Unique token oluştur
-   */
   private static generateUniqueToken(): string {
     const timestamp = Date.now().toString(36);
     const random = Math.random().toString(36).substring(2, 15);
@@ -205,18 +193,12 @@ export class QRService {
     return `QR_${timestamp}_${random}${random2}`.toUpperCase();
   }
 
-  /**
-   * QR kod data'sı oluştur (frontend'de QR image'a çevrilecek)
-   */
   private static generateQRCodeData(token: string): string {
     // QR kod içinde validation URL'i olacak
     const baseUrl = process.env.APP_URL || 'http://localhost:3000';
     return `${baseUrl}/api/parcels/validate-qr?token=${token}`;
   }
 
-  /**
-   * QR ile ilgili event oluştur
-   */
   private static async createQREvent(
     parcelId: number, 
     eventType: string, 

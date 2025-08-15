@@ -4,7 +4,6 @@ import { RouteOptimizationService } from './route-optimization';
 import { ParcelStatus, type CourierAssignedQuery, type ParcelCoordinates, type ParcelEventMetadata, type ParcelIndexQuery, type ParcelRoute } from './types';
 
 export class ParcelService {
-  // Kargo listesi (Admin/Courier)
   static async index(query: ParcelIndexQuery) {
     const page = query.page || 1;
     const limit = query.limit || 10;
@@ -51,7 +50,6 @@ export class ParcelService {
     };
   }
 
-  // Kargo detayını getir
   static async show(uuid: string) {
     const parcel = await prisma.parcel.findUnique({
       where: { uuid, deletedAt: null },
@@ -78,14 +76,12 @@ export class ParcelService {
     return parcel;
   }
 
-  // Kargo oluştur (sipariş verildiğinde otomatik çağrılır)
   static async create(data: {
     orderId: string;
     courierId?: string;
     route?: string[];
     estimatedDelivery?: Date;
   }) {
-    // Order'ı kontrol et
     const order = await prisma.order.findUnique({
       where: { uuid: data.orderId },
       include: { user: true }
@@ -95,7 +91,6 @@ export class ParcelService {
       throw new NotFoundException('Sipariş bulunamadı');
     }
 
-    // Mevcut kargo var mı kontrol et
     const existingParcel = await prisma.parcel.findUnique({
       where: { orderId: data.orderId }
     });
@@ -104,21 +99,17 @@ export class ParcelService {
       throw new BadRequestException('Bu sipariş için zaten kargo oluşturulmuş');
     }
 
-    // Tracking number oluştur
     const trackingNumber = await this.generateTrackingNumber();
 
-    // Route bilgisini hazırla - otomatik optimizasyon
     let routeData: any;
     
     if (data.route && data.route.length > 0 && data.route[0] !== '') {
-      // Manuel route verilmişse kullan
       routeData = {
         cities: data.route,
         currentCityIndex: 0,
         isOptimized: false,
       };
     } else {
-      // Otomatik route oluştur - sadece bu siparişin şehri
       const destinationCity = RouteOptimizationService.extractCityFromAddress(order.shippingAddress);
       const cities = destinationCity ? [destinationCity] : [];
       
@@ -128,7 +119,6 @@ export class ParcelService {
         currentCityIndex: 0,
       };
       
-      console.log(`📍 Auto-generated route for order ${order.orderNumber}:`, optimizedRoute.cities);
     }
 
     const parcel = await prisma.parcel.create({
@@ -147,7 +137,6 @@ export class ParcelService {
       }
     });
 
-    // İlk event'i oluştur
     await this.createEvent(parcel.id, {
       eventType: 'STATUS_CHANGE',
       description: 'Kargo oluşturuldu ve işleme alındı',
@@ -158,7 +147,6 @@ export class ParcelService {
     return parcel;
   }
 
-  // Kargo güncelle
   static async update(uuid: string, data: {
     courierId?: string;
     status?: ParcelStatus;
@@ -181,7 +169,6 @@ export class ParcelService {
     }
 
     if (data.status !== undefined) {
-      // Status transition kontrolü
       if (!this.isValidStatusTransition(parcel.status as ParcelStatus, data.status)) {
         throw new BadRequestException(`${parcel.status} durumundan ${data.status} durumuna geçiş yapılamaz`);
       }
@@ -224,7 +211,6 @@ export class ParcelService {
     return updatedParcel;
   }
 
-  // Kuryeye ata
   static async assignCourier(parcelId: number, courierId: string) {
     const courier = await prisma.user.findUnique({
       where: { id: courierId },
@@ -264,7 +250,6 @@ export class ParcelService {
     return parcel;
   }
 
-  // Status güncelle
   static async updateStatus(
     parcelId: number, 
     status: ParcelStatus, 
@@ -323,7 +308,6 @@ export class ParcelService {
     return updatedParcel;
   }
 
-  // Kurye konumunu güncelle
   static async updateCourierLocation(
     courierId: string,
     parcelId: number,
@@ -342,7 +326,6 @@ export class ParcelService {
     });
   }
 
-  // Tracking bilgilerini getir
   static async getTrackingInfo(trackingNumber: string) {
     const parcel = await prisma.parcel.findUnique({
       where: { trackingNumber },
@@ -371,7 +354,6 @@ export class ParcelService {
     };
   }
 
-  // Kuryenin atanan kargolarını getir
   static async getCourierAssignedParcels(courierId: string, query: CourierAssignedQuery) {
     const page = query.page || 1;
     const limit = query.limit || 10;
@@ -407,7 +389,6 @@ export class ParcelService {
     };
   }
 
-  // Kargo sil (soft delete)
   static async destroy(uuid: string) {
     const parcel = await prisma.parcel.findUnique({
       where: { uuid, deletedAt: null }
@@ -428,10 +409,8 @@ export class ParcelService {
     });
   }
 
-  // Kuryenin tüm aktif kargolarının rotasını yeniden hesapla
   static async updateCourierParcelsRoute(courierId: string) {
     try {
-      // Kuryenin aktif kargolarını al
       const activeParcels = await prisma.parcel.findMany({
         where: {
           courierId,
@@ -450,7 +429,6 @@ export class ParcelService {
         return;
       }
 
-      // Teslimat şehirlerini topla
       const destinationCities: string[] = [];
       
       for (const parcel of activeParcels) {
@@ -465,7 +443,6 @@ export class ParcelService {
         return;
       }
 
-      // Optimal rota oluştur
       const optimizedRoute = RouteOptimizationService.generateOptimalRoute(destinationCities);
       
       console.log(`🗺️ Kurye ${courierId} için yeni rota oluşturuldu:`, {
@@ -474,14 +451,13 @@ export class ParcelService {
         estimatedDuration: optimizedRoute.estimatedDuration
       });
 
-      // Tüm aktif kargoların rotasını güncelle
       const updatePromises = activeParcels.map(parcel => 
         prisma.parcel.update({
           where: { id: parcel.id },
           data: {
             route: {
               ...optimizedRoute,
-              currentCityIndex: 0, // Yeniden başla
+              currentCityIndex: 0, 
             }
           }
         })
@@ -489,7 +465,6 @@ export class ParcelService {
 
       await Promise.all(updatePromises);
 
-      // Log event'i oluştur
       const eventPromises = activeParcels.map(parcel =>
         this.createEvent(parcel.id, {
           eventType: 'ROUTE_OPTIMIZED',
@@ -513,11 +488,9 @@ export class ParcelService {
 
     } catch (error) {
       console.error('❌ Kurye kargoları rota güncelleme hatası:', error);
-      // Hata kullanıcıyı etkilemesin, sadece log
     }
   }
 
-  // Event oluştur
   private static async createEvent(
     parcelId: number,
     data: {
@@ -542,7 +515,6 @@ export class ParcelService {
     });
   }
 
-  // Tracking number oluştur
   private static async generateTrackingNumber(): Promise<string> {
     let trackingNumber: string;
     let isUnique = false;
@@ -578,7 +550,6 @@ export class ParcelService {
     return validTransitions[from]?.includes(to) || false;
   }
 
-  // Status açıklaması oluştur
   private static getStatusDescription(
     status: ParcelStatus, 
     location?: string, 
