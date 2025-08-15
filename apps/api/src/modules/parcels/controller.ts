@@ -157,7 +157,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
       }),
     ),
   )
-  .get(
+  .get( // TODO: Bu endpoint kullanılmayacak
     '/courier/assigned',
     async ({ user, query }) => {
       if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
@@ -220,7 +220,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
   .post(
-    '/:id/generate-qr',
+    '/:id/generate-qr', 
     async ({ params, user }) => {
       if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
 
@@ -261,7 +261,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     ),
   )
   .get(
-    '/qr-info/:token',
+    '/qr-info/:token', // TODO: Bu endpoint kullanılmayacak
     async ({ params }) => {
       const qrInfo = await QRService.getQRTokenInfo(params.token);
 
