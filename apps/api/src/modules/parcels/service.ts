@@ -213,11 +213,11 @@ export class ParcelService {
 
   static async assignCourier(parcelId: number, courierId: string) {
     const courier = await prisma.user.findUnique({
-      where: { id: courierId },
-      include: { userRoles: { include: { role: true } } }
+      where: { id: courierId }, 
+      
     });
 
-    if (!courier || !courier.userRoles.some(ur => ur.role.name === 'Courier')) {
+    if (!courier) {
       throw new BadRequestException('Geçerli bir kurye bulunamadı');
     }
 
@@ -246,6 +246,13 @@ export class ParcelService {
 
     // Kuryenin tüm kargolarının rotasını yeniden hesapla
     await this.updateCourierParcelsRoute(courierId);
+
+    try {
+      await this.syncOrderStatus(parcelId, ParcelStatus.ASSIGNED);
+    } catch (syncError) {
+      console.error(`⚠️ Order sync failed for parcel ${parcelId}:`, syncError);
+      // Senkronizasyon hatası kurye atamasını engellemez
+    }
 
     return parcel;
   }
@@ -303,6 +310,14 @@ export class ParcelService {
     // Konum güncelle (eğer kurye koordinat gönderiyorsa)
     if (coordinates && parcel.courierId) {
       await this.updateCourierLocation(parcel.courierId, parcelId, coordinates, location);
+    }
+
+    // Order status senkronizasyonu
+    try {
+      await this.syncOrderStatus(parcelId, status);
+    } catch (syncError) {
+      console.error(`⚠️ Order sync failed for parcel ${parcelId}:`, syncError);
+      // Senkronizasyon hatası parcel güncellemeyi engellemez
     }
 
     return updatedParcel;
@@ -574,6 +589,58 @@ export class ParcelService {
         return 'Kargo gönderene iade edildi';
       default:
         return 'Kargo durumu güncellendi';
+    }
+  }
+
+  static async syncOrderStatus(parcelId: number, parcelStatus: ParcelStatus) {
+    try {
+      const parcel = await prisma.parcel.findUnique({
+        where: { id: parcelId },
+        include: { order: true }
+      });
+
+      if (!parcel || !parcel.order) {
+        console.log(`⚠️ Parcel ${parcelId} or associated order not found for status sync`);
+        return;
+      }
+
+      // Parcel status → Order status mapping
+      let orderStatus: 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | null = null;
+
+      switch (parcelStatus) {
+        case ParcelStatus.CREATED:
+        case ParcelStatus.ASSIGNED:
+          orderStatus = 'CONFIRMED';
+          break;
+        case ParcelStatus.PICKED_UP:
+        case ParcelStatus.IN_TRANSIT:
+          orderStatus = 'PREPARING';
+          break;
+        case ParcelStatus.OUT_FOR_DELIVERY:
+          orderStatus = 'SHIPPED';
+          break;
+        case ParcelStatus.DELIVERED:
+          orderStatus = 'DELIVERED';
+          break;
+        case ParcelStatus.CANCELLED:
+        case ParcelStatus.RETURNED:
+          orderStatus = 'CANCELLED';
+          break;
+        default:
+          console.log(`⚠️ No order status mapping for parcel status: ${parcelStatus}`);
+          return;
+      }
+
+      // Order status güncelle (sadece gerekirse)
+      if (orderStatus && parcel.order.status !== orderStatus) {
+        const { OrderService } = await import('../orders/service');
+        await OrderService.updateOrderStatus(parcel.order.uuid, orderStatus);
+        console.log(`🔄 Order ${parcel.order.orderNumber} status synced: ${parcel.order.status} → ${orderStatus}`);
+      }
+
+    } catch (error) {
+      console.error(`❌ Failed to sync order status for parcel ${parcelId}:`, error);
+      // Senkronizasyon hatası diğer işlemleri engellemez
     }
   }
 }

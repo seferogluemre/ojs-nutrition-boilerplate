@@ -1,4 +1,5 @@
-import { emailService, prisma } from '#core';
+import { prisma } from '#core';
+import { emailService } from '../../core/email/service';
 import { BadRequestException, NotFoundException } from '../../utils';
 import { ParcelStatus } from './types';
 
@@ -118,7 +119,6 @@ export class QRService {
       throw new BadRequestException('Bu QR kod size atanmamış');
     }
 
-    // Token'ı kullanılmış olarak işaretle
     await prisma.qRToken.update({
       where: { id: qrToken.id },
       data: {
@@ -127,7 +127,6 @@ export class QRService {
       }
     });
 
-    // Parcel durumunu DELIVERED yap
     const deliveredParcel = await prisma.parcel.update({
       where: { id: qrToken.parcelId },
       data: {
@@ -136,7 +135,13 @@ export class QRService {
       }
     });
 
-    // Teslimat event'i ekle
+    const deliveredOrder = await prisma.order.update({
+      where: { orderNumber: qrToken.parcel.order.orderNumber },
+      data: {
+        status: "DELIVERED",
+      }
+    });
+
     await this.createQREvent(
       qrToken.parcelId, 
       'DELIVERED', 
@@ -155,7 +160,7 @@ export class QRService {
 
       // Sipariş ürünlerini al
       const orderItems = await prisma.orderItem.findMany({
-        where: { orderId: qrToken.parcel.orderId },
+        where: { orderId: qrToken.parcel.order.id },
         include: { product: true }
       });
 

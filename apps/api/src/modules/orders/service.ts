@@ -231,9 +231,124 @@ export abstract class OrderService {
         userName: order.user?.name || order.user?.email || 'Müşteri',
       });
 
+      // Otomatik parcel oluştur ve kurye ata
+      try {
+        await this.createParcelFromOrder(order);
+      } catch (error) {
+        console.error(`❌ Failed to create parcel for order ${order.uuid}:`, error);
+        // Parcel oluşturma hatası sipariş oluşturmayı engellemez
+      }
+
       return order;
     } catch (error) {
       throw await HandleError.handlePrismaError(error, 'order', 'create');
+    }
+  }
+
+  static async updateOrderStatus(orderId: string, status: 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED') {
+    try {
+      const order = await prisma.order.update({
+        where: { uuid: orderId },
+        data: { status },
+        include: {
+          user: true,
+          items: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      console.log(`📦 Order ${orderId} status updated to: ${status}`);
+      return order;
+    } catch (error) {
+      console.error(`❌ Failed to update order ${orderId} status:`, error);
+      throw HandleError.handlePrismaError(error, 'order', 'update');
+    }
+  }
+
+  static async getAvailableCourier(): Promise<string | null> {
+    try {
+    
+      const couriers = await prisma.user.findMany({
+        where: {
+          userRoles: {
+            some: {
+              role: {
+                name: 'Courier'
+              }
+            }
+          },
+          deletedAt: null,
+        },
+        include: {
+          _count: {
+            select: {
+              assignedParcels: {
+                where: {
+                  status: {
+                    notIn: ['DELIVERED', 'CANCELLED', 'RETURNED']
+                  }
+                }
+              }
+            }
+          }
+        },
+        orderBy: {
+          assignedParcels: {
+            _count: 'asc' // En az işi olan kurye
+          }
+        },
+        take: 1
+      });
+
+      if (couriers.length > 0) {
+        return couriers[0].id;
+      }
+
+      console.log('⚠️ No available courier found');
+      return null;
+    } catch (error) {
+      console.error('❌ Failed to get available courier:', error);
+      return null;
+    }
+  }
+
+  static async createParcelFromOrder(order: any) {
+    try {
+      const { ParcelService } = await import('../parcels/service');
+      
+      const availableCourier = await this.getAvailableCourier();
+      
+      const estimatedDelivery = new Date();
+      estimatedDelivery.setDate(estimatedDelivery.getDate() + 3);
+
+      const parcel = await ParcelService.create({
+        orderId: order.uuid,
+        courierId: availableCourier || undefined,
+        estimatedDelivery: estimatedDelivery,
+      });
+
+      if (availableCourier && parcel) {
+        try {
+          await ParcelService.assignCourier(parcel.id, availableCourier);
+          console.log(`📦 Parcel created and courier assigned for order: ${order.orderNumber}`);
+          
+          // Order statusunu CONFIRMED yap
+          await this.updateOrderStatus(order.uuid, 'CONFIRMED');
+        } catch (assignError) {
+          console.error(`⚠️ Failed to assign courier to parcel ${parcel.id}:`, assignError);
+          // Kurye atama başarısız olsa da parcel oluşturulmuş
+        }
+      } else {
+        console.log(`📦 Parcel created without courier assignment for order: ${order.orderNumber}`);
+      }
+
+      return parcel;
+    } catch (error) {
+      console.error(`❌ Failed to create parcel from order ${order.uuid}:`, error);
+      throw error;
     }
   }
 

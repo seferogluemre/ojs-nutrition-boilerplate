@@ -110,7 +110,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
   .patch(
     '/:id/assign-courier',
     async ({ params, body }) => {
-      const parcel = await ParcelService.assignCourier(parseInt(params.id), body.courierId);
+      const parcel = await ParcelService.assignCourier(params.id, body.courierId);
       if (!parcel) throw new NotFoundException('Kargo bulunamadı');
       return {
         ...ParcelFormatter.response(parcel),
