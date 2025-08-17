@@ -178,12 +178,14 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
     '/:id/location',
     async ({ params, body, user }) => {
       if (!user?.id) throw new Error('Kullanıcı bilgisi bulunamadı');
+      
       const location = await ParcelService.updateCourierLocation(
         user.id,
         parseInt(params.id),
         body.coordinates,
         body.address,
       );
+
       return {
         success: true,
         data: ParcelFormatter.locationResponse(location),
@@ -282,6 +284,7 @@ const app = new Elysia({ prefix: '/parcels', tags: ['Parcel'] })
         body,
         user.id
       );
+
       return result;
     },
     dtoWithMiddlewares(

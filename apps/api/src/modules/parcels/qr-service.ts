@@ -1,10 +1,9 @@
-import { prisma } from '#core';
+import { emailService, prisma } from '#core';
 import { BadRequestException, NotFoundException } from '../../utils';
 import { ParcelStatus } from './types';
 
 export class QRService {
   static async generateQRToken(parcelId: number) {
-    // Parcel'ı kontrol et
     const parcel = await prisma.parcel.findUnique({
       where: { id: parcelId },
       include: {
@@ -54,6 +53,25 @@ export class QRService {
     });
 
     await this.createQREvent(parcelId, 'QR_GENERATED', 'Teslimat için QR kod oluşturuldu', parcel.courierId);
+
+    try {
+      await emailService.sendQRDeliveryNotification({
+        trackingNumber: parcel.trackingNumber,
+        customerName: `${parcel.order.user.firstName} ${parcel.order.user.lastName}`,
+        customerEmail: parcel.order.user.email,
+        qrToken: qrToken.token,
+        orderNumber: parcel.order.orderNumber,
+      });
+
+      await prisma.qRToken.update({
+        where: { id: qrToken.id },
+        data: { emailSentAt: new Date() }
+      });
+
+    } catch (error) {
+      console.error(`❌ Failed to send QR delivery notification for parcel ${parcel.trackingNumber}:`, error);
+      // E-posta hatası QR oluşturmayı engellemez, sadece log'larız
+    }
 
     return {
       token: qrToken.token,
@@ -126,6 +144,38 @@ export class QRService {
       qrToken.parcel.courierId
     );
 
+    try {
+      const deliveryDate = new Intl.DateTimeFormat('tr-TR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(new Date());
+
+      // Sipariş ürünlerini al
+      const orderItems = await prisma.orderItem.findMany({
+        where: { orderId: qrToken.parcel.orderId },
+        include: { product: true }
+      });
+
+      await emailService.sendDeliverySuccessNotification({
+        trackingNumber: qrToken.parcel.trackingNumber,
+        customerName: `${qrToken.parcel.order.user.firstName} ${qrToken.parcel.order.user.lastName}`,
+        customerEmail: qrToken.parcel.order.user.email,
+        orderNumber: qrToken.parcel.order.orderNumber,
+        deliveryDate: deliveryDate,
+        items: orderItems.map(item => ({
+          productName: item.product.name,
+          quantity: item.quantity,
+        })),
+      });
+
+      console.log(`📧 Delivery success notification sent to ${qrToken.parcel.order.user.email} for parcel ${qrToken.parcel.trackingNumber}`);
+    } catch (error) {
+      console.error(`❌ Failed to send delivery success notification for parcel ${qrToken.parcel.trackingNumber}:`, error);
+    }
+
     return {
       success: true,
       parcel: {
@@ -194,9 +244,9 @@ export class QRService {
   }
 
   private static generateQRCodeData(token: string): string {
-    // QR kod içinde validation URL'i olacak
+    // QR kod sadece validation sayfasına yönlendirir, token body ile gönderilecek
     const baseUrl = process.env.APP_URL || 'http://localhost:3000';
-    return `${baseUrl}/api/parcels/validate-qr?token=${token}`;
+    return `${baseUrl}/validate`;
   }
 
   private static async createQREvent(
