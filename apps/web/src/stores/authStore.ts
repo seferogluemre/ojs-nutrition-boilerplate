@@ -14,7 +14,8 @@ interface AuthUser {
   updatedAt: string;
 }
 
-interface AuthState {
+
+export interface AuthState {
   auth: {
     user: AuthUser | null;
     setUser: (user: AuthUser | null) => void;
@@ -27,7 +28,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()((set) => {
   const initToken = localStorage.getItem(ACCESS_TOKEN_KEY) || "";
-  
+  // TODO ! persist kullan
   return {
     auth: {
       user: null,

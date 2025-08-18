@@ -2,7 +2,7 @@ import { Toaster } from "#components/ui/toaster";
 import GeneralError from "#features/errors/general-error";
 import NotFoundError from "#features/errors/not-found-error";
 import { api } from "#lib/api.js";
-import { useAuthStore } from "#stores/authStore.js";
+import { AuthState, useAuthStore } from "#stores/authStore.js";
 import { useCartStore } from "#stores/cartStore.js";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -12,6 +12,7 @@ import { useEffect } from "react";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
+  auth: AuthState;
 }>()({
   component: () => {
     const { auth } = useAuthStore();
@@ -47,6 +48,7 @@ export const Route = createRootRouteWithContext<{
       },
       enabled: !!auth.accessToken,
     });
+    
     useEffect(() => {
       if (authData) {
         auth.setUser(authData);

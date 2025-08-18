@@ -4,13 +4,14 @@
     "tsBuildInfoFile": "../../dist/apps/web/.app.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "#*": ["./src/*"],
+      "#/*": ["./src/*"],
       "#components/*": ["./src/components/*"],
       "#features/*": ["./src/features/*"],
       "#hooks/*": ["./src/hooks/*"],
       "#lib/*": ["./src/lib/*"],
       "#types/*": ["./src/types/*"],
-      "#utils/*": ["./src/utils/*"]
+      "#utils/*": ["./src/utils/*"],
+      "#config/*": ["./src/config/*"],
     },
     "outDir": "../../dist/apps/web",
     "lib": ["es2022", "dom", "dom.iterable"]

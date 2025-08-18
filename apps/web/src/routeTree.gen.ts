@@ -13,17 +13,19 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated/route'
+import { Route as AdminRouteImport } from './routes/admin/route'
+import { Route as publicRouteImport } from './routes/(public)/route'
 import { Route as authRouteImport } from './routes/(auth)/route'
-import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as publicIndexImport } from './routes/(public)/index'
+import { Route as AdminDashboardImport } from './routes/admin/dashboard'
 import { Route as authSignUpImport } from './routes/(auth)/sign-up'
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
 import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordImport } from './routes/(auth)/forgot-password'
-import { Route as AuthenticatedSssIndexImport } from './routes/_authenticated/sss/index'
-import { Route as AuthenticatedLoginIndexImport } from './routes/_authenticated/login/index'
-import { Route as AuthenticatedContactIndexImport } from './routes/_authenticated/contact/index'
-import { Route as AuthenticatedAboutIndexImport } from './routes/_authenticated/about/index'
+import { Route as publicSssIndexImport } from './routes/(public)/sss/index'
+import { Route as publicLoginIndexImport } from './routes/(public)/login/index'
+import { Route as publicContactIndexImport } from './routes/(public)/contact/index'
+import { Route as publicAboutIndexImport } from './routes/(public)/about/index'
 
 // Create Virtual Routes
 
@@ -33,14 +35,10 @@ const errors500LazyImport = createFileRoute('/(errors)/500')()
 const errors404LazyImport = createFileRoute('/(errors)/404')()
 const errors403LazyImport = createFileRoute('/(errors)/403')()
 const errors401LazyImport = createFileRoute('/(errors)/401')()
-const AuthenticatedProductsIndexLazyImport = createFileRoute(
-  '/_authenticated/products/',
-)()
-const AuthenticatedAccountIndexLazyImport = createFileRoute(
-  '/_authenticated/account/',
-)()
-const AuthenticatedProductsProductIdLazyImport = createFileRoute(
-  '/_authenticated/products/$productId',
+const publicProductsIndexLazyImport = createFileRoute('/(public)/products/')()
+const publicAccountIndexLazyImport = createFileRoute('/(public)/account/')()
+const publicProductsProductIdLazyImport = createFileRoute(
+  '/(public)/products/$productId',
 )()
 
 // Create/Update Routes
@@ -51,8 +49,14 @@ const PaymentLazyRoute = PaymentLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/payment.lazy').then((d) => d.Route))
 
-const AuthenticatedRouteRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
+const AdminRouteRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const publicRouteRoute = publicRouteImport.update({
+  id: '/(public)',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -61,10 +65,10 @@ const authRouteRoute = authRouteImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
+const publicIndexRoute = publicIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
 
 const errors503LazyRoute = errors503LazyImport
@@ -107,6 +111,12 @@ const errors401LazyRoute = errors401LazyImport
   } as any)
   .lazy(() => import('./routes/(errors)/401.lazy').then((d) => d.Route))
 
+const AdminDashboardRoute = AdminDashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
 const authSignUpRoute = authSignUpImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -131,57 +141,58 @@ const authForgotPasswordRoute = authForgotPasswordImport.update({
   getParentRoute: () => authRouteRoute,
 } as any)
 
-const AuthenticatedProductsIndexLazyRoute =
-  AuthenticatedProductsIndexLazyImport.update({
+const publicProductsIndexLazyRoute = publicProductsIndexLazyImport
+  .update({
     id: '/products/',
     path: '/products/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any).lazy(() =>
-    import('./routes/_authenticated/products/index.lazy').then((d) => d.Route),
+    getParentRoute: () => publicRouteRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(public)/products/index.lazy').then((d) => d.Route),
   )
 
-const AuthenticatedAccountIndexLazyRoute =
-  AuthenticatedAccountIndexLazyImport.update({
+const publicAccountIndexLazyRoute = publicAccountIndexLazyImport
+  .update({
     id: '/account/',
     path: '/account/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any).lazy(() =>
-    import('./routes/_authenticated/account/index.lazy').then((d) => d.Route),
+    getParentRoute: () => publicRouteRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(public)/account/index.lazy').then((d) => d.Route),
   )
 
-const AuthenticatedSssIndexRoute = AuthenticatedSssIndexImport.update({
+const publicSssIndexRoute = publicSssIndexImport.update({
   id: '/sss/',
   path: '/sss/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
 
-const AuthenticatedLoginIndexRoute = AuthenticatedLoginIndexImport.update({
+const publicLoginIndexRoute = publicLoginIndexImport.update({
   id: '/login/',
   path: '/login/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
 
-const AuthenticatedContactIndexRoute = AuthenticatedContactIndexImport.update({
+const publicContactIndexRoute = publicContactIndexImport.update({
   id: '/contact/',
   path: '/contact/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
 
-const AuthenticatedAboutIndexRoute = AuthenticatedAboutIndexImport.update({
+const publicAboutIndexRoute = publicAboutIndexImport.update({
   id: '/about/',
   path: '/about/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
 
-const AuthenticatedProductsProductIdLazyRoute =
-  AuthenticatedProductsProductIdLazyImport.update({
+const publicProductsProductIdLazyRoute = publicProductsProductIdLazyImport
+  .update({
     id: '/products/$productId',
     path: '/products/$productId',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any).lazy(() =>
-    import('./routes/_authenticated/products/$productId.lazy').then(
-      (d) => d.Route,
-    ),
+    getParentRoute: () => publicRouteRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(public)/products/$productId.lazy').then((d) => d.Route),
   )
 
 // Populate the FileRoutesByPath interface
@@ -195,11 +206,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authRouteImport
       parentRoute: typeof rootRoute
     }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthenticatedRouteImport
+    '/(public)': {
+      id: '/(public)'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof publicRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRoute
     }
     '/payment': {
@@ -237,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignUpImport
       parentRoute: typeof authRouteImport
     }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardImport
+      parentRoute: typeof AdminRouteImport
+    }
     '/(errors)/401': {
       id: '/(errors)/401'
       path: '/401'
@@ -272,61 +297,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof errors503LazyImport
       parentRoute: typeof rootRoute
     }
-    '/_authenticated/': {
-      id: '/_authenticated/'
+    '/(public)/': {
+      id: '/(public)/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof publicIndexImport
+      parentRoute: typeof publicRouteImport
     }
-    '/_authenticated/products/$productId': {
-      id: '/_authenticated/products/$productId'
+    '/(public)/products/$productId': {
+      id: '/(public)/products/$productId'
       path: '/products/$productId'
       fullPath: '/products/$productId'
-      preLoaderRoute: typeof AuthenticatedProductsProductIdLazyImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof publicProductsProductIdLazyImport
+      parentRoute: typeof publicRouteImport
     }
-    '/_authenticated/about/': {
-      id: '/_authenticated/about/'
+    '/(public)/about/': {
+      id: '/(public)/about/'
       path: '/about'
       fullPath: '/about'
-      preLoaderRoute: typeof AuthenticatedAboutIndexImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof publicAboutIndexImport
+      parentRoute: typeof publicRouteImport
     }
-    '/_authenticated/contact/': {
-      id: '/_authenticated/contact/'
+    '/(public)/contact/': {
+      id: '/(public)/contact/'
       path: '/contact'
       fullPath: '/contact'
-      preLoaderRoute: typeof AuthenticatedContactIndexImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof publicContactIndexImport
+      parentRoute: typeof publicRouteImport
     }
-    '/_authenticated/login/': {
-      id: '/_authenticated/login/'
+    '/(public)/login/': {
+      id: '/(public)/login/'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof AuthenticatedLoginIndexImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof publicLoginIndexImport
+      parentRoute: typeof publicRouteImport
     }
-    '/_authenticated/sss/': {
-      id: '/_authenticated/sss/'
+    '/(public)/sss/': {
+      id: '/(public)/sss/'
       path: '/sss'
       fullPath: '/sss'
-      preLoaderRoute: typeof AuthenticatedSssIndexImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof publicSssIndexImport
+      parentRoute: typeof publicRouteImport
     }
-    '/_authenticated/account/': {
-      id: '/_authenticated/account/'
+    '/(public)/account/': {
+      id: '/(public)/account/'
       path: '/account'
       fullPath: '/account'
-      preLoaderRoute: typeof AuthenticatedAccountIndexLazyImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof publicAccountIndexLazyImport
+      parentRoute: typeof publicRouteImport
     }
-    '/_authenticated/products/': {
-      id: '/_authenticated/products/'
+    '/(public)/products/': {
+      id: '/(public)/products/'
       path: '/products'
       fullPath: '/products'
-      preLoaderRoute: typeof AuthenticatedProductsIndexLazyImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof publicProductsIndexLazyImport
+      parentRoute: typeof publicRouteImport
     }
   }
 }
@@ -351,109 +376,127 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
   authRouteRouteChildren,
 )
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedProductsProductIdLazyRoute: typeof AuthenticatedProductsProductIdLazyRoute
-  AuthenticatedAboutIndexRoute: typeof AuthenticatedAboutIndexRoute
-  AuthenticatedContactIndexRoute: typeof AuthenticatedContactIndexRoute
-  AuthenticatedLoginIndexRoute: typeof AuthenticatedLoginIndexRoute
-  AuthenticatedSssIndexRoute: typeof AuthenticatedSssIndexRoute
-  AuthenticatedAccountIndexLazyRoute: typeof AuthenticatedAccountIndexLazyRoute
-  AuthenticatedProductsIndexLazyRoute: typeof AuthenticatedProductsIndexLazyRoute
+interface publicRouteRouteChildren {
+  publicIndexRoute: typeof publicIndexRoute
+  publicProductsProductIdLazyRoute: typeof publicProductsProductIdLazyRoute
+  publicAboutIndexRoute: typeof publicAboutIndexRoute
+  publicContactIndexRoute: typeof publicContactIndexRoute
+  publicLoginIndexRoute: typeof publicLoginIndexRoute
+  publicSssIndexRoute: typeof publicSssIndexRoute
+  publicAccountIndexLazyRoute: typeof publicAccountIndexLazyRoute
+  publicProductsIndexLazyRoute: typeof publicProductsIndexLazyRoute
 }
 
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedProductsProductIdLazyRoute:
-    AuthenticatedProductsProductIdLazyRoute,
-  AuthenticatedAboutIndexRoute: AuthenticatedAboutIndexRoute,
-  AuthenticatedContactIndexRoute: AuthenticatedContactIndexRoute,
-  AuthenticatedLoginIndexRoute: AuthenticatedLoginIndexRoute,
-  AuthenticatedSssIndexRoute: AuthenticatedSssIndexRoute,
-  AuthenticatedAccountIndexLazyRoute: AuthenticatedAccountIndexLazyRoute,
-  AuthenticatedProductsIndexLazyRoute: AuthenticatedProductsIndexLazyRoute,
+const publicRouteRouteChildren: publicRouteRouteChildren = {
+  publicIndexRoute: publicIndexRoute,
+  publicProductsProductIdLazyRoute: publicProductsProductIdLazyRoute,
+  publicAboutIndexRoute: publicAboutIndexRoute,
+  publicContactIndexRoute: publicContactIndexRoute,
+  publicLoginIndexRoute: publicLoginIndexRoute,
+  publicSssIndexRoute: publicSssIndexRoute,
+  publicAccountIndexLazyRoute: publicAccountIndexLazyRoute,
+  publicProductsIndexLazyRoute: publicProductsIndexLazyRoute,
 }
 
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
+  publicRouteRouteChildren,
+)
+
+interface AdminRouteRouteChildren {
+  AdminDashboardRoute: typeof AdminDashboardRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminDashboardRoute: AdminDashboardRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
-  '': typeof AuthenticatedRouteRouteWithChildren
+  '/': typeof publicIndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/payment': typeof PaymentLazyRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/401': typeof errors401LazyRoute
   '/403': typeof errors403LazyRoute
   '/404': typeof errors404LazyRoute
   '/500': typeof errors500LazyRoute
   '/503': typeof errors503LazyRoute
-  '/products/$productId': typeof AuthenticatedProductsProductIdLazyRoute
-  '/about': typeof AuthenticatedAboutIndexRoute
-  '/contact': typeof AuthenticatedContactIndexRoute
-  '/login': typeof AuthenticatedLoginIndexRoute
-  '/sss': typeof AuthenticatedSssIndexRoute
-  '/account': typeof AuthenticatedAccountIndexLazyRoute
-  '/products': typeof AuthenticatedProductsIndexLazyRoute
+  '/products/$productId': typeof publicProductsProductIdLazyRoute
+  '/about': typeof publicAboutIndexRoute
+  '/contact': typeof publicContactIndexRoute
+  '/login': typeof publicLoginIndexRoute
+  '/sss': typeof publicSssIndexRoute
+  '/account': typeof publicAccountIndexLazyRoute
+  '/products': typeof publicProductsIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof AuthenticatedIndexRoute
+  '/': typeof publicIndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/payment': typeof PaymentLazyRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/401': typeof errors401LazyRoute
   '/403': typeof errors403LazyRoute
   '/404': typeof errors404LazyRoute
   '/500': typeof errors500LazyRoute
   '/503': typeof errors503LazyRoute
-  '/products/$productId': typeof AuthenticatedProductsProductIdLazyRoute
-  '/about': typeof AuthenticatedAboutIndexRoute
-  '/contact': typeof AuthenticatedContactIndexRoute
-  '/login': typeof AuthenticatedLoginIndexRoute
-  '/sss': typeof AuthenticatedSssIndexRoute
-  '/account': typeof AuthenticatedAccountIndexLazyRoute
-  '/products': typeof AuthenticatedProductsIndexLazyRoute
+  '/products/$productId': typeof publicProductsProductIdLazyRoute
+  '/about': typeof publicAboutIndexRoute
+  '/contact': typeof publicContactIndexRoute
+  '/login': typeof publicLoginIndexRoute
+  '/sss': typeof publicSssIndexRoute
+  '/account': typeof publicAccountIndexLazyRoute
+  '/products': typeof publicProductsIndexLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/(auth)': typeof authRouteRouteWithChildren
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/(public)': typeof publicRouteRouteWithChildren
+  '/admin': typeof AdminRouteRouteWithChildren
   '/payment': typeof PaymentLazyRoute
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/otp': typeof authOtpRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/(errors)/401': typeof errors401LazyRoute
   '/(errors)/403': typeof errors403LazyRoute
   '/(errors)/404': typeof errors404LazyRoute
   '/(errors)/500': typeof errors500LazyRoute
   '/(errors)/503': typeof errors503LazyRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdLazyRoute
-  '/_authenticated/about/': typeof AuthenticatedAboutIndexRoute
-  '/_authenticated/contact/': typeof AuthenticatedContactIndexRoute
-  '/_authenticated/login/': typeof AuthenticatedLoginIndexRoute
-  '/_authenticated/sss/': typeof AuthenticatedSssIndexRoute
-  '/_authenticated/account/': typeof AuthenticatedAccountIndexLazyRoute
-  '/_authenticated/products/': typeof AuthenticatedProductsIndexLazyRoute
+  '/(public)/': typeof publicIndexRoute
+  '/(public)/products/$productId': typeof publicProductsProductIdLazyRoute
+  '/(public)/about/': typeof publicAboutIndexRoute
+  '/(public)/contact/': typeof publicContactIndexRoute
+  '/(public)/login/': typeof publicLoginIndexRoute
+  '/(public)/sss/': typeof publicSssIndexRoute
+  '/(public)/account/': typeof publicAccountIndexLazyRoute
+  '/(public)/products/': typeof publicProductsIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | ''
+    | '/admin'
     | '/payment'
     | '/forgot-password'
     | '/otp'
     | '/sign-in'
     | '/sign-up'
+    | '/admin/dashboard'
     | '/401'
     | '/403'
     | '/404'
@@ -469,11 +512,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/payment'
     | '/forgot-password'
     | '/otp'
     | '/sign-in'
     | '/sign-up'
+    | '/admin/dashboard'
     | '/401'
     | '/403'
     | '/404'
@@ -489,31 +534,34 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/(auth)'
-    | '/_authenticated'
+    | '/(public)'
+    | '/admin'
     | '/payment'
     | '/(auth)/forgot-password'
     | '/(auth)/otp'
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
+    | '/admin/dashboard'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
-    | '/_authenticated/'
-    | '/_authenticated/products/$productId'
-    | '/_authenticated/about/'
-    | '/_authenticated/contact/'
-    | '/_authenticated/login/'
-    | '/_authenticated/sss/'
-    | '/_authenticated/account/'
-    | '/_authenticated/products/'
+    | '/(public)/'
+    | '/(public)/products/$productId'
+    | '/(public)/about/'
+    | '/(public)/contact/'
+    | '/(public)/login/'
+    | '/(public)/sss/'
+    | '/(public)/account/'
+    | '/(public)/products/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   authRouteRoute: typeof authRouteRouteWithChildren
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  publicRouteRoute: typeof publicRouteRouteWithChildren
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   PaymentLazyRoute: typeof PaymentLazyRoute
   errors401LazyRoute: typeof errors401LazyRoute
   errors403LazyRoute: typeof errors403LazyRoute
@@ -524,7 +572,8 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   authRouteRoute: authRouteRouteWithChildren,
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  publicRouteRoute: publicRouteRouteWithChildren,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   PaymentLazyRoute: PaymentLazyRoute,
   errors401LazyRoute: errors401LazyRoute,
   errors403LazyRoute: errors403LazyRoute,
@@ -544,7 +593,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/(auth)",
-        "/_authenticated",
+        "/(public)",
+        "/admin",
         "/payment",
         "/(errors)/401",
         "/(errors)/403",
@@ -562,17 +612,23 @@ export const routeTree = rootRoute
         "/(auth)/sign-up"
       ]
     },
-    "/_authenticated": {
-      "filePath": "_authenticated/route.tsx",
+    "/(public)": {
+      "filePath": "(public)/route.tsx",
       "children": [
-        "/_authenticated/",
-        "/_authenticated/products/$productId",
-        "/_authenticated/about/",
-        "/_authenticated/contact/",
-        "/_authenticated/login/",
-        "/_authenticated/sss/",
-        "/_authenticated/account/",
-        "/_authenticated/products/"
+        "/(public)/",
+        "/(public)/products/$productId",
+        "/(public)/about/",
+        "/(public)/contact/",
+        "/(public)/login/",
+        "/(public)/sss/",
+        "/(public)/account/",
+        "/(public)/products/"
+      ]
+    },
+    "/admin": {
+      "filePath": "admin/route.tsx",
+      "children": [
+        "/admin/dashboard"
       ]
     },
     "/payment": {
@@ -594,6 +650,10 @@ export const routeTree = rootRoute
       "filePath": "(auth)/sign-up.tsx",
       "parent": "/(auth)"
     },
+    "/admin/dashboard": {
+      "filePath": "admin/dashboard.tsx",
+      "parent": "/admin"
+    },
     "/(errors)/401": {
       "filePath": "(errors)/401.lazy.tsx"
     },
@@ -609,37 +669,37 @@ export const routeTree = rootRoute
     "/(errors)/503": {
       "filePath": "(errors)/503.lazy.tsx"
     },
-    "/_authenticated/": {
-      "filePath": "_authenticated/index.tsx",
-      "parent": "/_authenticated"
+    "/(public)/": {
+      "filePath": "(public)/index.tsx",
+      "parent": "/(public)"
     },
-    "/_authenticated/products/$productId": {
-      "filePath": "_authenticated/products/$productId.lazy.tsx",
-      "parent": "/_authenticated"
+    "/(public)/products/$productId": {
+      "filePath": "(public)/products/$productId.lazy.tsx",
+      "parent": "/(public)"
     },
-    "/_authenticated/about/": {
-      "filePath": "_authenticated/about/index.tsx",
-      "parent": "/_authenticated"
+    "/(public)/about/": {
+      "filePath": "(public)/about/index.tsx",
+      "parent": "/(public)"
     },
-    "/_authenticated/contact/": {
-      "filePath": "_authenticated/contact/index.tsx",
-      "parent": "/_authenticated"
+    "/(public)/contact/": {
+      "filePath": "(public)/contact/index.tsx",
+      "parent": "/(public)"
     },
-    "/_authenticated/login/": {
-      "filePath": "_authenticated/login/index.tsx",
-      "parent": "/_authenticated"
+    "/(public)/login/": {
+      "filePath": "(public)/login/index.tsx",
+      "parent": "/(public)"
     },
-    "/_authenticated/sss/": {
-      "filePath": "_authenticated/sss/index.tsx",
-      "parent": "/_authenticated"
+    "/(public)/sss/": {
+      "filePath": "(public)/sss/index.tsx",
+      "parent": "/(public)"
     },
-    "/_authenticated/account/": {
-      "filePath": "_authenticated/account/index.lazy.tsx",
-      "parent": "/_authenticated"
+    "/(public)/account/": {
+      "filePath": "(public)/account/index.lazy.tsx",
+      "parent": "/(public)"
     },
-    "/_authenticated/products/": {
-      "filePath": "_authenticated/products/index.lazy.tsx",
-      "parent": "/_authenticated"
+    "/(public)/products/": {
+      "filePath": "(public)/products/index.lazy.tsx",
+      "parent": "/(public)"
     }
   }
 }

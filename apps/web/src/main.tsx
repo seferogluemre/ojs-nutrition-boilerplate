@@ -1,5 +1,5 @@
 import { toast } from "#hooks/use-toast";
-import { useAuthStore } from "#stores/authStore";
+import { AuthState, useAuthStore } from "#stores/authStore";
 import { handleServerError } from "#utils/handle-server-error";
 import {
   QueryCache,
@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { AxiosError } from "axios";
-import { StrictMode } from "react";
+import { StrictMode, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { ThemeProvider } from "./context/theme-context";
 import "./index.css";
@@ -77,7 +77,7 @@ const queryClient = new QueryClient({
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: { queryClient },
+  context: { queryClient, auth: useAuthStore.getState() },
   defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
 });
@@ -95,12 +95,32 @@ const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
+    <>
+      <App />
+    </>
+  );
+}
+
+function App() {
+  const auth = useAuthStore();
+
+  useEffect(() => {
+    const unsubscribe = useAuthStore.subscribe(() => {
+      router.invalidate({});
+    })
+
+    return () => {
+      unsubscribe();
+    };
+  }, [])
+
+  return <>
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <RouterProvider router={router} />
+          <RouterProvider router={router} context={{ auth }} />
         </ThemeProvider>
       </QueryClientProvider>
-    </StrictMode>,
-  );
+    </StrictMode>
+  </>
 }
