@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getPaginationRowModel, getSortedRowModel, SortingState, getFilteredRowModel, ColumnFiltersState } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "#/components/ui/table";
-import { Button } from '#/components/ui/button';
-import { Input } from '#/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/ui/avatar';
 import { Badge } from '#/components/ui/badge';
-import { ArrowUpDown, ChevronLeft, ChevronRight, Search, UserPlus } from 'lucide-react';
-import { User } from '#features/admin/users/types/types.js';
+import { Button } from '#/components/ui/button';
+import { Input } from '#/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "#/components/ui/table";
 import { UserActionsPopover } from '#features/admin/users/components/user-actions-popover.js';
+import { User } from '#features/admin/users/types/types.js';
+import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
+import { ArrowUpDown, ChevronLeft, ChevronRight, Search, UserPlus } from 'lucide-react';
+import { useState } from 'react';
 
 interface UsersDataTableProps {
   data: User[];
