@@ -20,7 +20,7 @@ const accountLinks = [
 ];
 
 export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
   const { clearCart } = useCartStore();
   const router = useRouter();
   const queryClient = useQueryClient();

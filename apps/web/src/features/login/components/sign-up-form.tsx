@@ -5,7 +5,7 @@ import { Label } from "#components/ui/label.js";
 import { toast } from "#hooks/use-toast.js";
 import { api } from "#lib/api.js";
 import { useAuthStore } from "#stores/authStore.js";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
 interface SignUpFormProps {
@@ -18,7 +18,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
   const [lastName, setLastName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
 
   const mutation = useMutation({
     mutationFn: async () => {

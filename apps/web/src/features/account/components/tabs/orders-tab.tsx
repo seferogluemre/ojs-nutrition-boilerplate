@@ -9,7 +9,7 @@ import { OrderFromAPI } from "../../types";
 export function OrdersTab() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [highlightOrderNumber, setHighlightOrderNumber] = useState<string | null>(null);
-  const { auth } = useAuthStore();
+  const auth  = useAuthStore();
 
   useEffect(() => {
     const checkUrlParams = () => {

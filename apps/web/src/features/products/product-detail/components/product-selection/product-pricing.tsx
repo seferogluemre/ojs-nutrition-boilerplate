@@ -24,7 +24,7 @@ export function ProductPricing({
   onQuantityIncrease, 
   onQuantityDecrease 
 }: ProductPricingProps) {
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
   const queryClient = useQueryClient();
   
   // Add to cart mutation

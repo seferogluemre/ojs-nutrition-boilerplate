@@ -41,7 +41,7 @@ export const PaymentStep = ({
   const [showContent, setShowContent] = useState(false)
   const [orderNumber, setOrderNumber] = useState("")
 
-  const { auth } = useAuthStore()
+  const auth = useAuthStore()
   const router = useRouter()
 
   // Success ekranı animasyonu için

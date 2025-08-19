@@ -11,7 +11,7 @@ interface ProductCommentFormProps {
 }
 
 export function ProductCommentForm({ productId, productName, onSuccess, onCancel }: ProductCommentFormProps) {
-  const { auth } = useAuthStore();
+  const  auth  = useAuthStore();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: "",

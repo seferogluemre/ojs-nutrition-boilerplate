@@ -1,6 +1,6 @@
 import { toast } from "#hooks/use-toast";
 import { api } from "#lib/api";
-import { useAuthStore } from "#stores/authStore";
+import { useAuthStore } from "#stores/authStore.js";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -9,7 +9,7 @@ interface AccountInfoTabProps {
 }
 
 export function AccountInfoTab({ user }: AccountInfoTabProps) {
-  const { auth } = useAuthStore();
+  const  auth = useAuthStore();
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",

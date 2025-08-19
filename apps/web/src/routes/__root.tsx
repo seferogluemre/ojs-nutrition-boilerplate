@@ -15,7 +15,7 @@ export const Route = createRootRouteWithContext<{
   auth: AuthState;
 }>()({
   component: () => {
-    const { auth } = useAuthStore();
+    const auth = useAuthStore();
     const { setItems, clearCart } = useCartStore();
 
     const { data: authData } = useQuery({
@@ -25,12 +25,12 @@ export const Route = createRootRouteWithContext<{
 
         const response = await api.auth.me.get({
           headers: {
-            authorization: `Bearer ${auth.accessToken}`,
+            authorization: `Bearer ${auth?.accessToken}`,
           },
         });
         return response.data;
       },
-      enabled: !!auth.accessToken,
+      enabled: !!auth?.accessToken,
       retry: false,
     });
 
@@ -41,12 +41,12 @@ export const Route = createRootRouteWithContext<{
 
         const response = await api["cart-items"].get({
           headers: {
-            authorization: `Bearer ${auth.accessToken}`,
+            authorization: `Bearer ${auth?.accessToken}`,
           },
         });
         return response.data;
       },
-      enabled: !!auth.accessToken,
+      enabled: !!auth?.accessToken,
     });
     
     useEffect(() => {

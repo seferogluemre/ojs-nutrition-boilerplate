@@ -13,7 +13,7 @@ interface OrderDetailProps {
 }
 
 export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
-  const { auth } = useAuthStore();
+  const  auth  = useAuthStore();
 
   const {
     data: orderData,

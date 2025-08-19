@@ -1,5 +1,5 @@
 import { Address } from "#/features/account/addresses/address-card"
-import { useAuthStore } from "#stores/authStore"
+import { useAuthStore } from "#stores/authStore.js"
 import { useState } from "react"
 import { AddressStep } from "./components/address/address-step"
 import { OrderSummary } from "./components/order-summary"
@@ -8,7 +8,7 @@ import { ShippingStep } from "./components/shipping-step"
 import { StepIndicator } from "./components/step-indicator"
 
 export default function PaymentPage() {
-  const { auth } = useAuthStore()
+  const  auth  = useAuthStore()
   const [currentStep, setCurrentStep] = useState(1)
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
   const [shippingCost, setShippingCost] = useState(0)

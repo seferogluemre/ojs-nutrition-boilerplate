@@ -14,7 +14,7 @@ interface CartSidebarProps {
 }
 
 export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();  
   const { 
     items: cartItems, 
     setItems, 

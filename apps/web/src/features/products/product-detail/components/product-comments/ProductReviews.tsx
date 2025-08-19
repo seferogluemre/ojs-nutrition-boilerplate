@@ -48,7 +48,7 @@ export function ProductReviews({ productId }: { productId: string }) {
     canReview: false,
   });
   const [activeTab, setActiveTab] = useState<string>("all");
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
   const router = useRouter();
 
   const { data, refetch } = useQuery({

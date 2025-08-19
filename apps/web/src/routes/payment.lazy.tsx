@@ -9,7 +9,7 @@ export const Route = createLazyFileRoute('/payment')({
 
 function RouteComponent() {
   const navigate = useNavigate()
-  const { auth } = useAuthStore()
+  const auth = useAuthStore()
 
   useEffect(() => {
     if (!auth.accessToken || !auth.user) {

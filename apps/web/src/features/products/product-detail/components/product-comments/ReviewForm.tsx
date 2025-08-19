@@ -29,7 +29,7 @@ export function ReviewForm({ productId, onSuccess, onCancel }: ReviewFormProps) 
     images: [],
   });
 
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 

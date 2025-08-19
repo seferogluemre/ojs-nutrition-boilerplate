@@ -12,7 +12,7 @@ export default function SignInForm() {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
   const router = useRouter();
 
   const mutation = useMutation({

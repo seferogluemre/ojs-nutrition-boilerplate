@@ -21,9 +21,9 @@ interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
 export const Header = ({ className, fixed, ...props }: HeaderProps) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
-  const { auth } = useAuthStore();
+  const auth = useAuthStore();
   const { items, clearCart } = useCartStore();
-  const router = useRouter();
+  const router = useRouter(); 
   const queryClient = useQueryClient();
 
   // Search state

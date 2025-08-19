@@ -11,7 +11,7 @@ interface ProductCommentModalProps {
 }
 
 export function ProductCommentModal({ isOpen, onClose, productId, productName }: ProductCommentModalProps) {
-  const { auth } = useAuthStore();
+  const  auth  = useAuthStore();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: "",

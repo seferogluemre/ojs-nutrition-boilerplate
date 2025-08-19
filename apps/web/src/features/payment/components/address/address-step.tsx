@@ -20,7 +20,7 @@ interface AddressStepProps {
 export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: AddressStepProps) => {
   const [showForm, setShowForm] = useState(false)
   const [editingAddress, setEditingAddress] = useState<Address | null>(null)
-  const { auth } = useAuthStore()
+  const auth = useAuthStore()
 
   // Kullanıcı adreslerini API'den çek
   const { data: addressesData, isLoading, error } = useQuery({
