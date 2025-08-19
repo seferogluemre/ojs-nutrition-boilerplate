@@ -43,7 +43,6 @@ const app = new Elysia({
   .guard(authSwagger, (app) =>
     app
       .use(auth())
-      
       .get(
         '', // index
         async ({ query }) => {

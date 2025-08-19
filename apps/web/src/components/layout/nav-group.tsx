@@ -14,7 +14,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "#components/ui/sidebar";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { ReactNode } from "react";
 import { Badge } from "../ui/badge";
@@ -83,6 +83,7 @@ const SidebarMenuCollapsible = ({
   item: NavCollapsible;
   href: string;
 }) => {
+  const navigate=useNavigate();
   const { setOpenMobile } = useSidebar();
   return (
     <Collapsible
@@ -96,7 +97,14 @@ const SidebarMenuCollapsible = ({
             {item.icon && <item.icon />}
             <span>{item.title}</span>
             {item.badge && <NavBadge>{item.badge}</NavBadge>}
-            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+            <ChevronRight
+              onClick={() => {
+                if (item.url) {
+                  navigate({ to: item.url });
+                }
+              }}
+              className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+            />
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent className="CollapsibleContent">
