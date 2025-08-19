@@ -3,6 +3,7 @@ import {
   IconBrowserCheck,
   IconBug,
   IconChecklist,
+  IconColorSwatch,
   IconError404,
   IconHelp,
   IconLayoutDashboard,
@@ -10,10 +11,13 @@ import {
   IconLockAccess,
   IconMessages,
   IconNotification,
+  IconPackage,
   IconPackages,
   IconPalette,
+  IconReceipt2,
   IconServerOff,
   IconSettings,
+  IconTags,
   IconTool,
   IconUserCog,
   IconUserOff,
@@ -51,29 +55,52 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: "Dashboard",
-          url: "/",
+          url: "/admin/dashboard",
           icon: IconLayoutDashboard,
         },
         {
-          title: "Tasks",
-          url: "/tasks",
-          icon: IconChecklist,
-        },
-        {
-          title: "Apps",
-          url: "/apps",
-          icon: IconPackages,
-        },
-        {
-          title: "Chats",
-          url: "/chats",
-          badge: "3",
-          icon: IconMessages,
+          title: "Categories",
+          url: "/admin/categories",
+          icon: IconTags,
         },
         {
           title: "Users",
-          url: "/users",
+          url: "/admin/users",
           icon: IconUsers,
+        },
+        {
+          title: "Orders",
+          url: "/admin/orders",
+          icon: IconReceipt2,
+        },
+        {
+          title: "Parcels",
+          url: "/admin/parcels",
+          icon: IconPackage,
+          items: [
+            {
+              title: "Parcel Events",
+              url: "/admin/parcels/parcel-events",
+              icon: IconPackage,
+            }
+          ]
+        },
+        {
+          title: "Products",
+          url: "/admin/products",
+          icon: IconPackage,
+          items: [
+            {
+              title: "Product Comments",
+              url: "/admin/products/product-comments",
+              icon: IconMessages,
+            },
+            {
+              title: "Product Variants",
+              url: "/admin/products/product-variants",
+              icon: IconColorSwatch,
+            }
+          ]
         },
       ],
     },
@@ -84,57 +111,22 @@ export const sidebarData: SidebarData = {
           title: "Auth",
           icon: IconLockAccess,
           items: [
-            {
-              title: "Sign In",
-              url: "/sign-in",
-            },
-            {
-              title: "Sign In (2 Col)",
-              url: "/sign-in-2",
-            },
-            {
-              title: "Sign Up",
-              url: "/sign-up",
-            },
-            {
-              title: "Forgot Password",
-              url: "/forgot-password",
-            },
-            {
-              title: "OTP",
-              url: "/otp",
-            },
+            { title: "Sign In", url: "/sign-in" },
+            { title: "Sign In (2 Col)", url: "/sign-in-2" },
+            { title: "Sign Up", url: "/sign-up" },
+            { title: "Forgot Password", url: "/forgot-password" },
+            { title: "OTP", url: "/otp" },
           ],
         },
         {
           title: "Errors",
           icon: IconBug,
           items: [
-            {
-              title: "Unauthorized",
-              url: "/401",
-              icon: IconLock,
-            },
-            {
-              title: "Forbidden",
-              url: "/403",
-              icon: IconUserOff,
-            },
-            {
-              title: "Not Found",
-              url: "/404",
-              icon: IconError404,
-            },
-            {
-              title: "Internal Server Error",
-              url: "/500",
-              icon: IconServerOff,
-            },
-            {
-              title: "Maintenance Error",
-              url: "/503",
-              icon: IconBarrierBlock,
-            },
+            { title: "Unauthorized", url: "/401", icon: IconLock },
+            { title: "Forbidden", url: "/403", icon: IconUserOff },
+            { title: "Not Found", url: "/404", icon: IconError404 },
+            { title: "Internal Server Error", url: "/500", icon: IconServerOff },
+            { title: "Maintenance Error", url: "/503", icon: IconBarrierBlock },
           ],
         },
       ],
@@ -146,31 +138,11 @@ export const sidebarData: SidebarData = {
           title: "Settings",
           icon: IconSettings,
           items: [
-            {
-              title: "Profile",
-              url: "/settings",
-              icon: IconUserCog,
-            },
-            {
-              title: "Account",
-              url: "/settings/account",
-              icon: IconTool,
-            },
-            {
-              title: "Appearance",
-              url: "/settings/appearance",
-              icon: IconPalette,
-            },
-            {
-              title: "Notifications",
-              url: "/settings/notifications",
-              icon: IconNotification,
-            },
-            {
-              title: "Display",
-              url: "/settings/display",
-              icon: IconBrowserCheck,
-            },
+            { title: "Profile", url: "/settings", icon: IconUserCog },
+            { title: "Account", url: "/settings/account", icon: IconTool },
+            { title: "Appearance", url: "/settings/appearance", icon: IconPalette },
+            { title: "Notifications", url: "/settings/notifications", icon: IconNotification },
+            { title: "Display", url: "/settings/display", icon: IconBrowserCheck },
           ],
         },
         {
