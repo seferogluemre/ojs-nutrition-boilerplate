@@ -254,6 +254,7 @@ export const OrdersDataTable = ({
     },
   ];
 
+  
   const table = useReactTable({
     data,
     columns,

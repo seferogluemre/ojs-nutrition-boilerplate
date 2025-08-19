@@ -7,29 +7,30 @@ import { Input } from "#components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "#components/ui/table"
 import { EditParcelModal } from "#features/admin/parcels/components/edit-parcel-modal.js"
 import { ParcelStatusBadge } from "#features/admin/parcels/components/parcel-status-badge.js"
+import { useRouter } from "@tanstack/react-router"
 import {
-    type ColumnDef,
-    type ColumnFiltersState,
-    type SortingState,
-    type VisibilityState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table"
 import {
-    Calendar,
-    ChevronLeft,
-    ChevronRight,
-    Edit,
-    Eye,
-    MoreHorizontal,
-    Package,
-    Search,
-    Trash2,
-    User,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  Package,
+  Search,
+  Trash2,
+  User,
 } from "lucide-react"
 import { useState } from "react"
 import type { Parcel } from "../types/parcel-types"
@@ -43,6 +44,7 @@ export function ParcelsDataTable({ data }: ParcelsDataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
+  const router =useRouter();
 
   // Modal states
   const [editModalOpen, setEditModalOpen] = useState(false)
@@ -60,7 +62,7 @@ export function ParcelsDataTable({ data }: ParcelsDataTableProps) {
   }
 
   const handleView = (parcel: Parcel) => {
-    console.log("Viewing parcel:", parcel)
+    router.navigate({ to: `/admin/parcels/${parcel.uuid}` })
   }
 
   const handleSaveParcel = (updatedParcel: Parcel) => {

@@ -2,7 +2,6 @@ import {
   IconBarrierBlock,
   IconBrowserCheck,
   IconBug,
-  IconChecklist,
   IconColorSwatch,
   IconError404,
   IconHelp,
@@ -12,7 +11,6 @@ import {
   IconMessages,
   IconNotification,
   IconPackage,
-  IconPackages,
   IconPalette,
   IconReceipt2,
   IconServerOff,
@@ -21,7 +19,7 @@ import {
   IconTool,
   IconUserCog,
   IconUserOff,
-  IconUsers,
+  IconUsers
 } from "@tabler/icons-react";
 import { AudioWaveform, Command, GalleryVerticalEnd } from "lucide-react";
 import { type SidebarData } from "../types";
@@ -77,13 +75,6 @@ export const sidebarData: SidebarData = {
           title: "Parcels",
           url: "/admin/parcels",
           icon: IconPackage,
-          items: [
-            {
-              title: "Parcel Events",
-              url: "/admin/parcels/parcel-events",
-              icon: IconPackage,
-            }
-          ]
         },
         {
           title: "Products",

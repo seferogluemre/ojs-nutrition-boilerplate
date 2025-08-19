@@ -31,9 +31,9 @@ import { Route as publicSssIndexImport } from './routes/(public)/sss/index'
 import { Route as publicLoginIndexImport } from './routes/(public)/login/index'
 import { Route as publicContactIndexImport } from './routes/(public)/contact/index'
 import { Route as publicAboutIndexImport } from './routes/(public)/about/index'
+import { Route as AdminParcelsParcelIdImport } from './routes/admin/parcels/$parcelId'
 import { Route as AdminProductsProductVariantsIndexImport } from './routes/admin/products/product-variants/index'
 import { Route as AdminProductsProductCommentsIndexImport } from './routes/admin/products/product-comments/index'
-import { Route as AdminParcelsParcelEventsIndexImport } from './routes/admin/parcels/parcel-events/index'
 
 // Create Virtual Routes
 
@@ -233,6 +233,12 @@ const publicProductsProductIdLazyRoute = publicProductsProductIdLazyImport
     import('./routes/(public)/products/$productId.lazy').then((d) => d.Route),
   )
 
+const AdminParcelsParcelIdRoute = AdminParcelsParcelIdImport.update({
+  id: '/parcels/$parcelId',
+  path: '/parcels/$parcelId',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+
 const AdminProductsProductVariantsIndexRoute =
   AdminProductsProductVariantsIndexImport.update({
     id: '/products/product-variants/',
@@ -244,13 +250,6 @@ const AdminProductsProductCommentsIndexRoute =
   AdminProductsProductCommentsIndexImport.update({
     id: '/products/product-comments/',
     path: '/products/product-comments/',
-    getParentRoute: () => AdminRouteRoute,
-  } as any)
-
-const AdminParcelsParcelEventsIndexRoute =
-  AdminParcelsParcelEventsIndexImport.update({
-    id: '/parcels/parcel-events/',
-    path: '/parcels/parcel-events/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
 
@@ -356,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicIndexImport
       parentRoute: typeof publicRouteImport
     }
+    '/admin/parcels/$parcelId': {
+      id: '/admin/parcels/$parcelId'
+      path: '/parcels/$parcelId'
+      fullPath: '/admin/parcels/$parcelId'
+      preLoaderRoute: typeof AdminParcelsParcelIdImport
+      parentRoute: typeof AdminRouteImport
+    }
     '/(public)/products/$productId': {
       id: '/(public)/products/$productId'
       path: '/products/$productId'
@@ -447,13 +453,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicProductsIndexLazyImport
       parentRoute: typeof publicRouteImport
     }
-    '/admin/parcels/parcel-events/': {
-      id: '/admin/parcels/parcel-events/'
-      path: '/parcels/parcel-events'
-      fullPath: '/admin/parcels/parcel-events'
-      preLoaderRoute: typeof AdminParcelsParcelEventsIndexImport
-      parentRoute: typeof AdminRouteImport
-    }
     '/admin/products/product-comments/': {
       id: '/admin/products/product-comments/'
       path: '/products/product-comments'
@@ -518,25 +517,25 @@ const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
 )
 
 interface AdminRouteRouteChildren {
+  AdminParcelsParcelIdRoute: typeof AdminParcelsParcelIdRoute
   AdminCategoriesIndexRoute: typeof AdminCategoriesIndexRoute
   AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
   AdminOrdersIndexRoute: typeof AdminOrdersIndexRoute
   AdminParcelsIndexRoute: typeof AdminParcelsIndexRoute
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
-  AdminParcelsParcelEventsIndexRoute: typeof AdminParcelsParcelEventsIndexRoute
   AdminProductsProductCommentsIndexRoute: typeof AdminProductsProductCommentsIndexRoute
   AdminProductsProductVariantsIndexRoute: typeof AdminProductsProductVariantsIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminParcelsParcelIdRoute: AdminParcelsParcelIdRoute,
   AdminCategoriesIndexRoute: AdminCategoriesIndexRoute,
   AdminDashboardIndexRoute: AdminDashboardIndexRoute,
   AdminOrdersIndexRoute: AdminOrdersIndexRoute,
   AdminParcelsIndexRoute: AdminParcelsIndexRoute,
   AdminProductsIndexRoute: AdminProductsIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
-  AdminParcelsParcelEventsIndexRoute: AdminParcelsParcelEventsIndexRoute,
   AdminProductsProductCommentsIndexRoute:
     AdminProductsProductCommentsIndexRoute,
   AdminProductsProductVariantsIndexRoute:
@@ -560,6 +559,7 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404LazyRoute
   '/500': typeof errors500LazyRoute
   '/503': typeof errors503LazyRoute
+  '/admin/parcels/$parcelId': typeof AdminParcelsParcelIdRoute
   '/products/$productId': typeof publicProductsProductIdLazyRoute
   '/about': typeof publicAboutIndexRoute
   '/contact': typeof publicContactIndexRoute
@@ -573,7 +573,6 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersIndexRoute
   '/account': typeof publicAccountIndexLazyRoute
   '/products': typeof publicProductsIndexLazyRoute
-  '/admin/parcels/parcel-events': typeof AdminParcelsParcelEventsIndexRoute
   '/admin/products/product-comments': typeof AdminProductsProductCommentsIndexRoute
   '/admin/products/product-variants': typeof AdminProductsProductVariantsIndexRoute
 }
@@ -591,6 +590,7 @@ export interface FileRoutesByTo {
   '/404': typeof errors404LazyRoute
   '/500': typeof errors500LazyRoute
   '/503': typeof errors503LazyRoute
+  '/admin/parcels/$parcelId': typeof AdminParcelsParcelIdRoute
   '/products/$productId': typeof publicProductsProductIdLazyRoute
   '/about': typeof publicAboutIndexRoute
   '/contact': typeof publicContactIndexRoute
@@ -604,7 +604,6 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersIndexRoute
   '/account': typeof publicAccountIndexLazyRoute
   '/products': typeof publicProductsIndexLazyRoute
-  '/admin/parcels/parcel-events': typeof AdminParcelsParcelEventsIndexRoute
   '/admin/products/product-comments': typeof AdminProductsProductCommentsIndexRoute
   '/admin/products/product-variants': typeof AdminProductsProductVariantsIndexRoute
 }
@@ -625,6 +624,7 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500LazyRoute
   '/(errors)/503': typeof errors503LazyRoute
   '/(public)/': typeof publicIndexRoute
+  '/admin/parcels/$parcelId': typeof AdminParcelsParcelIdRoute
   '/(public)/products/$productId': typeof publicProductsProductIdLazyRoute
   '/(public)/about/': typeof publicAboutIndexRoute
   '/(public)/contact/': typeof publicContactIndexRoute
@@ -638,7 +638,6 @@ export interface FileRoutesById {
   '/admin/users/': typeof AdminUsersIndexRoute
   '/(public)/account/': typeof publicAccountIndexLazyRoute
   '/(public)/products/': typeof publicProductsIndexLazyRoute
-  '/admin/parcels/parcel-events/': typeof AdminParcelsParcelEventsIndexRoute
   '/admin/products/product-comments/': typeof AdminProductsProductCommentsIndexRoute
   '/admin/products/product-variants/': typeof AdminProductsProductVariantsIndexRoute
 }
@@ -658,6 +657,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/admin/parcels/$parcelId'
     | '/products/$productId'
     | '/about'
     | '/contact'
@@ -671,7 +671,6 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/account'
     | '/products'
-    | '/admin/parcels/parcel-events'
     | '/admin/products/product-comments'
     | '/admin/products/product-variants'
   fileRoutesByTo: FileRoutesByTo
@@ -688,6 +687,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/admin/parcels/$parcelId'
     | '/products/$productId'
     | '/about'
     | '/contact'
@@ -701,7 +701,6 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/account'
     | '/products'
-    | '/admin/parcels/parcel-events'
     | '/admin/products/product-comments'
     | '/admin/products/product-variants'
   id:
@@ -720,6 +719,7 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/(public)/'
+    | '/admin/parcels/$parcelId'
     | '/(public)/products/$productId'
     | '/(public)/about/'
     | '/(public)/contact/'
@@ -733,7 +733,6 @@ export interface FileRouteTypes {
     | '/admin/users/'
     | '/(public)/account/'
     | '/(public)/products/'
-    | '/admin/parcels/parcel-events/'
     | '/admin/products/product-comments/'
     | '/admin/products/product-variants/'
   fileRoutesById: FileRoutesById
@@ -809,13 +808,13 @@ export const routeTree = rootRoute
     "/admin": {
       "filePath": "admin/route.tsx",
       "children": [
+        "/admin/parcels/$parcelId",
         "/admin/categories/",
         "/admin/dashboard/",
         "/admin/orders/",
         "/admin/parcels/",
         "/admin/products/",
         "/admin/users/",
-        "/admin/parcels/parcel-events/",
         "/admin/products/product-comments/",
         "/admin/products/product-variants/"
       ]
@@ -857,6 +856,10 @@ export const routeTree = rootRoute
     "/(public)/": {
       "filePath": "(public)/index.tsx",
       "parent": "/(public)"
+    },
+    "/admin/parcels/$parcelId": {
+      "filePath": "admin/parcels/$parcelId.tsx",
+      "parent": "/admin"
     },
     "/(public)/products/$productId": {
       "filePath": "(public)/products/$productId.lazy.tsx",
@@ -909,10 +912,6 @@ export const routeTree = rootRoute
     "/(public)/products/": {
       "filePath": "(public)/products/index.lazy.tsx",
       "parent": "/(public)"
-    },
-    "/admin/parcels/parcel-events/": {
-      "filePath": "admin/parcels/parcel-events/index.tsx",
-      "parent": "/admin"
     },
     "/admin/products/product-comments/": {
       "filePath": "admin/products/product-comments/index.tsx",

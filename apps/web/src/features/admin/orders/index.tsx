@@ -6,7 +6,7 @@ import { Button } from "#components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "#components/ui/card"
 import { EditOrderModal } from "#features/admin/orders/components/edit-order-modal"
 import { OrderFilters } from "#features/admin/orders/components/orders-filter"
-import { CheckCircle, Clock, Package, Plus, ShoppingBag, TrendingUp } from "lucide-react"
+import { CheckCircle, Clock, Package, Plus, TrendingUp } from "lucide-react"
 import { useMemo, useState } from "react"
 import { mockOrders } from "./data/data"
 import type { Order, OrderFilters as OrderFiltersType } from "./types/types"
@@ -104,7 +104,6 @@ export  function Orders() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <ShoppingBag className="h-8 w-8 text-primary" />
             Siparişler
           </h1>
           <p className="text-muted-foreground mt-1">E-ticaret siparişlerinizi yönetin ve takip edin</p>
@@ -115,7 +114,6 @@ export  function Orders() {
         </Button>
       </div>
 
-      {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

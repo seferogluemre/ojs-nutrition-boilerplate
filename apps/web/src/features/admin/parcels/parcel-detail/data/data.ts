@@ -1,0 +1,70 @@
+import type { ParcelDetail } from "../types/parcel-types"
+
+export const mockParcelDetail: ParcelDetail = {
+  uuid: "7e4f2b60-7d3d-40d6-82ef-33ea98b8e0f5",
+  trackingNumber: "OJS54565236BJP3",
+  status: "IN_TRANSIT",
+  orderId: "abdc3e1d-4387-4fa6-ac2a-e02080d16fbc",
+  courier: {
+    id: "c7376ada-60e9-4d67-b184-b64ae9c9716b",
+    firstName: "Ahmet",
+    lastName: "Mehmetoglu",
+  },
+  estimatedDelivery: "2025-08-20T18:16:05.233Z",
+  createdAt: "2025-08-17T18:16:05.253Z",
+  weight: 2.5,
+  dimensions: {
+    length: 30,
+    width: 20,
+    height: 15,
+  },
+  shippingAddress: {
+    fullName: "Mehmet Yılmaz",
+    phone: "+90 532 123 45 67",
+    address: "Atatürk Mahallesi, Cumhuriyet Caddesi No: 123/5",
+    city: "İstanbul",
+    district: "Kadıköy",
+    postalCode: "34710",
+  },
+  route: {
+    fromCity: "Ankara",
+    toCity: "İstanbul",
+    distance: 450,
+    estimatedDuration: 8,
+  },
+  actualDelivery: undefined,
+  events: [
+    {
+      id: "1",
+      type: "CREATED",
+      description: "Kargo oluşturuldu",
+      location: "Ankara Depo",
+      timestamp: "2025-08-17T18:16:05.253Z",
+      createdBy: "Sistem",
+    },
+    {
+      id: "2",
+      type: "PICKED_UP",
+      description: "Kargo kurye tarafından alındı",
+      location: "Ankara Depo",
+      timestamp: "2025-08-18T09:30:00.000Z",
+      createdBy: "Ahmet Mehmetoglu",
+    },
+    {
+      id: "3",
+      type: "IN_TRANSIT",
+      description: "Kargo yolda",
+      location: "Ankara - İstanbul Yolu",
+      timestamp: "2025-08-18T14:45:00.000Z",
+      createdBy: "Ahmet Mehmetoglu",
+    },
+    {
+      id: "4",
+      type: "ARRIVED_AT_HUB",
+      description: "İstanbul dağıtım merkezine ulaştı",
+      location: "İstanbul Dağıtım Merkezi",
+      timestamp: "2025-08-19T08:15:00.000Z",
+      createdBy: "Sistem",
+    },
+  ],
+}
