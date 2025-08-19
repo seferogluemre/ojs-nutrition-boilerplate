@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 const ACCESS_TOKEN_KEY = "access_token";
 
@@ -14,45 +15,31 @@ interface AuthUser {
   updatedAt: string;
 }
 
-
-export interface AuthState {
-  auth: {
-    user: AuthUser | null;
-    setUser: (user: AuthUser | null) => void;
-    accessToken: string;
-    setAccessToken: (accessToken: string) => void;
-    resetAccessToken: () => void;
-    reset: () => void;
-  };  
+interface AuthSlice {
+  user: AuthUser | null;
+  accessToken: string;
+  setUser: (user: AuthUser | null) => void;
+  setAccessToken: (accessToken: string) => void;
+  resetAccessToken: () => void;
+  reset: () => void;
 }
 
-export const useAuthStore = create<AuthState>()((set) => {
-  const initToken = localStorage.getItem(ACCESS_TOKEN_KEY) || "";
-  // TODO ! persist kullan
-  return {
-    auth: {
+export const useAuthStore = create<AuthSlice>()(
+  persist(
+    (set) => ({
       user: null,
-      setUser: (user) =>
-        set((state) => ({ ...state, auth: { ...state.auth, user } })),
-      accessToken: initToken,
-      setAccessToken: (accessToken) =>
-        set((state) => {
-          localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-          return { ...state, auth: { ...state.auth, accessToken } };
-        }),
-      resetAccessToken: () =>
-        set((state) => {
-          localStorage.removeItem(ACCESS_TOKEN_KEY);
-          return { ...state, auth: { ...state.auth, accessToken: "" } };
-        }),
-      reset: () =>
-        set((state) => {
-          localStorage.removeItem(ACCESS_TOKEN_KEY);
-          return {
-            ...state,
-            auth: { ...state.auth, user: null, accessToken: "" },
-          };
-        }),
-    },
-  };
-});
+      accessToken: "",
+      setUser: (user) => set(() => ({ user })),
+      setAccessToken: (accessToken) => set(() => ({ accessToken })),
+      resetAccessToken: () => set(() => ({ accessToken: "" })),
+      reset: () => set(() => ({ user: null, accessToken: "" })),
+    }),
+    {
+      name: ACCESS_TOKEN_KEY,
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        user: state.user,
+      }),
+    }
+  )
+);
