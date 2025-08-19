@@ -19,7 +19,7 @@ import {
 } from "./components";
 
 export default function ProductDetail() {
-  const { productId } = useParams({ from: "/_authenticated/products/$productId" });
+  const { productId } = useParams({ from: "/(public)/products/$productId" });
   const { addToRecentlyViewed } = useRecentlyViewed();
 
   const { data } = useQuery({
