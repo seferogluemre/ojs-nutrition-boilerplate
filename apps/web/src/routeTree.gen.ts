@@ -17,11 +17,11 @@ import { Route as AdminRouteImport } from './routes/admin/route'
 import { Route as publicRouteImport } from './routes/(public)/route'
 import { Route as authRouteImport } from './routes/(auth)/route'
 import { Route as publicIndexImport } from './routes/(public)/index'
-import { Route as AdminDashboardImport } from './routes/admin/dashboard'
 import { Route as authSignUpImport } from './routes/(auth)/sign-up'
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
 import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordImport } from './routes/(auth)/forgot-password'
+import { Route as AdminDashboardIndexImport } from './routes/admin/dashboard/index'
 import { Route as publicSssIndexImport } from './routes/(public)/sss/index'
 import { Route as publicLoginIndexImport } from './routes/(public)/login/index'
 import { Route as publicContactIndexImport } from './routes/(public)/contact/index'
@@ -111,12 +111,6 @@ const errors401LazyRoute = errors401LazyImport
   } as any)
   .lazy(() => import('./routes/(errors)/401.lazy').then((d) => d.Route))
 
-const AdminDashboardRoute = AdminDashboardImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AdminRouteRoute,
-} as any)
-
 const authSignUpRoute = authSignUpImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -160,6 +154,12 @@ const publicAccountIndexLazyRoute = publicAccountIndexLazyImport
   .lazy(() =>
     import('./routes/(public)/account/index.lazy').then((d) => d.Route),
   )
+
+const AdminDashboardIndexRoute = AdminDashboardIndexImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 const publicSssIndexRoute = publicSssIndexImport.update({
   id: '/sss/',
@@ -255,13 +255,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignUpImport
       parentRoute: typeof authRouteImport
     }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AdminDashboardImport
-      parentRoute: typeof AdminRouteImport
-    }
     '/(errors)/401': {
       id: '/(errors)/401'
       path: '/401'
@@ -339,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicSssIndexImport
       parentRoute: typeof publicRouteImport
     }
+    '/admin/dashboard/': {
+      id: '/admin/dashboard/'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardIndexImport
+      parentRoute: typeof AdminRouteImport
+    }
     '/(public)/account/': {
       id: '/(public)/account/'
       path: '/account'
@@ -403,11 +403,11 @@ const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
 )
 
 interface AdminRouteRouteChildren {
-  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
-  AdminDashboardRoute: AdminDashboardRoute,
+  AdminDashboardIndexRoute: AdminDashboardIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
@@ -422,7 +422,6 @@ export interface FileRoutesByFullPath {
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
   '/401': typeof errors401LazyRoute
   '/403': typeof errors403LazyRoute
   '/404': typeof errors404LazyRoute
@@ -433,6 +432,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof publicContactIndexRoute
   '/login': typeof publicLoginIndexRoute
   '/sss': typeof publicSssIndexRoute
+  '/admin/dashboard': typeof AdminDashboardIndexRoute
   '/account': typeof publicAccountIndexLazyRoute
   '/products': typeof publicProductsIndexLazyRoute
 }
@@ -445,7 +445,6 @@ export interface FileRoutesByTo {
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
   '/401': typeof errors401LazyRoute
   '/403': typeof errors403LazyRoute
   '/404': typeof errors404LazyRoute
@@ -456,6 +455,7 @@ export interface FileRoutesByTo {
   '/contact': typeof publicContactIndexRoute
   '/login': typeof publicLoginIndexRoute
   '/sss': typeof publicSssIndexRoute
+  '/admin/dashboard': typeof AdminDashboardIndexRoute
   '/account': typeof publicAccountIndexLazyRoute
   '/products': typeof publicProductsIndexLazyRoute
 }
@@ -470,7 +470,6 @@ export interface FileRoutesById {
   '/(auth)/otp': typeof authOtpRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
   '/(errors)/401': typeof errors401LazyRoute
   '/(errors)/403': typeof errors403LazyRoute
   '/(errors)/404': typeof errors404LazyRoute
@@ -482,6 +481,7 @@ export interface FileRoutesById {
   '/(public)/contact/': typeof publicContactIndexRoute
   '/(public)/login/': typeof publicLoginIndexRoute
   '/(public)/sss/': typeof publicSssIndexRoute
+  '/admin/dashboard/': typeof AdminDashboardIndexRoute
   '/(public)/account/': typeof publicAccountIndexLazyRoute
   '/(public)/products/': typeof publicProductsIndexLazyRoute
 }
@@ -496,7 +496,6 @@ export interface FileRouteTypes {
     | '/otp'
     | '/sign-in'
     | '/sign-up'
-    | '/admin/dashboard'
     | '/401'
     | '/403'
     | '/404'
@@ -507,6 +506,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/login'
     | '/sss'
+    | '/admin/dashboard'
     | '/account'
     | '/products'
   fileRoutesByTo: FileRoutesByTo
@@ -518,7 +518,6 @@ export interface FileRouteTypes {
     | '/otp'
     | '/sign-in'
     | '/sign-up'
-    | '/admin/dashboard'
     | '/401'
     | '/403'
     | '/404'
@@ -529,6 +528,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/login'
     | '/sss'
+    | '/admin/dashboard'
     | '/account'
     | '/products'
   id:
@@ -541,7 +541,6 @@ export interface FileRouteTypes {
     | '/(auth)/otp'
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
-    | '/admin/dashboard'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/404'
@@ -553,6 +552,7 @@ export interface FileRouteTypes {
     | '/(public)/contact/'
     | '/(public)/login/'
     | '/(public)/sss/'
+    | '/admin/dashboard/'
     | '/(public)/account/'
     | '/(public)/products/'
   fileRoutesById: FileRoutesById
@@ -628,7 +628,7 @@ export const routeTree = rootRoute
     "/admin": {
       "filePath": "admin/route.tsx",
       "children": [
-        "/admin/dashboard"
+        "/admin/dashboard/"
       ]
     },
     "/payment": {
@@ -649,10 +649,6 @@ export const routeTree = rootRoute
     "/(auth)/sign-up": {
       "filePath": "(auth)/sign-up.tsx",
       "parent": "/(auth)"
-    },
-    "/admin/dashboard": {
-      "filePath": "admin/dashboard.tsx",
-      "parent": "/admin"
     },
     "/(errors)/401": {
       "filePath": "(errors)/401.lazy.tsx"
@@ -692,6 +688,10 @@ export const routeTree = rootRoute
     "/(public)/sss/": {
       "filePath": "(public)/sss/index.tsx",
       "parent": "/(public)"
+    },
+    "/admin/dashboard/": {
+      "filePath": "admin/dashboard/index.tsx",
+      "parent": "/admin"
     },
     "/(public)/account/": {
       "filePath": "(public)/account/index.lazy.tsx",
