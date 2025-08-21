@@ -83,8 +83,16 @@ const SidebarMenuCollapsible = ({
   item: NavCollapsible;
   href: string;
 }) => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const { setOpenMobile } = useSidebar();
+  
+  const handleClick = () => {
+    if (item.url) {
+      navigate({ to: item.url });
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <Collapsible
       asChild
@@ -93,16 +101,14 @@ const SidebarMenuCollapsible = ({
     >
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip={item.title}>
+          <SidebarMenuButton 
+            tooltip={item.title}
+            onClick={handleClick}
+          >
             {item.icon && <item.icon />}
             <span>{item.title}</span>
             {item.badge && <NavBadge>{item.badge}</NavBadge>}
             <ChevronRight
-              onClick={() => {
-                if (item.url) {
-                  navigate({ to: item.url });
-                }
-              }}
               className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
             />
           </SidebarMenuButton>
@@ -137,6 +143,16 @@ const SidebarMenuCollapsedDropdown = ({
   item: NavCollapsible;
   href: string;
 }) => {
+  const navigate = useNavigate();
+  const { setOpenMobile } = useSidebar();
+  
+  const handleClick = () => {
+    if (item.url) {
+      navigate({ to: item.url });
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <SidebarMenuItem>
       <DropdownMenu>
@@ -144,6 +160,7 @@ const SidebarMenuCollapsedDropdown = ({
           <SidebarMenuButton
             tooltip={item.title}
             isActive={checkIsActive(href, item)}
+            onClick={handleClick}
           >
             {item.icon && <item.icon />}
             <span>{item.title}</span>
@@ -156,6 +173,20 @@ const SidebarMenuCollapsedDropdown = ({
             {item.title} {item.badge ? `(${item.badge})` : ""}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+          {item.url && (
+            <>
+              <DropdownMenuItem asChild>
+                <Link
+                  to={item.url}
+                  className={`${checkIsActive(href, item) ? "bg-secondary" : ""}`}
+                >
+                  {item.icon && <item.icon />}
+                  <span className="max-w-52 text-wrap">View All {item.title}</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
           {item.items.map((sub) => (
             <DropdownMenuItem key={`${sub.title}-${sub.url}`} asChild>
               <Link
