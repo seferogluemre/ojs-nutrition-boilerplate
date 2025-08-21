@@ -2,13 +2,11 @@ import {
   IconBarrierBlock,
   IconBrowserCheck,
   IconBug,
-  IconColorSwatch,
   IconError404,
   IconHelp,
   IconLayoutDashboard,
   IconLock,
   IconLockAccess,
-  IconMessages,
   IconNotification,
   IconPackage,
   IconPalette,
@@ -80,18 +78,6 @@ export const sidebarData: SidebarData = {
           title: "Products",
           url: "/admin/products",
           icon: IconPackage,
-          items: [
-            {
-              title: "Product Comments",
-              url: "/admin/products/product-comments",
-              icon: IconMessages,
-            },
-            {
-              title: "Product Variants",
-              url: "/admin/products/product-variants",
-              icon: IconColorSwatch,
-            }
-          ]
         },
       ],
     },

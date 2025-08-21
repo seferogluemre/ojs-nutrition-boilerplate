@@ -1,17 +1,32 @@
 'use client';
 
+import { ConfirmDialog } from '#components/confirm-dialog';
 import { ProductsDataTable } from '#components/data-table/products-data-table';
-import { Button } from '#components/ui/button';
 import { useToast } from '#hooks/use-toast';
 import { useNavigate } from '@tanstack/react-router';
-import { MessageSquare, Palette } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { ProductFormModal } from './components/product-form-modal';
 import { productsApi } from './data/data';
-import { Product } from './types/types';
+import { Product, ProductFormData } from './types/types';
 
 export function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [productFormModal, setProductFormModal] = useState<{
+    open: boolean;
+    product: Product | null;
+  }>({
+    open: false,
+    product: null,
+  });
+  const [deleteDialog, setDeleteDialog] = useState<{
+    open: boolean;
+    product: Product | null;
+  }>({
+    open: false,
+    product: null,
+  });
+  const [deleting, setDeleting] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -46,34 +61,81 @@ export function AdminProducts() {
   };
 
   const handleEdit = (product: Product) => {
-    console.log('Ürün düzenleme modalı açılıyor:', product.name);
-    // TODO: Ürün düzenleme modal veya sayfası açılacak
-    toast({
-      title: "Ürün Düzenleme",
-      description: `"${product.name}" ürünü düzenleme modunda açılıyor.`,
+    setProductFormModal({
+      open: true,
+      product: product,
     });
   };
 
   const handleDelete = (product: Product) => {
-    console.log('Ürün silme onayı:', product.name);
-    // TODO: Silme onay modalı açılacak
-    toast({
-      title: "Ürün Silme",
-      description: `"${product.name}" ürününü silmek için onay bekleniyor.`,
+    setDeleteDialog({
+      open: true,
+      product: product,
     });
   };
 
   const handleAddNew = () => {
-    console.log('Yeni ürün ekleme modalı açılıyor');
-    // TODO: Yeni ürün ekleme modal veya sayfası açılacak
-    toast({
-      title: "Yeni Ürün",
-      description: "Yeni ürün ekleme formu açılıyor.",
+    setProductFormModal({
+      open: true,
+      product: null,
     });
   };
 
+  const handleProductSubmit = async (data: ProductFormData) => {
+    try {
+      if (productFormModal.product) {
+        // Güncelleme işlemi
+        console.log('Ürün güncelleme:', data);
+        // TODO: API çağrısı yapılacak
+        // await productsApi.updateProduct(productFormModal.product.id, data);
+      } else {
+        // Yeni ürün ekleme
+        console.log('Yeni ürün ekleme:', data);
+        // TODO: API çağrısı yapılacak
+        // await productsApi.createProduct(data);
+      }
+      
+      // Listeyi yeniden yükle
+      await loadProducts();
+    } catch (error) {
+      throw error; // Modal'da hata gösterilmesi için
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteDialog.product) return;
+    
+    try {
+      setDeleting(true);
+      console.log('Ürün siliniyor:', deleteDialog.product.name);
+      // TODO: API çağrısı yapılacak
+      // await productsApi.deleteProduct(deleteDialog.product.id);
+      
+      toast({
+        title: "Ürün silindi!",
+        description: `"${deleteDialog.product.name}" başarıyla silindi.`,
+      });
+      
+      setDeleteDialog({ open: false, product: null });
+      
+      // Listeyi yeniden yükle
+      await loadProducts();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Silme hatası!",
+        description: "Ürün silinirken bir hata oluştu.",
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleViewComments = (product: Product) => {
-    navigate({ to: '/admin/products/product-comments' });
+    navigate({ 
+      to: '/admin/products/product-comments',
+      search: { productId: product.id, productName: product.name }
+    });
     toast({
       title: "Ürün Yorumları",
       description: `"${product.name}" ürününün yorumları görüntüleniyor.`,
@@ -81,7 +143,10 @@ export function AdminProducts() {
   };
 
   const handleViewVariants = (product: Product) => {
-    navigate({ to: '/admin/products/product-variants' });
+    navigate({ 
+      to: '/admin/products/product-variants',
+      search: { productId: product.id, productName: product.name }
+    });
     toast({
       title: "Ürün Varyantları",
       description: `"${product.name}" ürününün varyantları görüntüleniyor.`,
@@ -109,24 +174,7 @@ export function AdminProducts() {
             E-ticaret sitenizin ürünlerini yönetin
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate({ to: '/admin/products/product-comments' })}
-            className="flex items-center space-x-2"
-          >
-            <MessageSquare className="h-4 w-4" />
-            <span>Ürün Yorumları</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate({ to: '/admin/products/product-variants' })}
-            className="flex items-center space-x-2"
-          >
-            <Palette className="h-4 w-4" />
-            <span>Ürün Varyantları</span>
-          </Button>
-        </div>
+       
       </div>
 
       {/* Data Table */}
@@ -138,6 +186,31 @@ export function AdminProducts() {
         onAddNew={handleAddNew}
         onViewComments={handleViewComments}
         onViewVariants={handleViewVariants}
+      />
+
+      {/* Product Form Modal */}
+      <ProductFormModal
+        open={productFormModal.open}
+        onOpenChange={(open) => setProductFormModal({ open, product: null })}
+        product={productFormModal.product}
+        onSubmit={handleProductSubmit}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialog.open}
+        onOpenChange={(open) => setDeleteDialog({ open, product: null })}
+        title="Ürünü Sil"
+        desc={
+          deleteDialog.product
+            ? `"${deleteDialog.product.name}" ürününü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`
+            : ''
+        }
+        confirmText="Sil"
+        cancelBtnText="İptal"
+        destructive={true}
+        handleConfirm={handleConfirmDelete}
+        isLoading={deleting}
       />
     </div>
   );
