@@ -1,7 +1,7 @@
 import { prisma } from '#core';
 
 import { GoneException } from '../../utils';
-import { COURIER_PERMISSIONS, USER_PERMISSIONS } from '../auth';
+import { USER_PERMISSIONS } from '../auth';
 import { betterAuth } from '../auth/authentication/instance';
 import { RolesService } from '../auth/roles/service';
 
@@ -47,17 +47,6 @@ export class SystemAdministrationService {
       });
     }
 
-    let courierRole = await prisma.role.findFirst({
-      where: { name: 'Courier' },
-    });
-
-    if (!courierRole) {
-      courierRole = await RolesService.store({
-        name: 'Courier',
-        description: 'Kargo kuryesi',
-        permissions: COURIER_PERMISSIONS,
-      });
-    }
 
     let userRole = await prisma.role.findFirst({
       where: { name: 'User' },

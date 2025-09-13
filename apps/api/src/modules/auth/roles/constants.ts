@@ -78,29 +78,6 @@ export const PERMISSIONS = {
     UPDATE: { key: 'orders:update', description: 'Sipariş Güncelle' },
     DESTROY: { key: 'orders:destroy', description: 'Sipariş Sil' },
   },
-  PARCELS: {
-    INDEX: { key: 'parcels:index', description: 'Kargoları Görüntüle' },
-    SHOW: { key: 'parcels:show', description: 'Kargo Görüntüle' },
-    CREATE: { key: 'parcels:create', description: 'Kargo Oluştur' },
-    UPDATE: { key: 'parcels:update', description: 'Kargo Güncelle' },
-    UPDATE_STATUS: { key: 'parcels:update-status', description: 'Kargo Durumu Güncelle' },
-    UPDATE_LOCATION: { key: 'parcels:update-location', description: 'Kargo Konumu Güncelle' },
-    GENERATE_QR: { key: 'parcels:generate-qr', description: 'QR Kod Oluştur' },
-    VALIDATE_QR: { key: 'parcels:validate-qr', description: 'QR Kod Doğrula' },
-    TRACK: { key: 'parcels:track', description: 'Kargo Takip Et' },
-    ASSIGN_COURIER: { key: 'parcels:assign-courier', description: 'Kurye Ata' },
-    DESTROY: { key: 'parcels:destroy', description: 'Kargo Sil' },
-  },
-  COURIER: {
-    VIEW_ASSIGNED_PARCELS: {
-      key: 'courier:view-assigned-parcels',
-      description: 'Atanan Kargoları Görüntüle',
-    },
-    UPDATE_LOCATION: { key: 'courier:update-location', description: 'Konum Güncelle' },
-    SCAN_QR: { key: 'courier:scan-qr', description: 'QR Kod Tara' },
-    SEND_QR_EMAIL: { key: 'courier:send-qr-email', description: 'QR Kod E-posta Gönder' },
-    COMPLETE_DELIVERY: { key: 'courier:complete-delivery', description: 'Teslimat Tamamla' },
-  },
 } as const satisfies Record<string, Record<string, GenericPermissionObject>>;
 
 export const PERMISSION_KEYS = [
@@ -162,16 +139,6 @@ export const PERMISSION_GROUPS = {
     description: 'Siparişler',
     permissions: Object.values(PERMISSIONS.ORDERS),
   },
-  PARCELS: {
-    key: 'parcels',
-    description: 'Kargo Yönetimi',
-    permissions: Object.values(PERMISSIONS.PARCELS),
-  },
-  COURIER: {
-    key: 'courier',
-    description: 'Kurye İşlemleri',
-    permissions: Object.values(PERMISSIONS.COURIER),
-  },
 } as const satisfies Record<
   string,
   { key: string; description: string; permissions: Array<{ key: string; description: string }> }
@@ -206,21 +173,4 @@ export const USER_PERMISSIONS = [
 
   // Kategori izinleri (sadece görüntüleme)
   PERMISSIONS.CATEGORIES.INDEX.key,
-] as const;
-
-export const COURIER_PERMISSIONS = [
-  PERMISSIONS.COURIER.VIEW_ASSIGNED_PARCELS.key,
-  PERMISSIONS.COURIER.UPDATE_LOCATION.key,
-  PERMISSIONS.COURIER.SCAN_QR.key,
-  PERMISSIONS.COURIER.SEND_QR_EMAIL.key,
-  PERMISSIONS.COURIER.COMPLETE_DELIVERY.key,
-
-  PERMISSIONS.PARCELS.SHOW.key,
-  PERMISSIONS.PARCELS.UPDATE_STATUS.key,
-  PERMISSIONS.PARCELS.UPDATE_LOCATION.key,
-  PERMISSIONS.PARCELS.GENERATE_QR.key,
-  PERMISSIONS.PARCELS.VALIDATE_QR.key,
-  PERMISSIONS.PARCELS.TRACK.key,
-
-  PERMISSIONS.ORDERS.SHOW.key,
 ] as const;

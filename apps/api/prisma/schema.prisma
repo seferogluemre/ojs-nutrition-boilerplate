@@ -33,18 +33,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ParcelStatus {
-  CREATED
-  ASSIGNED
-  PICKED_UP
-  IN_TRANSIT
-  OUT_FOR_DELIVERY
-  DELIVERED
-  CANCELLED
-  RETURNED
-
-  @@map("parcel_status")
-}
 
 enum Gender {
   MALE
@@ -149,9 +137,6 @@ model User {
   addresses        UserAddress[]     @relation("UserAddressToUser")
   cart             Cart?             @relation("CartToUser")
   productComments  ProductComments[] @relation
-  assignedParcels  Parcel[]          @relation("ParcelToCourier")
-  parcelEvents     ParcelEvent[]     @relation("ParcelEventToCourier")
-  courierLocations CourierLocation[] @relation("CourierLocationToCourier")
 
   @@index([deletedAt])
   @@map("users")
@@ -715,7 +700,6 @@ model Order {
   shippingAddress Json @map("shipping_address") @db.JsonB
 
   items  OrderItem[]
-  parcel Parcel?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -788,129 +772,6 @@ model UserAddress {
   @@map("user_addresses")
 }
 
-model Parcel {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
 
-  // Order bağlantısı
-  orderId String @unique @map("order_id")
-  order   Order  @relation(fields: [orderId], references: [uuid])
 
-  // Kurye ataması
-  courierId String? @map("courier_id")
-  courier   User?   @relation("ParcelToCourier", fields: [courierId], references: [id])
 
-  // Kargo bilgileri
-  trackingNumber String       @unique @map("tracking_number")
-  status         ParcelStatus @default(CREATED)
-
-  shippingAddress Json @map("shipping_address") @db.JsonB
-
-  route Json? @map("route") @db.JsonB 
-
-  qrToken     QRToken?
-
-  estimatedDelivery DateTime? @map("estimated_delivery")
-  actualDelivery    DateTime? @map("actual_delivery")
-
-  events           ParcelEvent[]
-  courierLocations CourierLocation[]
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  @@map("parcels")
-}
-
-model ParcelEvent {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
-
-  // Parcel bağlantısı
-  parcelId Int    @map("parcel_id")
-  parcel   Parcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
-
-  // Event bilgileri
-  eventType   String @map("event_type") // "STATUS_CHANGE", "LOCATION_UPDATE", "QR_GENERATED", "DELIVERED"
-  description String @map("description") // "Kuryemiz Ahmet M****** Samsun şubeye ulaştı"
-
-  // Konum bilgisi
-  location    String? // "Samsun", "Zonguldak" vs.
-  coordinates Json?   @db.JsonB // { lat: 41.0082, lng: 28.9784 }
-
-  // Kurye bilgisi
-  courierId String? @map("courier_id")
-  courier   User?   @relation("ParcelEventToCourier", fields: [courierId], references: [id])
-
-  // Metadata
-  metadata Json? @db.JsonB
-
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@index([parcelId])
-  @@index([eventType])
-  @@index([createdAt])
-  @@map("parcel_events")
-}
-
-model CourierLocation {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
-
-  // Kurye bilgisi
-  courierId String @map("courier_id")
-  courier   User   @relation("CourierLocationToCourier", fields: [courierId], references: [id])
-
-  // Parcel bilgisi (opsiyonel - genel konum vs kargo-specific konum)
-  parcelId Int?    @map("parcel_id")
-  parcel   Parcel? @relation(fields: [parcelId], references: [id])
-
-  // Konum bilgileri
-  latitude  Decimal @db.Decimal(10, 8)
-  longitude Decimal @db.Decimal(11, 8)
-  accuracy  Float? // GPS accuracy in meters
-
-  // Adres bilgisi
-  address String?
-  city    String?
-
-  // Metadata
-  deviceInfo Json? @map("device_info") @db.JsonB
-
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@index([courierId])
-  @@index([parcelId])
-  @@index([createdAt])
-  @@map("courier_locations")
-}
-
-model QRToken {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
-
-  // Parcel bağlantısı
-  parcelId Int    @unique @map("parcel_id")
-  parcel   Parcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
-
-  // Token bilgileri
-  token String @unique
-
-  // Durum bilgileri
-  isUsed Boolean   @default(false) @map("is_used")
-  usedAt DateTime? @map("used_at")
-
-  // E-posta bilgileri
-  emailSentAt DateTime? @map("email_sent_at")
-
-  // Süre bilgileri
-  expiresAt DateTime @map("expires_at")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@index([token])
-  @@index([expiresAt])
-  @@map("qr_tokens")
-}
