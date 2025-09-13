@@ -1,5 +1,4 @@
 import { Button } from "#components/ui/button";
-import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
@@ -14,7 +13,7 @@ export const categoriesData = [
     id: "1",
     name: "PROTEİN",
     image: "/images/protein.jpg",
-    link: "/products?main_category/protein",
+    link: "/products?main_category/PROTEIN",
   },
   {
     id: "2",
@@ -58,7 +57,6 @@ interface CategoryItem {
 export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
   const router = useRouter();
 
-  const [apiCategories, setApiCategories] = useState([]);
   const [categories, setCategories] = useState<CategoryItem[]>(categoriesData);
 
   const { data } = useQuery({
@@ -71,32 +69,48 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
     gcTime: 1000 * 60 * 60,
   });
 
-  const getApiCategoryName = (localCategoryName: string) => {
-    const mappings = {
+  const getApiCategoryMapping = (localCategoryName: string) => {
+    const mappings: Record<string, string> = {
       VİTAMİNLER: "VİTAMİN",
-      PROTEİN: "PROTEİN",
+      PROTEİN: "PROTEİN", 
       SAĞLIK: "SAĞLIK",
       GIDA: "GIDA",
       "SPOR GIDALARI": "SPOR GIDALARI",
-      "TÜM ÜRÜNLER": "TÜM ÜRÜNLER",
     };
     return mappings[localCategoryName] || localCategoryName;
   };
 
+  const getSubCategoryId = (apiCategories: any[], localCategoryName: string) => {
+    const apiCategoryName = getApiCategoryMapping(localCategoryName);
+    
+    const mainCategory = apiCategories.find(cat => cat.name === apiCategoryName);
+    if (!mainCategory) return null;
+
+    const subCategory = mainCategory.children?.find((child: any) => child.products && child.products.length > 0);
+    return subCategory?.id || null;
+  };
+  console.log("data", data);
   useEffect(() => {
     if (data?.data) {
       const updatedCategories = categories.map((cat) => {
-        const matchingApiCategory = data?.data.find(
-          (apiCat) => apiCat.name === getApiCategoryName(cat.name),
-        );
-        if (matchingApiCategory) {
+        if (cat.name === "TÜM ÜRÜNLER") {
           return {
             ...cat,
-            id: matchingApiCategory.id,
-            link: `/products?main_category=${matchingApiCategory.id}`,
+            link: `/products`,
           };
         }
-        const mainCategoryParam = cat.id.toLowerCase().replace(/ /g, "-");
+
+        const subCategoryId = getSubCategoryId(data.data, cat.name);
+        console.log(`${cat.name} -> SubCategory ID:`, subCategoryId);
+        if (subCategoryId) {
+          return {
+            ...cat,
+            id: subCategoryId,
+            link: `/products?main_category=${subCategoryId}`,
+          };
+        }
+
+        const mainCategoryParam = cat.name.toLowerCase().replace(/ /g, "-");
         return {
           ...cat,
           link: `/products?main_category=${mainCategoryParam}`,
