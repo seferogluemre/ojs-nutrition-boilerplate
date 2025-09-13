@@ -69,13 +69,7 @@ export function ProductReviews({ productId }: { productId: string }) {
 
     console.log("checkCanReview", auth?.accessToken);
     try {
-      const response = await api.products({ productId })["comments"]["can-review"].get(
-        {
-          headers: {
-            authorization: `Bearer ${auth?.accessToken}`,
-          },
-        },
-      );
+      const response = await api.products({ productId })["comments"]["can-review"].get();
       if (response.status == 200) {
         setCanReview(response.data as CanReviewResponse);
       } else {

@@ -57,17 +57,13 @@ export function ReviewForm({ productId, onSuccess, onCancel }: ReviewFormProps) 
         submitFormData.append('content', formData.content.trim());
       }
 
-      // Add images to FormData
       formData.images.forEach((file) => {
         submitFormData.append('images', file);
       });
 
-      // Use fetch directly for multipart/form-data
       const response = await fetch(`http://localhost:3000/api/products/${productId}/comments`, {
         method: 'POST',
-        headers: {
-          'authorization': `Bearer ${auth?.accessToken}`,
-        },
+        credentials: 'include',
         body: submitFormData,
       });
 

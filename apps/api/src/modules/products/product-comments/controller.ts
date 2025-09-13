@@ -1,3 +1,4 @@
+import { auth } from '#modules/auth/authentication/plugin.ts';
 import { Elysia } from 'elysia';
 import { canReviewDto, commentIndexDto } from './dto';
 import { ProductCommentFormatter } from './formatter';
@@ -11,6 +12,7 @@ export const app = new Elysia({
     tags: ['Product Comments'],
   },
 })
+  .use(auth())
   .get(
     '',
     async ({ params, query }) => {
@@ -36,9 +38,9 @@ export const app = new Elysia({
     },
     commentIndexDto,
   )
-  .post( // TODO !! Burada kodlar refaktör edilip clean code yapılcak ek olarak auth durumu kontrol edilcek
+  .post(
     '',
-    async ({ request, params, set }) => {
+    async ({ request, params, set, user }) => {
       let imagePaths: string[] = [];
       const commentData: {
         rating: number;
@@ -98,7 +100,7 @@ export const app = new Elysia({
 
       const comment = await ProductCommentService.createComment({
         productId: params.id,
-        userId: "5d160bc9-c3bd-476b-add2-71161b5ed8fd",
+        userId: user.id,
         data: commentData,
       });
 
@@ -108,8 +110,9 @@ export const app = new Elysia({
 )
   .get(
     '/can-review',
-    async ({ params }) => {
-      const result = await checkUserCanReviewProduct("5d160bc9-c3bd-476b-add2-71161b5ed8fd", params.id);
+    async ({ params, user }) => {
+      console.log('Can review - User:', user?.id);
+      const result = await checkUserCanReviewProduct(user.id, params.id);
      
       return result;
     },
