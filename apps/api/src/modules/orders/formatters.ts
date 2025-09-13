@@ -52,33 +52,6 @@ export abstract class OrderFormatter {
         name: order?.user?.name || '',
         email: order?.user?.email || '',
       },
-      parcels: order?.parcels.map(parcel => ({
-        ...parcel,
-        estimatedDelivery: parcel.estimatedDelivery instanceof Date
-          ? parcel.estimatedDelivery.toISOString()
-          : parcel.estimatedDelivery,
-        actualDelivery: parcel.actualDelivery instanceof Date
-          ? parcel.actualDelivery.toISOString()
-          : parcel.actualDelivery,
-        createdAt: parcel.createdAt instanceof Date
-          ? parcel.createdAt.toISOString()
-          : parcel.createdAt,
-        updatedAt: parcel.updatedAt instanceof Date
-          ? parcel.updatedAt.toISOString()
-          : parcel.updatedAt,
-        events: parcel.events.map(event => ({
-          ...event,
-          createdAt: event.createdAt instanceof Date
-            ? event.createdAt.toISOString()
-            : event.createdAt,
-          actualDelivery: event.actualDelivery instanceof Date
-            ? event.actualDelivery.toISOString()
-            : event.actualDelivery || "Teslimat tarihi bilinmiyor",
-          estimatedDelivery: event.estimatedDelivery instanceof Date
-            ? event.estimatedDelivery.toISOString()
-            : event.estimatedDelivery || "Tahmini teslimat tarihi bilinmiyor",
-        })),
-      })),
     };
   }
   
