@@ -111,9 +111,10 @@ export const app = new Elysia({
   .get(
     '/can-review',
     async ({ params, user }) => {
-      console.log('Can review - User:', user?.id);
+      console.log('Can review - User ID:', user?.id);
+      console.log('Can review - Product ID:', params.id);
       const result = await checkUserCanReviewProduct(user.id, params.id);
-     
+      console.log('Can review - Result:', result);
       return result;
     },
     canReviewDto,

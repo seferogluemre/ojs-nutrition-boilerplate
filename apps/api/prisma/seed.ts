@@ -30,7 +30,6 @@ async function main() {
   }
 
   console.log('👤 Creating "user" role...');
-  // Create "user" role for regular users
   let userRole = await prisma.role.findFirst({
     where: { name: 'User' }
   });

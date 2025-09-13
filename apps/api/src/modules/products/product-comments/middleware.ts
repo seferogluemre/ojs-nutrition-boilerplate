@@ -3,16 +3,11 @@ import { OrderStatus } from '#prisma/client';
 import { ForbiddenException } from '../../../utils';
 import type { AuthContext } from '../../auth/authentication/types';
 
-/**
- * Kullanıcının ürünü sipariş etmiş ve teslim almış olduğunu kontrol eder
- * Sadece DELIVERED siparişi olan kullanıcılar yorum yapabilir
- */
 export function withProductPurchaseCheck() {
   return {
     beforeHandle: async ({ user, params, set }: AuthContext & { params: { id: string } }) => {
       const productId = params.id;
 
-      // Kullanıcının bu ürünü sipariş etmiş ve teslim almış olduğunu kontrol et
       const deliveredOrder = await prisma.order.findFirst({
         where: {
           userId: user.id,
@@ -55,7 +50,6 @@ export function withProductPurchaseCheck() {
         return exception;
       }
 
-      // Kullanıcının daha önce bu ürün için yorum yapıp yapmadığını kontrol et
       const existingComment = await prisma.productComments.findFirst({
         where: {
           userId: user.id,
@@ -82,15 +76,13 @@ export function withProductPurchaseCheck() {
   };
 }
 
-/**
- * Kullanıcının ürünü sipariş edip etmediğini kontrol eder (yorum yapma eligibility)
- * Frontend'de buton gösterimi için kullanılır
- */
 export async function checkUserCanReviewProduct(userId: string, productUuid: string): Promise<{
   canReview: boolean;
   reason?: string;
 }> {
-  // Kullanıcının bu ürünü sipariş etmiş ve teslim almış olduğunu kontrol et
+  console.log('checkUserCanReviewProduct - userId:', userId);
+  console.log('checkUserCanReviewProduct - productUuid:', productUuid);
+  
   const deliveredOrder = await prisma.order.findFirst({
     where: {
       userId,
@@ -104,6 +96,14 @@ export async function checkUserCanReviewProduct(userId: string, productUuid: str
       },
     },
   });
+  
+  console.log('checkUserCanReviewProduct - deliveredOrder:', deliveredOrder ? 'Found' : 'Not found');
+  
+  const allOrders = await prisma.order.findMany({
+    where: { userId },
+    select: { uuid: true, status: true, items: { select: { product: { select: { name: true, uuid: true } } } } }
+  });
+  console.log('checkUserCanReviewProduct - allOrders:', JSON.stringify(allOrders, null, 2));
 
   if (!deliveredOrder) {
     return {
@@ -112,7 +112,6 @@ export async function checkUserCanReviewProduct(userId: string, productUuid: str
     };
   }
 
-  // Kullanıcının daha önce bu ürün için yorum yapıp yapmadığını kontrol et
   const existingComment = await prisma.productComments.findFirst({
     where: {
       userId,
