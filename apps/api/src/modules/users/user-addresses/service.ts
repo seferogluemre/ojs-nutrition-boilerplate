@@ -68,6 +68,7 @@ export abstract class UserAddressesService {
             select: {
               id: true,
               name: true,
+              stateName: true,
             },
           },
         },

@@ -29,12 +29,11 @@ export function AddressList() {
     queryFn: () =>
       api["user-addresses"].get({
         headers: {
-          authorization: `Bearer ${auth.auth.accessToken}`,
+          authorization: `Bearer ${auth.accessToken}`,
         },
       }),
   });
 
-  // Create address mutation
   const createAddressMutation = useMutation({
     mutationFn: async (addressData: AddressFormData) => {
       return api["user-addresses"].post(
@@ -50,7 +49,7 @@ export function AddressList() {
         },
         {
           headers: {
-            authorization: `Bearer ${auth.auth.accessToken}`,
+            authorization: `Bearer ${auth.accessToken}`,
           },
         },
       );
@@ -73,14 +72,13 @@ export function AddressList() {
     },
   });
 
-  // Delete address mutation
   const deleteAddressMutation = useMutation({
     mutationFn: async (addressUuid: string) => {
       return api["user-addresses"]({
         id: addressUuid,
       }).delete({
         headers: {
-          authorization: `Bearer ${auth.auth.accessToken}`,
+          authorization: `Bearer ${auth.accessToken}`,
         },
       });
     },

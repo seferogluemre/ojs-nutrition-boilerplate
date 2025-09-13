@@ -100,7 +100,6 @@ export const AddressForm = ({ address, onClose, onSave }: AddressFormProps) => {
     },
   });
 
-  // Update address mutation
   const updateAddressMutation = useMutation({
     mutationFn: async (addressData: AddressFormData) => {
       return api["user-addresses"]({
@@ -141,7 +140,6 @@ export const AddressForm = ({ address, onClose, onSave }: AddressFormProps) => {
     },
   });
 
-  // Delete address mutation
   const deleteAddressMutation = useMutation({
     mutationFn: async () => {
       return api["user-addresses"]({
