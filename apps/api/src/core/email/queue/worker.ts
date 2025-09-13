@@ -39,8 +39,8 @@ export const deliveryEmailQueue = new Queue('delivery-emails', {
 
 async function generateQRCodeDataURL(token: string): Promise<string> {
   try {
-    const validationUrl = `${emailConfig.app.url}/validate`;
-    const qrCodeDataURL = await QRCode.toDataURL(validationUrl, {
+    const qrData = JSON.stringify({ token });
+    const qrCodeDataURL = await QRCode.toDataURL(qrData, {
       errorCorrectionLevel: 'M',
       type: 'image/png',
       quality: 0.92,
@@ -59,13 +59,10 @@ async function generateQRCodeDataURL(token: string): Promise<string> {
   }
 }
 
-// Email sending functions
 async function sendQRDeliveryNotificationEmail(data: QRDeliveryEmailJobProps) {
   try {
-    // Generate QR code
     const qrCodeDataURL = await generateQRCodeDataURL(data.qrToken);
     
-    // Prepare email data
     const emailData = {
       trackingNumber: data.trackingNumber,
       customerName: data.customerName,
@@ -107,10 +104,8 @@ async function sendQRDeliveryNotificationEmail(data: QRDeliveryEmailJobProps) {
       },
     };
 
-    // Render email HTML
     const emailHtml = await render(QRDeliveryNotification(emailData));
 
-    // Send email
     const mailOptions = {
       from: emailConfig.mailer.defaults.from,
       to: data.customerEmail,
@@ -129,7 +124,6 @@ async function sendQRDeliveryNotificationEmail(data: QRDeliveryEmailJobProps) {
 
 async function sendDeliverySuccessEmail(data: DeliverySuccessEmailJobProps) {
   try {
-    // Prepare email data
     const emailData = {
       trackingNumber: data.trackingNumber,
       customerName: data.customerName,
@@ -171,10 +165,8 @@ async function sendDeliverySuccessEmail(data: DeliverySuccessEmailJobProps) {
       },
     };
 
-    // Render email HTML
     const emailHtml = await render(DeliverySuccess(emailData));
 
-    // Send email
     const mailOptions = {
       from: emailConfig.mailer.defaults.from,
       to: data.customerEmail,
@@ -191,7 +183,6 @@ async function sendDeliverySuccessEmail(data: DeliverySuccessEmailJobProps) {
   }
 }
 
-// Worker setup
 export const deliveryEmailWorker = new Worker(
   'delivery-emails',
   async (job: Job<QRDeliveryEmailJobProps | DeliverySuccessEmailJobProps>) => {
@@ -221,7 +212,6 @@ export const deliveryEmailWorker = new Worker(
   }
 );
 
-// Worker events
 deliveryEmailWorker.on('completed', async (job) => {
   console.log(`📬 Delivery email job ${job.id} completed`);
   await job.remove();
@@ -235,7 +225,6 @@ deliveryEmailWorker.on('error', (err) => {
   console.error('📭 Delivery email worker error:', err);
 });
 
-// Queue service class
 export class DeliveryEmailQueueService {
   static async addQRDeliveryNotificationJob(data: QRDeliveryEmailJobProps) {
     try {

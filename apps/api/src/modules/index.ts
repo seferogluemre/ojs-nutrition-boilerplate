@@ -5,7 +5,6 @@ import { categoriesController } from './categories';
 import { fileLibraryAssetsController } from './file-library-assets';
 import { locationsController } from './locations';
 import { ordersController } from './orders';
-import { parcelController } from './parcels';
 import { postsController } from './posts';
 import productsController from './products';
 import { productCommentController } from './products/product-comments';
@@ -25,7 +24,6 @@ const app = new Elysia()
   .use(userAddressesController)
   .use(cartController)
   .use(ordersController)
-  .use(parcelController)
   .use(productsController)
   .use(categoriesController)
   .use(productVariantController)

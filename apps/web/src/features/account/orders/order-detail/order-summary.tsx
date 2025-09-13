@@ -49,23 +49,9 @@ export function OrderSummary({ order }: OrderSummaryProps) {
                   </h6>
                   <p className="mb-1 text-sm text-gray-600">{product.price}</p>
                   <p className="text-sm text-gray-500">{product.size}</p>
-                  
-                  {/* Comment button for delivered orders */}
-                  {isDelivered && (
-                    <button
-                      onClick={() => handleCommentRedirect(product.productId || product.id)}
-                      className="mt-2 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-lg text-green-700 bg-green-100 hover:bg-green-200 transition-all duration-200 hover:shadow-sm"
-                    >
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10m0 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2m0 0v10a2 2 0 002 2h8a2 2 0 002-2V8m-9 4h4" />
-                      </svg>
-                      Yorum Ekle
-                    </button>
-                  )}
+                
                 </div>
               </div>
-              
-
             </div>
           ))}
         </div>
