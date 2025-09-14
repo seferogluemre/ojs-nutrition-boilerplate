@@ -36,7 +36,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         return {
           container: "mx-8 max-w-lg flex-1",
           searchIcon: "absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400",
-          input: "w-full rounded-md border border-gray-300 py-2 pl-10 pr-20 focus:border-transparent focus:ring-2 focus:ring-blue-500",
+          input: "w-full rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-500 py-2 pl-10 pr-20 focus:border-transparent focus:ring-2 focus:ring-blue-500",
           button: "absolute right-2 top-1/2 h-7 -translate-y-1/2 transform bg-gray-700 px-3 py-1 text-xs text-white hover:bg-gray-800"
         };
       case "tablet":
@@ -50,7 +50,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         return {
           container: "mx-8 max-w-lg flex-1",
           searchIcon: "absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400",
-          input: "w-full rounded-md border border-gray-300 py-2 pl-10 pr-20 focus:border-transparent focus:ring-2 focus:ring-blue-500",
+          input: "w-full rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-500 py-2 pl-10 pr-20 focus:border-transparent focus:ring-2 focus:ring-blue-500",
           button: "absolute right-2 top-1/2 h-7 -translate-y-1/2 transform bg-gray-700 px-3 py-1 text-xs text-white hover:bg-gray-800"
         };
     }

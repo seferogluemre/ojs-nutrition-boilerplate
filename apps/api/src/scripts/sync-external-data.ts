@@ -1,7 +1,7 @@
 import prisma from "../core/prisma";
 
 // External API base URL
-const API_BASE_URL = process.env.API_BASE_URL
+const API_BASE_URL = 'https://fe1111.projects.academy.onlyjs.com/api/v1'
 
 // Types for external API responses
 interface ExternalCategory {
