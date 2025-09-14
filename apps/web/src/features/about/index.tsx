@@ -1,6 +1,6 @@
 import { Main } from "#components/layout/main";
 import { Button } from "#components/ui/button";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Award, BadgeCheck, ChevronLeft, ChevronRight, ScrollText, Shield, ShieldCheck, Star } from "lucide-react";
 import { useState } from "react";
 import { certificates, customerReviews, reviewStats } from "./data/customer-reviews";
 
@@ -8,6 +8,7 @@ const REVIEWS_PER_PAGE = 3;
 
 export default function About() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   
   const totalPages = Math.ceil(customerReviews.length / REVIEWS_PER_PAGE);
   const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
@@ -59,6 +60,17 @@ export default function About() {
     }
   };
 
+  const renderCertificateIcon = (name: string) => {
+    const normalized = name.toLowerCase();
+    const commonClasses = "w-10 h-10 md:w-12 md:h-12 text-gray-700 dark:text-gray-200";
+    if (normalized.includes("helal")) return <BadgeCheck className={commonClasses} />;
+    if (normalized.includes("gmp")) return <Shield className={commonClasses} />;
+    if (normalized.includes("45001")) return <ShieldCheck className={commonClasses} />;
+    if (normalized.includes("22000")) return <ShieldCheck className={commonClasses} />;
+    if (normalized.includes("9001")) return <Award className={commonClasses} />;
+    return <ScrollText className={commonClasses} />;
+  };
+
   return (
     <Main>
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -100,13 +112,16 @@ export default function About() {
             {certificates.map((certificate) => (
               <div key={certificate.id} className="flex flex-col items-center p-4">
                 <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-3">
-                  <img 
-                    src={certificate.imageUrl} 
-                    alt={certificate.name}
-                    className="w-16 h-16 md:w-20 md:h-20 object-contain"
-                    onError={() => {
-                    }}
-                  />
+                  {failedImages[certificate.id] || !certificate.imageUrl ? (
+                    renderCertificateIcon(certificate.name)
+                  ) : (
+                    <img 
+                      src={certificate.imageUrl}
+                      alt={certificate.name}
+                      className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                      onError={() => setFailedImages(prev => ({ ...prev, [certificate.id]: true }))}
+                    />
+                  )}
                 </div>
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 text-center">
                   {certificate.name}
