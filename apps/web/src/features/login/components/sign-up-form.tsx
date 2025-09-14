@@ -54,7 +54,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
         <div className="space-y-2">
           <Label
             htmlFor="signup-firstname"
-            className="text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-gray-700 dark:text-gray-200"
           >
             Ad
           </Label>
@@ -63,7 +63,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            className="w-full border-gray-200 bg-gray-50"
+            className="w-full border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-600 focus:outline-none"
             required
           />
         </div>
@@ -71,7 +71,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
         <div className="space-y-2">
           <Label
             htmlFor="signup-lastname"
-            className="text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-gray-700 dark:text-gray-200"
           >
             Soyad
           </Label>
@@ -80,7 +80,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            className="w-full border-gray-200 bg-gray-50"
+            className="w-full border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-600 focus:outline-none"
             required
           />
         </div>
@@ -89,7 +89,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
       <div className="space-y-2">
         <Label
           htmlFor="signup-email"
-          className="text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-gray-700 dark:text-gray-200"
         >
           E-Posta
         </Label>
@@ -98,7 +98,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border-gray-200 bg-gray-50"
+          className="w-full border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-600 focus:outline-none"
           required
         />
       </div>
@@ -106,7 +106,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
       <div className="space-y-2">
         <Label
           htmlFor="signup-password"
-          className="text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-gray-700 dark:text-gray-200"
         >
           Şifre
         </Label>
@@ -115,7 +115,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border-gray-200 bg-gray-50"
+          className="w-full border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-600 focus:outline-none"
           required
         />
       </div>
@@ -134,7 +134,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
           <Checkbox id="terms" className="mt-1" />
           <label
             htmlFor="terms"
-            className="text-xs leading-relaxed text-gray-600"
+            className="text-xs leading-relaxed text-gray-600 dark:text-gray-400"
           >
             Kampanyalardan haberdar olmak için{" "}
             <a href="#" className="text-blue-600 underline">
@@ -149,7 +149,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
           <Checkbox id="privacy" className="mt-1" />
           <label
             htmlFor="privacy"
-            className="text-xs leading-relaxed text-gray-600"
+            className="text-xs leading-relaxed text-gray-600 dark:text-gray-400"
           >
             <a href="#" className="text-blue-600 underline">
               Üyelik sözleşmesini
@@ -164,7 +164,7 @@ export default function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
       </div>
 
       <div className="pt-4 text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Zaten hesabınız var mı?{" "}
           <button
             type="button"

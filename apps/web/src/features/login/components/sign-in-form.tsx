@@ -56,7 +56,7 @@ export default function SignInForm() {
       <div className="space-y-2">
         <Label
           htmlFor="signin-email"
-          className="text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-gray-700 dark:text-gray-200"
         >
           * E-Posta
         </Label>
@@ -65,7 +65,7 @@ export default function SignInForm() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border-gray-200 bg-gray-50"
+          className="w-full border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-600 focus:outline-none"
           required
         />
       </div>
@@ -73,7 +73,7 @@ export default function SignInForm() {
       <div className="space-y-2">
         <Label
           htmlFor="signin-password"
-          className="text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-gray-700 dark:text-gray-200"
         >
           * Şifre
         </Label>
@@ -82,7 +82,7 @@ export default function SignInForm() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border-gray-200 bg-gray-50"
+          className="w-full border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-600 focus:outline-none"
           required
         />
       </div>
@@ -90,7 +90,7 @@ export default function SignInForm() {
       <div className="text-right">
         <a
           href="#"
-          className="text-sm text-gray-600 underline hover:text-gray-800"
+          className="text-sm text-gray-600 dark:text-gray-400 underline hover:text-gray-800 dark:hover:text-gray-200"
         >
           Şifremi Unuttum?
         </a>
