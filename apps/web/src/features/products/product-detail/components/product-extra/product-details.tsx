@@ -6,10 +6,10 @@ export function ProductDetails({ explanation }: { explanation: ProductExplanatio
     <div className="mt-8">
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="features">
-          <AccordionTrigger className="text-lg font-semibold">
+          <AccordionTrigger className="text-lg font-semibold text-gray-900 dark:text-white">
             ÖZELLİKLER
           </AccordionTrigger>
-          <AccordionContent className="text-gray-700 leading-relaxed">
+          <AccordionContent className="text-gray-700 dark:text-gray-300 leading-relaxed">
             <div className="space-y-4">
               <p>
                 {explanation.description}
@@ -19,10 +19,10 @@ export function ProductDetails({ explanation }: { explanation: ProductExplanatio
         </AccordionItem>
 
         <AccordionItem value="nutrition">
-          <AccordionTrigger className="text-lg font-semibold">
+          <AccordionTrigger className="text-lg font-semibold text-gray-900 dark:text-white">
             BESİN İÇERİĞİ
           </AccordionTrigger>
-          <AccordionContent className="text-gray-700">
+          <AccordionContent className="text-gray-700 dark:text-gray-300">
             <div className="space-y-6">
               <div className="whitespace-pre-line">
                 {explanation.features}
@@ -30,7 +30,7 @@ export function ProductDetails({ explanation }: { explanation: ProductExplanatio
 
               {explanation.nutritional_content?.ingredients && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">İÇİNDEKİLER</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">İÇİNDEKİLER</h4>
                   <ul className="list-disc list-inside space-y-1 text-sm ml-4">
                     {explanation.nutritional_content.ingredients.map((ingredient, index) => (
                       <li key={index}>{ingredient.value}</li>
@@ -41,17 +41,17 @@ export function ProductDetails({ explanation }: { explanation: ProductExplanatio
 
               {explanation.nutritional_content?.nutrition_facts && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">BESİN DEĞERLERİ</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">BESİN DEĞERLERİ</h4>
                   {explanation.nutritional_content.nutrition_facts.portion_sizes && (
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                       {explanation.nutritional_content.nutrition_facts.portion_sizes.join(", ")} için
                     </p>
                   )}
                   <div className="space-y-2 text-sm">
                     {explanation.nutritional_content.nutrition_facts.ingredients?.map((ingredient, index) => (
-                      <div key={index} className="flex justify-between items-center py-1 border-b border-gray-100">
-                        <span className="font-medium">{ingredient.name}</span>
-                        <span className="text-gray-600">
+                      <div key={index} className="flex justify-between items-center py-1 border-b border-gray-100 dark:border-gray-800">
+                        <span className="font-medium text-gray-900 dark:text-white">{ingredient.name}</span>
+                        <span className="text-gray-600 dark:text-gray-400">
                           {ingredient.amounts.join(", ")}
                         </span>
                       </div>
@@ -64,10 +64,10 @@ export function ProductDetails({ explanation }: { explanation: ProductExplanatio
         </AccordionItem>
 
         <AccordionItem value="usage">
-          <AccordionTrigger className="text-lg font-semibold">
+          <AccordionTrigger className="text-lg font-semibold text-gray-900 dark:text-white">
             KULLANIM ŞEKLİ
           </AccordionTrigger>
-          <AccordionContent className="text-gray-700 leading-relaxed">
+          <AccordionContent className="text-gray-700 dark:text-gray-300 leading-relaxed">
             <p>
               {explanation.usage}
             </p>

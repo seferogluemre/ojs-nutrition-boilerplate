@@ -72,9 +72,9 @@ export function ProductVariants({
 
   const getFlavorStyle = (flavor: ProductVariant, isSelected: boolean) => {
     return {
-      backgroundColor: '#ffffff',
-      borderColor: isSelected ? '#3b82f6' : '#d1d5db',
-      color: '#374151',
+      backgroundColor: 'transparent',
+      borderColor: isSelected ? '#3b82f6' : undefined,
+      color: undefined,
     };
   };
 
@@ -96,7 +96,7 @@ export function ProductVariants({
       {/* Flavors Section - Only show if variants exist and have aroma */}
       {flavorsWithAroma.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">AROMA:</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">AROMA:</h3>
           <div className="flex flex-wrap gap-3">
             {flavorsWithAroma.map((flavor) => (
               <button
@@ -107,8 +107,8 @@ export function ProductVariants({
                   "relative px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all duration-200",
                   "h-[60px] md:h-[65px] flex items-center gap-3 min-w-[140px] md:min-w-[150px]",
                   selectedFlavor?.id === flavor.id
-                    ? "border-blue-500 ring-2 ring-blue-200"
-                    : "border-gray-300 hover:border-gray-400",
+                    ? "border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900"
+                    : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500",
                   !flavor.is_available && "opacity-50 cursor-not-allowed"
                 )}
                 style={getFlavorStyle(flavor, selectedFlavor?.id === flavor.id)}
@@ -127,7 +127,7 @@ export function ProductVariants({
                 </div>
                 
                 {/* Aroma Adı */}
-                <span className="flex-1 text-xs md:text-sm text-left leading-tight">{flavor.aroma}</span>
+                <span className="flex-1 text-xs md:text-sm text-left leading-tight text-gray-900 dark:text-gray-200">{flavor.aroma}</span>
                 
                 {/* Seçim İşareti */}
                 {selectedFlavor?.id === flavor.id && (
@@ -144,7 +144,7 @@ export function ProductVariants({
       {/* Sizes Section - Only show if variants exist and have size */}
       {variantsWithSize.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">BOYUT:</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">BOYUT:</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {variantsWithSize.map((variant) => (
               <button
@@ -153,8 +153,8 @@ export function ProductVariants({
                 className={cn(
                   "relative p-3 md:p-4 rounded-lg border-2 text-center transition-all duration-200",
                   selectedSize?.id === variant.id
-                    ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
-                    : "border-gray-300 hover:border-gray-400"
+                    ? "border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900 bg-blue-50 dark:bg-blue-950/30"
+                    : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500"
                 )}
               >
                 {/* Discount Badge - Middle Top */}
@@ -165,16 +165,16 @@ export function ProductVariants({
                   </div>
                 )}
 
-                <div className="font-bold text-gray-900 text-sm md:text-base">{variant.size?.pieces} adet</div>
-                <div className="text-xs md:text-sm text-gray-600">{variant.size?.total_services} servis</div>
+                <div className="font-bold text-gray-900 dark:text-white text-sm md:text-base">{variant.size?.pieces} adet</div>
+                <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">{variant.size?.total_services} servis</div>
 
                 <div className="mt-2">
                   {variant.price?.discounted_price && (
-                    <div className="text-xs text-gray-500 line-through">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 line-through">
                       {variant.price.total_price} TL
                     </div>
                   )}
-                  <div className="font-bold text-gray-900 text-sm md:text-base">
+                  <div className="font-bold text-gray-900 dark:text-white text-sm md:text-base">
                     {variant.price?.discounted_price || variant.price?.total_price} TL
                   </div>
                 </div>

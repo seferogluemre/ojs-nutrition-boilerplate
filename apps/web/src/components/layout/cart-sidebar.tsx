@@ -1,4 +1,5 @@
 import { Button } from "#components/ui/button";
+import { SafeImage } from "#components/ui/safe-image.js";
 import { api } from "#lib/api.js";
 import { cn, formatPrice } from "#lib/utils";
 import { useAuthStore } from "#stores/authStore.js";
@@ -249,17 +250,12 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
                 >
                   {/* Product Image */}
                   <div className="flex-shrink-0">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
-                      {item.product.primary_photo_url &&
-                      item.product.primary_photo_url !== "null" ? (
-                        <img
-                          src={item.product.primary_photo_url}
-                          alt={item.product.name}
-                          className="h-full w-full rounded-md object-cover"
-                        />
-                      ) : (
-                        <span className="text-xs text-gray-400">No Image</span>
-                      )}
+                    <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-200 overflow-hidden">
+                      <SafeImage
+                        src={item.product.primary_photo_url}
+                        alt={item.product.name}
+                        className="h-full w-full rounded-md object-cover"
+                      />
                     </div>
                   </div>
 

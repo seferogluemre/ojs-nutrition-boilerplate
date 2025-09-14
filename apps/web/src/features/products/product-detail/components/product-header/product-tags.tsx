@@ -15,7 +15,7 @@ export function ProductTags({ tags }: ProductTagsProps) {
               key={`${index}-${tagIndex}`}
               className={cn(
                 "px-3 py-1 rounded-md text-sm font-medium border",
-                "bg-gray-100 text-gray-700 border-gray-200"
+                "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
               )}
             >
               {tag}
@@ -27,7 +27,7 @@ export function ProductTags({ tags }: ProductTagsProps) {
               key={index}
               className={cn(
                 "px-3 py-1 rounded-md text-sm font-medium border",
-                "bg-gray-100 text-gray-700 border-gray-200"
+                "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
               )}
             >
               {tagString}

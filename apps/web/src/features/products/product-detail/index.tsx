@@ -7,15 +7,15 @@ import { useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Product, ProductVariant } from "../types";
 import {
-  ProductBenefits,
-  ProductDetails,
-  ProductImage,
-  ProductInfo,
-  ProductPricing,
-  ProductReviews,
-  ProductTags,
-  ProductVariants,
-  RecentlyViewedProducts,
+    ProductBenefits,
+    ProductDetails,
+    ProductImage,
+    ProductInfo,
+    ProductPricing,
+    ProductReviews,
+    ProductTags,
+    ProductVariants,
+    RecentlyViewedProducts,
 } from "./components";
 
 export default function ProductDetail() {
@@ -78,7 +78,7 @@ export default function ProductDetail() {
 
             <ProductTags tags={product.tags} />
 
-            <hr className="border-gray-200" />
+            <hr className="border-gray-200 dark:border-gray-700" />
 
             <ProductVariants
               variants={product.variants}

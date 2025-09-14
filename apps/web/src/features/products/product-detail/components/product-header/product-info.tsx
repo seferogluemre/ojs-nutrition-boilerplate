@@ -40,12 +40,12 @@ export function ProductInfo({ name, shortExplanation, averageRating, commentCoun
   return (
     <div className="space-y-4">
       {/* Product Name */}
-      <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
+      <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
         {name}
       </h1>
 
       {/* Short Description */}
-      <h2 className="text-lg lg:text-xl text-gray-600 font-medium">
+      <h2 className="text-lg lg:text-xl text-gray-600 dark:text-gray-300 font-medium">
         {shortExplanation}
       </h2>
 
@@ -54,7 +54,7 @@ export function ProductInfo({ name, shortExplanation, averageRating, commentCoun
         <div className="flex items-center gap-1">
           {renderStars(averageRating)}
         </div>
-        <span className="text-gray-600 font-medium">
+        <span className="text-gray-600 dark:text-gray-400 font-medium">
           {commentCount} Yorum
         </span>
       </div>

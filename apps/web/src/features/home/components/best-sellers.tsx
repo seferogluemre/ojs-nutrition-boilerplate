@@ -1,3 +1,4 @@
+import { SafeImage } from "#components/ui/safe-image.js";
 import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -59,8 +60,9 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
               <div className="flex w-full justify-center">
                 <div className="flex h-[168px] w-[168px] items-center justify-center overflow-hidden rounded-lg bg-gray-100">
                   <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200">
-                    <img
+                    <SafeImage
                       src={product.photo_src}
+                      alt={product.name}
                       className="h-full w-full object-cover"
                     />
                   </div>

@@ -22,13 +22,13 @@ export function ProductBenefits() {
     <div className="grid grid-cols-3 gap-4 pt-2">
       {benefits.map((benefit, index) => (
         <div key={index} className="text-center">
-          <div className="flex justify-center mb-2 text-gray-600">
+          <div className="flex justify-center mb-2 text-gray-600 dark:text-gray-400">
             {getBenefitIcon(benefit.icon)}
           </div>
-          <div className="text-sm font-semibold text-gray-900">
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">
             {benefit.title}
           </div>
-          <div className="text-xs text-gray-600">
+          <div className="text-xs text-gray-600 dark:text-gray-400">
             {benefit.description}
           </div>
         </div>

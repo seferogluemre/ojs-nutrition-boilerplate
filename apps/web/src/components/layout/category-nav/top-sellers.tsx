@@ -1,3 +1,4 @@
+import { SafeImage } from "#components/ui/safe-image.js";
 import React from "react";
 
 interface Product {
@@ -33,15 +34,11 @@ export const TopSellers: React.FC<TopSellersProps> = ({
             onClick={() => onProductClick(product.id)}
           >
             <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
-              {product.picture_src && product.picture_src !== "null" ? (
-                <img 
-                  src={`/images/${product.picture_src}`} 
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-300"></div>
-              )}
+              <SafeImage 
+                src={product.picture_src ? `/images/${product.picture_src}` : product.picture_src}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <h4 className="font-semibold text-sm text-gray-900 hover:text-blue-600 transition-colors">

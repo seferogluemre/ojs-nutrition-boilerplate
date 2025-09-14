@@ -1,4 +1,5 @@
 import { RatingDisplay } from "#components/ui/rating.js";
+import { SafeImage } from "#components/ui/safe-image.js";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 
@@ -64,7 +65,7 @@ export function ReviewCard({
               className="relative group cursor-pointer"
             >
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors">
-                <img
+                <SafeImage
                   src={"http://localhost:3000" + imageUrl}
                   alt={`Yorum fotoğrafı ${index + 1}`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"

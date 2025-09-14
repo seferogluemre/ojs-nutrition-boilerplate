@@ -154,19 +154,19 @@ export function ProductPricing({
   };
 
   return (
-    <div className="bg-white p-3 rounded-lg border-gray-200">
+    <div className="bg-white dark:bg-gray-900 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-4">
-        <div className="text-3xl font-bold text-gray-900">
+        <div className="text-3xl font-bold text-gray-900 dark:text-white">
           {formatPrice(getCurrentPrice())}
           {getOldPrice() && (
-            <span className="text-lg text-gray-500 line-through ml-3">
+            <span className="text-lg text-gray-500 dark:text-gray-400 line-through ml-3">
               {formatPrice(getOldPrice()!)}
             </span>
           )}
         </div>
         <div className="text-right">
-          <div className="text-sm text-gray-600">Servis başına</div>
-          <div className="text-lg font-semibold text-gray-900">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Servis başına</div>
+          <div className="text-lg font-semibold text-gray-900 dark:text-white">
             {formatPrice(parseFloat(getServingPrice()))}
           </div>
         </div>
@@ -176,22 +176,22 @@ export function ProductPricing({
       <div className="flex items-center gap-4">
         {/* Quantity Selector */}
         <div className="flex flex-col">
-          <div className="flex items-center border border-gray-300 rounded-lg">
+          <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg">
             <button
               onClick={onQuantityDecrease}
-              className="p-2 hover:bg-gray-100 transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               <Minus className="w-4 h-4" />
             </button>
-            <span className="px-4 py-2 font-semibold min-w-[50px] text-center">
+            <span className="px-4 py-2 font-semibold min-w-[50px] text-center text-gray-900 dark:text-white">
               {quantity}
             </span>
             <button
               onClick={handleQuantityIncrease}
               className={`p-2 transition-colors ${
                 isStockLimitReached() 
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                  : 'hover:bg-gray-100'
+                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed' 
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
               disabled={isStockLimitReached()}
             >
@@ -200,7 +200,7 @@ export function ProductPricing({
           </div>
           
           {/* Stock info */}
-          <div className="text-xs text-gray-500 mt-1 text-center">
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
             Stok: {getCurrentStock()}
           </div>
         </div>

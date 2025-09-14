@@ -1,3 +1,4 @@
+import { SafeImage } from "#components/ui/safe-image.js";
 import { api } from "#lib/api.js";
 import { cn } from "#lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -5,13 +6,13 @@ import { useRouter } from "@tanstack/react-router";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import {
-  CategoriesApiResponse,
-  Category,
-  CategoryNavigationProps,
-  ChildCategory,
-  PanelData,
-  Product,
-  SubChildCategory,
+    CategoriesApiResponse,
+    Category,
+    CategoryNavigationProps,
+    ChildCategory,
+    PanelData,
+    Product,
+    SubChildCategory,
 } from "./types";
 
 export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
@@ -263,10 +264,10 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
             className="flex w-full items-center px-6 py-4 text-left transition-colors duration-200 hover:bg-gray-50"
           >
             <div className="flex items-center space-x-3">
-              <img
+              <SafeImage
                 src={subChild.picture_src}
                 alt={subChild.name}
-                className="h-8 w-8 rounded-md"
+                className="h-8 w-8 rounded-md object-cover"
               />
               <span className="text-base font-medium text-gray-900">
                 {subChild.name}
@@ -298,18 +299,12 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
               onClick={() => navigateToProductDetail(product.id)}
               className="flex w-full items-center space-x-3 rounded-lg p-4 text-left transition-colors duration-200 hover:bg-gray-50"
             >
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-gray-200">
-                {product.picture_src && product.picture_src !== "null" ? (
-                  <img
-                    src={product.picture_src}
-                    alt={product.name}
-                    className="h-full w-full rounded-lg object-cover"
-                  />
-                ) : (
-                  <span className="text-xs font-medium text-gray-600">
-                    {product.name.charAt(0)}
-                  </span>
-                )}
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-gray-200 overflow-hidden">
+                <SafeImage
+                  src={product.picture_src}
+                  alt={product.name}
+                  className="h-full w-full rounded-lg object-cover"
+                />
               </div>
               <div className="min-w-0 flex-1 text-left">
                 <p className="truncate text-sm font-medium text-gray-900">
@@ -339,18 +334,12 @@ export const CategoryNavigation = ({ onClose }: CategoryNavigationProps) => {
               onClick={() => navigateToProductDetail(product.id)}
               className="flex w-full items-center space-x-3 rounded-md border border-gray-100 bg-white p-3 transition-colors duration-200 hover:bg-gray-100"
             >
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-gray-200">
-                {product.picture_src && product.picture_src !== "null" ? (
-                  <img
-                    src={`/images/${product.picture_src}`}
-                    alt={product.name}
-                    className="h-full w-full rounded-md object-cover"
-                  />
-                ) : (
-                  <span className="text-xs font-medium text-gray-600">
-                    {product.name.charAt(0)}
-                  </span>
-                )}
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-gray-200 overflow-hidden">
+                <SafeImage
+                  src={product.picture_src ? `/images/${product.picture_src}` : product.picture_src}
+                  alt={product.name}
+                  className="h-full w-full rounded-md object-cover"
+                />
               </div>
               <div className="min-w-0 flex-1 text-left">
                 <p className="truncate text-xs font-medium text-gray-900">

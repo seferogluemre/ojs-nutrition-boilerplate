@@ -8,7 +8,7 @@ import {
 import { api } from "#lib/api.js";
 import { useAuthStore } from "#stores/authStore.js";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+// import { useRouter } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Image, Star } from "lucide-react";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -49,13 +49,13 @@ export function ProductReviews({ productId }: { productId: string }) {
   });
   const [activeTab, setActiveTab] = useState<string>("all");
   const auth = useAuthStore();
-  const router = useRouter();
+  // const router = useRouter();
 
   const { data, refetch } = useQuery({
     queryKey: ["product-comments", productId],
     queryFn: async () => {
       console.log("productId", productId);
-      const response = await api.products({ productId })["comments"].get();
+      const response = await (api as any).products({ productId })["comments"].get();
       return response.data;
     },
   });
@@ -69,7 +69,7 @@ export function ProductReviews({ productId }: { productId: string }) {
 
     console.log("checkCanReview", auth?.accessToken);
     try {
-      const response = await api.products({ productId })["comments"]["can-review"].get();
+      const response = await (api as any).products({ productId })["comments"]["can-review"].get();
       if (response.status == 200) {
         setCanReview(response.data as CanReviewResponse);
       } else {
@@ -207,7 +207,7 @@ export function ProductReviews({ productId }: { productId: string }) {
     <section className="mt-12" data-reviews-section>
       {/* Header */}
       <div className="mb-8">
-        <h2 className="mb-6 text-2xl font-bold text-gray-900">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
           Müşteri Yorumları
         </h2>
 
@@ -224,13 +224,13 @@ export function ProductReviews({ productId }: { productId: string }) {
       <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Left Side - Overall Rating */}
         <div className="text-center lg:text-left">
-          <div className="mb-2 text-6xl font-bold text-gray-900">
+          <div className="mb-2 text-6xl font-bold text-gray-900 dark:text-white">
             {stats.averageRating}
           </div>
           <div className="mb-2 flex items-center justify-center gap-1 lg:justify-start">
             {renderStars(Math.round(stats.averageRating), "lg")}
           </div>
-          <div className="text-lg font-semibold text-gray-600">
+          <div className="text-lg font-semibold text-gray-600 dark:text-gray-400">
             {stats.totalReviews.toLocaleString()} YORUM
           </div>
           <Button className="mt-4 rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700">
@@ -258,7 +258,7 @@ export function ProductReviews({ productId }: { productId: string }) {
 
           {/* Cannot Review Reason */}
           {!canReview.canReview && canReview.reason && (
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-gray-500 dark:text-gray-400">
               {canReview.reason}
             </div>
           )}
@@ -277,13 +277,13 @@ export function ProductReviews({ productId }: { productId: string }) {
                   <div className="flex min-w-[60px] items-center gap-1">
                     {renderStars(rating, "sm")}
                   </div>
-                  <div className="h-2 flex-1 rounded-full bg-gray-200">
+                  <div className="h-2 flex-1 rounded-full bg-gray-200 dark:bg-gray-800">
                     <div
                       className="h-2 rounded-full bg-blue-600 transition-all duration-300"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
-                  <div className="min-w-[50px] text-right text-sm text-gray-600">
+                  <div className="min-w-[50px] text-right text-sm text-gray-600 dark:text-gray-400">
                     ({count})
                   </div>
                 </div>
@@ -309,18 +309,18 @@ export function ProductReviews({ productId }: { productId: string }) {
             />
           ))
         ) : (
-          <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 py-16 text-center">
+          <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 py-16 text-center">
             {activeTab === "with-images" ? (
-              <Image className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+              <Image className="mx-auto mb-4 h-16 w-16 text-gray-300 dark:text-gray-600" />
             ) : (
-              <Star className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+              <Star className="mx-auto mb-4 h-16 w-16 text-gray-300 dark:text-gray-600" />
             )}
-            <h4 className="mb-2 text-xl font-medium text-gray-900">
+            <h4 className="mb-2 text-xl font-medium text-gray-900 dark:text-white">
               {activeTab === "with-images"
                 ? "Henüz görselli yorum yapılmamış"
                 : "Henüz yorum yapılmamış"}
             </h4>
-            <p className="mb-6 text-gray-500">
+            <p className="mb-6 text-gray-500 dark:text-gray-400">
               {activeTab === "with-images"
                 ? "Bu ürün için ilk görselli yorumu siz yapın!"
                 : "Bu ürün için ilk yorumu siz yapın!"}
@@ -341,11 +341,11 @@ export function ProductReviews({ productId }: { productId: string }) {
       {/* Inline Comment Form - Yorumların altında göster */}
       {showInlineForm && canReview.canReview && (
         <div className="mb-8">
-          <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-1">
-            <div className="rounded-md bg-white p-6">
+          <div className="rounded-lg border-2 border-blue-200 bg-blue-50 dark:bg-blue-950/30 p-1">
+            <div className="rounded-md bg-white dark:bg-gray-900 p-6">
               <div className="mb-4 flex items-center">
                 <Star className="mr-2 h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Ürünü Değerlendir
                 </h3>
               </div>
