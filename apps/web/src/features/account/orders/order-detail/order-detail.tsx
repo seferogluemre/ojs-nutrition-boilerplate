@@ -164,7 +164,7 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
       <div className="mb-6 flex items-center">
         <button
           onClick={onBack}
-          className="mr-4 flex items-center text-gray-600 transition-colors hover:text-gray-900"
+          className="mr-4 flex items-center text-gray-600 dark:text-gray-400 transition-colors hover:text-gray-900 dark:hover:text-gray-100"
         >
           <svg
             className="mr-1 h-5 w-5"
@@ -181,7 +181,7 @@ export function OrderDetail({ orderId, onBack }: OrderDetailProps) {
           </svg>
           Geri
         </button>
-        <h3 className="text-xl font-semibold text-gray-900">Sipariş Detayı</h3>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Sipariş Detayı</h3>
       </div>
 
       {/* Main content grid */}
