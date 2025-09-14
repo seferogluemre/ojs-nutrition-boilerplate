@@ -10,7 +10,7 @@ export const RecentlyViewedProducts = () => {
 
   return (
     <section className="mt-12">
-      <div className="mb-6">
+      <div className="mb-4">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Son Görüntülenenler
         </h2>
@@ -20,12 +20,12 @@ export const RecentlyViewedProducts = () => {
       </div>
       
       {/* Responsive Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
         {recentlyViewed.slice(0,6).map((product) => (
           <ProductCard 
             key={product.id} 
             product={product}
-            className="h-[340px] md:h-[360px] lg:h-[430px]"
+            className="min-h-[320px] md:min-h-[340px] lg:min-h-[380px]"
           />
         ))}
       </div>

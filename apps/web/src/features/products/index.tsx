@@ -52,14 +52,14 @@ export default function Products() {
     <Main>
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Category Title */}
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-            {getCategoryTitle(mainCategory)}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+            {getCategoryTitle(mainCategory)} 
           </h1>
         </div>
 
         {/* Products Grid - Desktop 4 columns, responsive */}
-        <div className="grid grid-cols-2 items-center gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+        <div className="grid grid-cols-2 items-stretch gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {data?.data?.map((product: Product) => (
             <ProductCard key={product.id} product={product} />
           ))}
