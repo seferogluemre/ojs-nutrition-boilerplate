@@ -27,7 +27,7 @@ export function ReviewCard({
   createdAt 
 }: ReviewCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -36,10 +36,10 @@ export function ReviewCard({
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-gray-900">{user.maskedName}</span>
+              <span className="font-semibold text-gray-900 dark:text-white">{user.maskedName}</span>
               <RatingDisplay value={rating} size="sm" />
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {format(new Date(createdAt), "d MMMM yyyy", { locale: tr })}
             </p>
           </div>
@@ -48,12 +48,12 @@ export function ReviewCard({
 
       {/* Title */}
       {title && (
-        <h4 className="font-semibold text-gray-900 mb-2 text-base">{title}</h4>
+        <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-base">{title}</h4>
       )}
 
       {/* Content */}
       {content && (
-        <p className="text-gray-700 text-sm leading-relaxed mb-4">{content}</p>
+        <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4">{content}</p>
       )}
 
       {/* Images */}
@@ -64,7 +64,7 @@ export function ReviewCard({
               key={index}
               className="relative group cursor-pointer"
             >
-              <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors">
+              <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                 <SafeImage
                   src={"http://localhost:3000" + imageUrl}
                   alt={`Yorum fotoğrafı ${index + 1}`}
