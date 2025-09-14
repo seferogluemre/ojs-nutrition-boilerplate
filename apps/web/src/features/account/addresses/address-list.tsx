@@ -177,7 +177,7 @@ export function AddressList() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">Adresler yükleniyor...</p>
+          <p className="text-gray-600 dark:text-gray-400">Adresler yükleniyor...</p>
         </div>
       </div>
     );
@@ -196,7 +196,7 @@ export function AddressList() {
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h3 className="text-xl font-semibold text-gray-900">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             {editingAddress ? "Adresi Düzenle" : "Yeni Adres Ekle"}
           </h3>
         </div>
@@ -215,7 +215,7 @@ export function AddressList() {
     return (
       <div>
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-gray-900">Adreslerim</h3>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Adreslerim</h3>
           <Button
             onClick={() => setShowForm(true)}
             className="bg-blue-600 hover:bg-blue-700"
@@ -249,10 +249,10 @@ export function AddressList() {
             </svg>
           </div>
 
-          <h4 className="mb-2 text-lg font-medium text-gray-900">
+          <h4 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
             Henüz adresiniz yok
           </h4>
-          <p className="mb-6 text-gray-600">
+          <p className="mb-6 text-gray-600 dark:text-gray-400">
             Hızlı teslimat için teslimat adreslerinizi ekleyin
           </p>
 
@@ -272,7 +272,7 @@ export function AddressList() {
     <div>
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-gray-900">Adreslerim</h3>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Adreslerim</h3>
         <Button
           onClick={() => setShowForm(true)}
           className="bg-blue-600 hover:bg-blue-700"

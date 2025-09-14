@@ -92,7 +92,7 @@ export function OrdersTab() {
   if (!orders || orders.length === 0) {
     return (
       <div>
-        <h3 className="mb-6 text-xl font-semibold text-gray-900">
+        <h3 className="mb-6 text-xl font-semibold text-gray-900 dark:text-gray-100">
           Siparişlerim (0)
         </h3>
 
@@ -113,10 +113,10 @@ export function OrdersTab() {
             </svg>
           </div>
 
-          <h4 className="mb-2 text-lg font-medium text-gray-900">
+          <h4 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
             Henüz siparişiniz yok
           </h4>
-          <p className="mb-6 text-gray-600">
+          <p className="mb-6 text-gray-600 dark:text-gray-400">
             Verdiğiniz siparişler burada görünecek
           </p>
 
@@ -130,7 +130,7 @@ export function OrdersTab() {
 
   return (
     <div>
-      <h3 className="mb-6 text-xl font-semibold text-gray-900">
+      <h3 className="mb-6 text-xl font-semibold text-gray-900 dark:text-gray-100">
         Siparişlerim ({orders.length})
       </h3>
 
@@ -138,7 +138,7 @@ export function OrdersTab() {
         {orders.map((order) => (
           <div
             key={order.id}
-            className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md hover:border-gray-300"
+            className="rounded-xl border border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-sm transition-all hover:shadow-md hover:border-gray-300 dark:hover:border-neutral-700"
           >
             <div className="hidden items-center justify-between sm:flex">
               <div className="flex items-center space-x-6">
@@ -162,19 +162,19 @@ export function OrdersTab() {
                     </span>
                   </div>
 
-                  <h4 className="mb-2 text-lg font-semibold text-gray-900">
+                  <h4 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {order.productName}
                   </h4>
 
                   {/* Tarih ve Sipariş No */}
                   <div className="space-y-1">
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                       <svg className="mr-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       {order.orderDate} tarihinde sipariş verildi
                     </p>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                       <svg className="mr-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m0 0V1a1 1 0 011-1h4a1 1 0 011 1v18a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1h4a1 1 0 011 1v3z" />
                       </svg>
@@ -225,21 +225,21 @@ export function OrdersTab() {
                   </div>
 
                   {/* Ürün Adı */}
-                  <h4 className="mb-1 line-clamp-2 text-base font-semibold text-gray-900">
+                  <h4 className="mb-1 line-clamp-2 text-base font-semibold text-gray-900 dark:text-gray-100">
                     {order.productName}
                   </h4>
                 </div>
               </div>
 
               {/* Alt kısım - Tarih ve Sipariş No */}
-              <div className="mb-5 space-y-2 rounded-lg bg-gray-50 p-3">
-                <p className="text-xs text-gray-600 flex items-center">
+              <div className="mb-5 space-y-2 rounded-lg bg-gray-50 dark:bg-neutral-900 p-3">
+                <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center">
                   <svg className="mr-1.5 h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   {order.orderDate} tarihinde sipariş verildi
                 </p>
-                <p className="text-xs text-gray-600 flex items-center">
+                <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center">
                   <svg className="mr-1.5 h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m0 0V1a1 1 0 011-1h4a1 1 0 011 1v18a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1h4a1 1 0 011 1v3z" />
                   </svg>
