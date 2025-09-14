@@ -34,7 +34,7 @@ export const InfoBanner = ({
         // 768px altında gizli, üstünde görünür
         "hidden md:block",
         // Background ve border
-        "bg-gray-50 border-b border-gray-200",
+        "bg-gray-50 dark:bg-neutral-950 border-b border-gray-200 dark:border-neutral-800",
         // Header ile aynı padding değerleri
         "px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20",
         "py-3",
@@ -49,14 +49,14 @@ export const InfoBanner = ({
           {infoItems.map((item, index) => (
             <div key={index} className="flex items-center space-x-2 text-center sm:text-left">
               {/* Icon */}
-              <item.icon className="w-4 h-4 text-gray-600 flex-shrink-0" />
+              <item.icon className="w-4 h-4 text-gray-600 dark:text-gray-300 flex-shrink-0" />
               
               {/* Text Content */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-1">
-                <span className="text-xs font-semibold text-gray-800 whitespace-nowrap">
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
                   {item.title}
                 </span>
-                <span className="text-xs text-gray-600 whitespace-nowrap">
+                <span className="text-xs text-gray-600 dark:text-gray-400 whitespace-nowrap">
                   {item.description}
                 </span>
               </div>
