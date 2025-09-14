@@ -13,28 +13,28 @@ export function OrderSummary({ order }: OrderSummaryProps) {
 
   const isDelivered = order.status === "Teslim Edildi";
   return (
-    <div className="bg-white">
+    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg p-4">
       <div className="mb-6">
-        <h4 className="mb-3 text-lg font-semibold text-gray-900">
+        <h4 className="mb-3 text-lg font-semibold text-gray-900 dark:text-gray-100">
           {order.status}
         </h4>
-        <div className="flex items-center space-x-4 text-sm text-gray-600">
+        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
           <span>{order.deliveryDate} Tarihinde Sipariş Verildi</span>
           <span>•</span>
           <span>{order.orderNumber} numaralı sipariş</span>
         </div>
       </div>
 
-      <hr className="mb-6 border-gray-200" />
+      <hr className="mb-6 border-gray-200 dark:border-neutral-800" />
 
       <div>
-        <h5 className="text-md mb-4 font-medium text-gray-900">
+        <h5 className="text-md mb-4 font-medium text-gray-900 dark:text-gray-100">
           Sipariş Edilen Ürünler
         </h5>
         <div className="space-y-4">
           {order.products.map((product) => (
             <div key={product.id} className="space-y-0">
-              <div className="flex items-start space-x-4 rounded-lg bg-gray-50 p-4">
+              <div className="flex items-start space-x-4 rounded-lg bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 p-4">
                 <div className="flex-shrink-0">
                   <img
                     src={"/images/collagen.jpg"}
@@ -44,11 +44,11 @@ export function OrderSummary({ order }: OrderSummaryProps) {
                 </div>
 
                 <div className="flex-1">
-                  <h6 className="mb-1 font-medium text-gray-900">
+                  <h6 className="mb-1 font-medium text-gray-900 dark:text-gray-100">
                     {product.name}
                   </h6>
-                  <p className="mb-1 text-sm text-gray-600">{product.price}</p>
-                  <p className="text-sm text-gray-500">{product.size}</p>
+                  <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">{product.price}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{product.size}</p>
                 
                 </div>
               </div>

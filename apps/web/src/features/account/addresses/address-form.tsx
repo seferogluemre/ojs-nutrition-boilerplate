@@ -83,11 +83,11 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg p-4">
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
         {/* Adres Başlığı */}
         <div className="space-y-2">
-          <Label htmlFor="title">Adres Başlığı</Label>
+          <Label htmlFor="title" className="dark:text-gray-100">Adres Başlığı</Label>
           <Input
             id="title"
             placeholder="Örn: Ana Ofis, Ev Adresi"
@@ -99,7 +99,7 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
 
         {/* Alıcı Adı */}
         <div className="space-y-2">
-          <Label htmlFor="recipientName">Alıcı Adı Soyadı</Label>
+          <Label htmlFor="recipientName" className="dark:text-gray-100">Alıcı Adı Soyadı</Label>
           <Input
             id="recipientName"
             placeholder="Adınız ve soyadınız"
@@ -111,7 +111,7 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
 
         {/* Telefon */}
         <div className="space-y-2">
-          <Label htmlFor="phone">Telefon Numarası</Label>
+          <Label htmlFor="phone" className="dark:text-gray-100">Telefon Numarası</Label>
           <Input
             id="phone"
             placeholder="05551234567"
@@ -123,7 +123,7 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
 
         {/* Adres Satırı 1 */}
         <div className="space-y-2">
-          <Label htmlFor="addressLine1">Adres Satırı 1</Label>
+          <Label htmlFor="addressLine1" className="dark:text-gray-100">Adres Satırı 1</Label>
           <Input
             id="addressLine1"
             placeholder="Mahalle, sokak, cadde adı ve numara"
@@ -135,7 +135,7 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
 
         {/* Adres Satırı 2 */}
         <div className="space-y-2">
-          <Label htmlFor="addressLine2">Adres Satırı 2 (Opsiyonel)</Label>
+          <Label htmlFor="addressLine2" className="dark:text-gray-100">Adres Satırı 2 (Opsiyonel)</Label>
           <Input
             id="addressLine2"
             placeholder="Apartman adı, daire no, kat"
@@ -146,7 +146,7 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
 
         {/* Şehir Seçimi */}
         <div className="space-y-2">
-          <Label htmlFor="city">Şehir</Label>
+          <Label htmlFor="city" className="dark:text-gray-100">Şehir</Label>
           <Select 
             value={formData.cityId?.toString() || ""} 
             onValueChange={(value) => setFormData(prev => ({ ...prev, cityId: parseInt(value) }))}
@@ -166,7 +166,7 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
 
         {/* Posta Kodu */}
         <div className="space-y-2">
-          <Label htmlFor="postalCode">Posta Kodu</Label>
+          <Label htmlFor="postalCode" className="dark:text-gray-100">Posta Kodu</Label>
           <Input
             id="postalCode"
             placeholder="34000"
@@ -183,7 +183,7 @@ export function AddressForm({ onSubmit, onCancel, initialData }: AddressFormProp
             checked={formData.isDefault}
             onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isDefault: !!checked }))}
           />
-          <Label htmlFor="isDefault">Varsayılan adres olarak ayarla</Label>
+          <Label htmlFor="isDefault" className="dark:text-gray-100">Varsayılan adres olarak ayarla</Label>
         </div>
 
         {/* Butonlar */}
