@@ -2,7 +2,7 @@ import { Main } from "#components/layout/main";
 import { Button } from "#components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#components/ui/tabs";
 import { useRouter } from "@tanstack/react-router";
-import { Minus, Plus } from "lucide-react";
+import { ClipboardList, Minus, Package, Plus, Truck } from "lucide-react";
 import { useState } from "react";
 import { SSS } from "./data/data";
 
@@ -36,15 +36,15 @@ export default function SSSPage() {
         <Tabs defaultValue="genel" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8 rounded-lg p-1 border border-gray-200 dark:border-neutral-800 bg-gray-100 dark:bg-neutral-900">
             <TabsTrigger value="genel" className="flex items-center gap-2 rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-800 data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-100">
-              <span className="hidden sm:inline">📋</span>
+              <ClipboardList className="hidden sm:inline w-4 h-4" />
               Genel
             </TabsTrigger>
             <TabsTrigger value="ürünler" className="flex items-center gap-2 rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-800 data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-100">
-              <span className="hidden sm:inline">📦</span>
+              <Package className="hidden sm:inline w-4 h-4" />
               Ürünler
             </TabsTrigger>
             <TabsTrigger value="kargo" className="flex items-center gap-2 rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-800 data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-100">
-              <span className="hidden sm:inline">🚚</span>
+              <Truck className="hidden sm:inline w-4 h-4" />
               Kargo
             </TabsTrigger>
           </TabsList>
@@ -54,7 +54,7 @@ export default function SSSPage() {
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                  <span className="text-blue-600 dark:text-blue-200 font-semibold text-sm">📋</span>
+                  <ClipboardList className="w-4 h-4 text-blue-600 dark:text-blue-200" />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">GENEL</h2>
               </div>
@@ -101,7 +101,7 @@ export default function SSSPage() {
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                  <span className="text-green-600 dark:text-green-200 font-semibold text-sm">📦</span>
+                  <Package className="w-4 h-4 text-green-600 dark:text-green-200" />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">ÜRÜNLER</h2>
               </div>
@@ -148,7 +148,7 @@ export default function SSSPage() {
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
-                  <span className="text-orange-600 dark:text-orange-200 font-semibold text-sm">🚚</span>
+                  <Truck className="w-4 h-4 text-orange-600 dark:text-orange-200" />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">KARGO</h2>
               </div>
