@@ -1,43 +1,177 @@
-# Turborepo starter with shell commands
+# OJS Nutrition – Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team. This template is great for issue reproductions and exploring building task graphs without frameworks.
+A modern e-commerce monorepo consisting of API and Web applications. Built for performance, scalability and great DX.
 
-## Using this example
+## Table of Contents
+- [OJS Nutrition – Monorepo](#ojs-nutrition--monorepo)
+  - [Table of Contents](#table-of-contents)
+  - [Screenshots](#screenshots)
+  - [Architecture](#architecture)
+  - [Quick Start](#quick-start)
+  - [Development Commands](#development-commands)
+    - [Handy API Commands](#handy-api-commands)
+  - [Environment Variables](#environment-variables)
+    - [apps/api/.env](#appsapienv)
+    - [apps/web/.env](#appswebenv)
+  - [API (apps/api)](#api-appsapi)
+  - [Web (apps/web)](#web-appsweb)
+  - [Packages](#packages)
+  - [Code Quality](#code-quality)
+  - [Deployment](#deployment)
+  - [Contributing](#contributing)
+  - [License](#license)
 
-Run the following command:
+## Screenshots
 
-```sh
-npx create-turbo@latest -e with-shell-commands
+> A few visuals from the current build
+
+![Home](apps/web/public/images/banner.png)
+
+![All Products](apps/web/public/images/tüm_ürünler.png)
+
+![Admin UI Components](apps/web/public/images/shadcn-admin.png)
+
+## Architecture
+
+Turborepo is used as the monorepo orchestrator.
+
+Structure (short):
+
+```
+apps/
+  api/        # Elysia + Prisma REST API
+  web/        # React + Vite + TanStack Router SPA
+packages/
+  eden/       # API client / shared types (eden)
+  schemas/    # Shared schemas/types
+  tooling-config/ # Shared ESLint, Prettier, TS configs
 ```
 
-### For bug reproductions
+Key technologies:
+- TypeScript, ESM
+- Elysia (Bun) + Prisma + PostgreSQL
+- React 18, TanStack Router, TailwindCSS, shadcn/ui
+- React Query, Zustand
+- Turborepo task cache and parallelization
 
-Giving the Turborepo core team a minimal reproduction is the best way to create a tight feedback loop for a bug you'd like to report.
+## Quick Start
 
-Because most monorepos will rely on more tooling than Turborepo (frameworks, linters, formatters, etc.), it's often useful for us to have a reproduction that strips away all of this other tooling so we can focus _only_ on Turborepo's role in your repo. This example does exactly that, giving you a good starting point for creating a reproduction.
+Prerequisites:
+- Node.js 20+ and/or Bun 1.1+
+- pnpm 9+
+- PostgreSQL (local or Docker)
 
-- Feel free to rename/delete packages for your reproduction so that you can be confident it most closely matches your use case.
-- If you need to use a different package manager to produce your bug, run `npx @turbo/workspaces convert` to switch package managers.
-- It's possible that your bug really **does** have to do with the interaction of Turborepo and other tooling within your repository. If you find that your bug does not reproduce in this minimal example and you're confident Turborepo is still at fault, feel free to bring that other tooling into your reproduction.
+Install:
 
-## What's inside?
+```bash
+pnpm install
+```
 
-This Turborepo includes the following packages:
+Database (example):
 
-### Apps and Packages
+```bash
+cd apps/api
+# create .env (see samples below)
+pnpm prisma:generate
+pnpm prisma:migrate
+pnpm prisma:seed   # varsa seed
+```
 
-- `app-a`: A final package that depends on all other packages in the graph and has no dependents. This could resemble an application in your monorepo that consumes everything in your monorepo through its topological tree.
-- `app-b`: Another final package with many dependencies. No dependents, lots of dependencies.
-- `pkg-a`: A package that has all scripts in the root `package.json`.
-- `pkg-b`: A package with _almost_ all scripts in the root `package.json`.
-- `tooling-config`: A package to simulate a common configuration used for all of your repository. This could resemble a configuration for tools like TypeScript or ESLint that are installed into all of your packages.
+Run in development (from repo root):
 
-### Some scripts to try
+```bash
+pnpm dev
+```
 
-If you haven't yet, [install global `turbo`](https://turbo.build/repo/docs/installing#install-globally) to run tasks.
+This runs API and Web in parallel.
 
-- `turbo build lint check-types`: Runs all tasks in the default graph.
-- `turbo build`: A basic command to build `app-a` and `app-b` in parallel.
-- `turbo build --filter=app-a`: Building only `app-a` and its dependencies.
-- `turbo lint`: A basic command for running lints in all packages in parallel.
+## Development Commands
+
+From root `package.json`:
+
+```bash
+pnpm dev            # run apps/api and apps/web together
+pnpm build          # build all packages
+pnpm lint           # eslint across packages
+pnpm format         # prettier format
+```
+
+### Handy API Commands
+```bash
+cd apps/api
+pnpm prisma:generate
+pnpm prisma:migrate
+pnpm prisma:studio
+```
+
+## Environment Variables
+
+### apps/api/.env
+```
+DATABASE_URL=postgres://user:pass@localhost:5432/ojs
+JWT_SECRET=change_me
+APP_URL=http://localhost:3000
+SMTP_HOST=...
+SMTP_USER=...
+SMTP_PASS=...
+```
+
+### apps/web/.env
+```
+VITE_API_URL=http://localhost:3000
+```
+
+## API (apps/api)
+- Stack: Elysia (Bun) + Prisma
+- Modules: auth, users, products, orders, cart, categories, file-library, locations, etc.
+- Swagger/OpenAPI: `src/config/swagger.config.ts`
+- Email templates: `src/emails/`
+- Data model: `prisma/schema.prisma`, migrations under `prisma/migrations/`
+
+Run:
+```bash
+cd apps/api
+pnpm dev
+```
+
+## Web (apps/web)
+- React + Vite + TanStack Router
+- Tailwind + shadcn/ui components
+- Global state: Zustand; data layer: React Query
+- Theme: Light/Dark toggle (no system option)
+
+Run:
+```bash
+cd apps/web
+pnpm dev
+```
+
+Build:
+```bash
+pnpm build
+pnpm preview
+```
+
+## Packages
+- `packages/tooling-config`: Shared ESLint/Prettier/TS configs
+- `packages/schemas`: Shared schemas/types
+- `packages/eden`: API client/SDK
+
+## Code Quality
+- ESLint, Prettier, TypeScript strict
+- Consistent import aliases (`#components`, `#features`, `#lib` ...)
+- Recommended to run lint/build in PR and CI
+
+## Deployment
+- API: runs on Bun or Node; PostgreSQL as database
+- Web: Vite build can be deployed to Netlify/Vercel/Nginx
+- Ensure production env vars are set
+
+## Contributing
+1. Create a feature branch (`feat/` or `fix/` prefix)
+2. Write meaningful commits (Conventional Commits recommended)
+3. Open a PR; ensure lint and build pass
+
+## License
+This project is open-source for developers to learn and build on top of it. Unless otherwise stated in package-level licenses, it is provided under a project-specific permissive license. Contributions are welcome.
  
