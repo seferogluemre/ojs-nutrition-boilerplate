@@ -247,9 +247,9 @@ export function ProductReviews({ productId }: { productId: string }) {
           {/* Review Button */}
           {canReview.canReview && (
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-              <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+              <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
                 <DialogHeader>
-                  <DialogTitle>Ürünü Değerlendir</DialogTitle>
+                  <DialogTitle className="text-gray-900 dark:text-white">Ürünü Değerlendir</DialogTitle>
                 </DialogHeader>
                 <ReviewForm
                   productId={productId}
