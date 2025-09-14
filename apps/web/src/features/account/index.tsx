@@ -1,5 +1,6 @@
 import { useAuthStore } from "#stores/authStore.js";
 import { useRouter } from "@tanstack/react-router";
+import { MapPin, Package, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AccountInfoTab, AddressesTab, OrdersTab } from "./components/tabs";
 
@@ -38,9 +39,9 @@ export function Account() {
   }
 
   const tabs = [
-    { id: "account-info", label: "Hesap Bilgilerim", icon: "👤" },
-    { id: "addresses", label: "Adreslerim", icon: "📍" },
-    { id: "orders", label: "Siparişlerim", icon: "📦" }
+    { id: "account-info", label: "Hesap Bilgilerim", icon: <User className="w-4 h-4" /> },
+    { id: "addresses", label: "Adreslerim", icon: <MapPin className="w-4 h-4" /> },
+    { id: "orders", label: "Siparişlerim", icon: <Package className="w-4 h-4" /> }
   ];
 
   return (
