@@ -24,8 +24,8 @@ export const CategoryItem: React.FC<CategoryItemProps> = ({
         href="#"
         className={`transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap py-2 relative z-50 flex items-center space-x-1 ${
           isHovered 
-            ? 'text-blue-700' 
-            : 'text-white hover:text-gray-300'
+            ? 'text-blue-500' 
+            : 'text-white'
         }`}
       >
         <span>{category}</span>

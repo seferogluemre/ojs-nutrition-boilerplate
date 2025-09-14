@@ -1,3 +1,4 @@
+import { ThemeSwitch } from "#/components/theme-switch"
 import { Address } from "#/features/account/addresses/address-card"
 import { useAuthStore } from "#stores/authStore.js"
 import { useState } from "react"
@@ -62,19 +63,22 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 w-[100vw] overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-neutral-950 w-[100vw] overflow-x-hidden">
       {/* Header */}
-      <div className="bg-white-50 border-b">
+      <div className="bg-white-50 dark:bg-neutral-900 border-b border-gray-200 dark:border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <img src="/images/image.png" alt="logo"  />
             </div>
-            <div className="text-right flex flex-col gap-1">
-              <div className="font-medium text-gray-900 text-lg">
+            <div className="flex items-center gap-3">
+              <ThemeSwitch />
+              <div className="text-right flex flex-col gap-1">
+                <div className="font-medium text-gray-900 dark:text-gray-100 text-lg">
                 {auth.user?.firstName} {auth.user?.lastName}
+                </div>
+                <div className="text-gray-500 dark:text-gray-400">{auth.user?.email}</div>
               </div>
-              <div className="text-gray-500">{auth.user?.email}</div>
             </div>
           </div>
         </div>
@@ -82,7 +86,7 @@ export default function PaymentPage() {
 
       <div className="max-w-7xl mx-auto px-2 sm:px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="p-0">
+          <div className="p-0">
             <StepIndicator currentStep={currentStep} />
           </div>
 

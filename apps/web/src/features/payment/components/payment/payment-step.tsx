@@ -197,10 +197,10 @@ export const PaymentStep = ({
   // Processing Ekranı
   if (isProcessing) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-lg">
+      <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mb-4"></div>
-        <h3 className="text-lg font-medium text-gray-900">Ödeme Gerçekleştiriliyor...</h3>
-        <p className="text-sm text-gray-600 mt-2">Lütfen bekleyiniz, siparişiniz oluşturuluyor...</p>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Ödeme Gerçekleştiriliyor...</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Lütfen bekleyiniz, siparişiniz oluşturuluyor...</p>
       </div>
     )
   }
@@ -208,7 +208,7 @@ export const PaymentStep = ({
   // Ana Ödeme Formu
   return (
     <div className="space-y-6">
-      <div className="bg-gray-50 rounded-lg p-6">
+      <div className="bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg p-6">
         <h3 className="text-lg font-medium mb-4">Kart Bilgileri</h3>
 
         <div className="space-y-4">
@@ -284,24 +284,24 @@ export const PaymentStep = ({
         </div>
 
         {/* Sipariş Özeti */}
-        <div className="mt-6 p-4 bg-white rounded-lg">
+        <div className="mt-6 p-4 bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800">
           <h4 className="font-medium mb-2">Sipariş Özeti</h4>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             <div className="flex justify-between">
               <span>Teslimat Adresi:</span>
-              <span>{selectedAddress?.title || "Adres seçilmedi"}</span>
+              <span className="text-gray-900 dark:text-gray-100">{selectedAddress?.title || "Adres seçilmedi"}</span>
             </div>
             {selectedAddress && (
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {selectedAddress.recipientName} - {selectedAddress.addressLine1}
                 {selectedAddress.addressLine2 && `, ${selectedAddress.addressLine2}`}
               </div>
             )}
             <div className="flex justify-between mt-2">
               <span>Kargo:</span>
-              <span>{shippingCost === 0 ? "Ücretsiz" : `${shippingCost} TL`}</span>
+              <span className="text-gray-900 dark:text-gray-100">{shippingCost === 0 ? "Ücretsiz" : `${shippingCost} TL`}</span>
             </div>
-            <div className="flex justify-between mt-1 font-medium text-black">
+            <div className="flex justify-between mt-1 font-medium text-black dark:text-gray-100">
               <span>Toplam:</span>
               <span>{(1556 + shippingCost).toLocaleString()} TL</span>
             </div>
@@ -309,7 +309,7 @@ export const PaymentStep = ({
         </div>
 
         <div className="flex space-x-3 mt-6">
-          <Button variant="outline" onClick={onPrev} className="flex-1 bg-white" disabled={isProcessing}>
+          <Button variant="outline" onClick={onPrev} className="flex-1 bg-white dark:bg-neutral-900 dark:text-gray-100 dark:border-neutral-800" disabled={isProcessing}>
             Geri
           </Button>
           <Button onClick={handleCompleteOrder} className="flex-1 bg-black hover:bg-gray-800" disabled={isProcessing}>

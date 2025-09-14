@@ -9,9 +9,9 @@ export const OrderSummary = ({ shippingCost }: OrderSummaryProps) => {
   const { data: cartData } = useQuery<CartData>({
     queryKey: ["cart-items"],
     queryFn: async () => {
-      const response = await api["cart-items"].get({
+      const response = await (api as any)["cart-items"].get({
         headers: {
-          authorization: `Bearer ${auth.auth.accessToken}`,
+          authorization: `Bearer ${auth.accessToken}`,
         },
       });
       return response.data;
@@ -19,12 +19,12 @@ export const OrderSummary = ({ shippingCost }: OrderSummaryProps) => {
   });
   if (!cartData) {
     return (
-      <div className="sticky top-4 rounded-lg bg-gray-50 p-6">
-        <h3 className="mb-4 text-lg font-medium">Sipariş Özeti</h3>
+      <div className="sticky top-4 rounded-lg bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 p-6">
+        <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">Sipariş Özeti</h3>
         <div className="animate-pulse">
-          <div className="mb-4 h-4 rounded bg-gray-200"></div>
-          <div className="mb-4 h-4 rounded bg-gray-200"></div>
-          <div className="h-4 rounded bg-gray-200"></div>
+          <div className="mb-4 h-4 rounded bg-gray-200 dark:bg-neutral-800"></div>
+          <div className="mb-4 h-4 rounded bg-gray-200 dark:bg-neutral-800"></div>
+          <div className="h-4 rounded bg-gray-200 dark:bg-neutral-800"></div>
         </div>
       </div>
     );
@@ -46,8 +46,8 @@ export const OrderSummary = ({ shippingCost }: OrderSummaryProps) => {
   const total = subtotal + shippingCost;
 
   return (
-    <div className="sticky top-4 rounded-lg bg-gray-50 p-6">
-      <h3 className="mb-4 text-lg font-medium">Sipariş Özeti</h3>
+    <div className="sticky top-4 rounded-lg bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 p-6">
+      <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">Sipariş Özeti</h3>
 
       <div className="space-y-4">
         {itemsData.map((item) => (

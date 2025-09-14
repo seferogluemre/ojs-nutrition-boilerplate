@@ -69,11 +69,11 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="bg-gray-50 rounded-lg p-6">
+        <div className="bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg p-6">
           <h3 className="text-lg font-medium mb-4">Teslimat Adresi</h3>
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Adresler yükleniyor...</span>
+            <span className="ml-2 text-gray-600 dark:text-gray-400">Adresler yükleniyor...</span>
           </div>
         </div>
       </div>
@@ -84,7 +84,7 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
   if (error) {
     return (
       <div className="space-y-6">
-        <div className="bg-gray-50 rounded-lg p-6">
+        <div className="bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg p-6">
           <h3 className="text-lg font-medium mb-4">Teslimat Adresi</h3>
           <div className="text-center py-8">
             <p className="text-red-600 mb-4">Adresler yüklenirken hata oluştu</p>
@@ -114,12 +114,12 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
 
   return (
     <div className="space-y-6">
-      <div className="bg-gray-50 rounded-lg p-6">
+      <div className="bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg p-6">
         <h3 className="text-lg font-medium mb-4">Teslimat Adresi</h3>
 
         {addresses.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-600 mb-4">Henüz kayıtlı adresiniz yok</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">Henüz kayıtlı adresiniz yok</p>
             <Button onClick={handleAddNewAddress} className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
               İlk Adresinizi Ekleyin
@@ -140,15 +140,15 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
                   key={address.uuid}
                   className={`flex items-start space-x-3 p-4 rounded-lg ${
                     selectedAddress?.uuid === address.uuid
-                      ? "bg-blue-50 border-2 border-blue-500"
-                      : "bg-white border border-gray-200"
+                      ? "bg-blue-50 dark:bg-blue-950/30 border-2 border-blue-500 dark:border-blue-900"
+                      : "bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800"
                   }`}
                 >
                   <RadioGroupItem value={address.uuid} id={address.uuid} className="mt-1" />
                   <div className="flex-1">
                     <Label htmlFor={address.uuid} className="cursor-pointer">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium">{address.title}</span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{address.title}</span>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -161,17 +161,17 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
                           Düzenle
                         </Button>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                         {address.recipientName}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {address.addressLine1}
                         {address.addressLine2 && `, ${address.addressLine2}`}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {address.city.stateName} - {address.city.name}, {address.postalCode}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {address.phone}
                       </p>
                     </Label>
@@ -180,7 +180,7 @@ export const AddressStep = ({ onNext, selectedAddress, setSelectedAddress }: Add
               ))}
             </RadioGroup>
 
-            <Button variant="outline" onClick={handleAddNewAddress} className="w-full mt-4 border-dashed bg-white">
+            <Button variant="outline" onClick={handleAddNewAddress} className="w-full mt-4 border-dashed bg-white dark:bg-neutral-900 dark:text-gray-100 dark:border-neutral-800">
               <Plus className="w-4 h-4 mr-2" />
               Yeni Adres
             </Button>
