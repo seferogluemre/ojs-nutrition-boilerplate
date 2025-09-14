@@ -1,17 +1,11 @@
 import { Button } from "#components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "#components/ui/dropdown-menu";
 import { useTheme } from "#context/theme-context";
-import { cn } from "#lib/utils";
-import { IconCheck, IconMoon, IconSun } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { IconMoon, IconSun } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 
 export function ThemeSwitch() {
   const { theme, setTheme } = useTheme();
+  const [isDarkDom, setIsDarkDom] = useState<boolean>(false);
 
   /* Update theme-color meta tag
    * when theme is updated */
@@ -19,40 +13,30 @@ export function ThemeSwitch() {
     const themeColor = "#fff";
     const metaThemeColor = document.querySelector("meta[name='theme-color']");
     if (metaThemeColor) metaThemeColor.setAttribute("content", themeColor);
+    setIsDarkDom(document.documentElement.classList.contains("dark"));
   }, [theme]);
 
+  const handleToggle = () => {
+    const root = window.document.documentElement;
+    const effective = theme === "system" ? (root.classList.contains("dark") ? "dark" : "light") : theme;
+    const next = effective === "dark" ? "light" : "dark";
+    setTheme(next);
+  };
+
   return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="scale-95 rounded-full hover:bg-gray-100 text-gray-700 dark:text-gray-900">
-          <IconSun className="size-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-gray-700 dark:text-gray-900" />
-          <IconMoon className="absolute size-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-gray-700 dark:text-gray-900" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light{" "}
-          <IconCheck
-            size={14}
-            className={cn("ml-auto", theme !== "light" && "hidden")}
-          />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
-          <IconCheck
-            size={14}
-            className={cn("ml-auto", theme !== "dark" && "hidden")}
-          />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
-          <IconCheck
-            size={14}
-            className={cn("ml-auto", theme !== "system" && "hidden")}
-          />
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={handleToggle}
+      className="scale-95 rounded-full hover:bg-gray-100 text-gray-800"
+      aria-label="Tema değiştir"
+      title="Tema değiştir"
+    >
+      {isDarkDom ? (
+        <IconMoon className="size-[1.2rem] text-gray-800" stroke={2.2} />
+      ) : (
+        <IconSun className="size-[1.2rem] text-gray-800" stroke={2.2} />
+      )}
+    </Button>
   );
 }
