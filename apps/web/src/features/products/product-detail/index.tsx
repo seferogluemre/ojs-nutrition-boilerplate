@@ -28,7 +28,6 @@ export default function ProductDetail() {
   });
 
   const product = data?.data as Product;
-  // State management
   const [selectedFlavor, setSelectedFlavor] = useState<ProductVariant | null>(null);
   const [selectedSize, setSelectedSize] = useState<ProductVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -56,15 +55,17 @@ export default function ProductDetail() {
     );
   }
 
+
   return (
     <Main>
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* 2 Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-          {/* Left Column - Product Image */}
           <ProductImage 
-            src={product.photo_src} 
+            photos={product.photos}
+            primaryPhotoUrl={product.primaryPhotoUrl}
             alt={product.name}
+            selectedVariant={selectedFlavor || selectedSize}
           />
 
           {/* Right Column - Product Info */}

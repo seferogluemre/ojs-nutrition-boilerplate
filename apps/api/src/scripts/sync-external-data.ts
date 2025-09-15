@@ -91,7 +91,9 @@ const productUuidMapping = new Map<string, string>();
 function createImageUrl(photoSrc: string | null): string {
   if (!photoSrc) return '';
   if (photoSrc.startsWith('http')) return photoSrc;
-  return `${API_BASE_URL}${photoSrc}`;
+  // Görseller için /media/ prefixi kullanılıyor, /api/v1 değil
+  const baseUrl = 'https://fe1111.projects.academy.onlyjs.com';
+  return `${baseUrl}${photoSrc}`;
 }
 
 // Helper function to generate UUID
