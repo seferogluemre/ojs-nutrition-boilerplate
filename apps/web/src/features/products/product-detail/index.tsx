@@ -7,15 +7,15 @@ import { useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Product, ProductVariant } from "../types";
 import {
-    ProductBenefits,
-    ProductDetails,
-    ProductImage,
-    ProductInfo,
-    ProductPricing,
-    ProductReviews,
-    ProductTags,
-    ProductVariants,
-    RecentlyViewedProducts,
+  ProductBenefits,
+  ProductDetails,
+  ProductImage,
+  ProductInfo,
+  ProductPricing,
+  ProductReviews,
+  ProductTags,
+  ProductVariants,
+  RecentlyViewedProducts,
 } from "./components";
 
 export default function ProductDetail() {
@@ -24,7 +24,7 @@ export default function ProductDetail() {
 
   const { data } = useQuery({
     queryKey: ["products", productId],
-    queryFn:  () => api.products({ id: productId }).get()
+    queryFn:  () => api.products[productId].get()
   });
 
   const product = data?.data as Product;

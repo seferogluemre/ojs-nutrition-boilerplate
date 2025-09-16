@@ -6,6 +6,10 @@ import { Gender } from '#prisma/client';
 import { faker } from '@faker-js/faker';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 loadEnv();
 
@@ -49,8 +53,14 @@ async function main() {
     console.log('✅ User role permissions updated:', userRole);
   }
 
-  console.log('🌍 Seeding world data...');
-  await seedWorldData();
+  // World data already exists, skipping...
+  // await seedWorldData();
+
+  console.log('🏪 Creating test categories...');
+  await seedCategories();
+
+  console.log('📦 Creating test products...');
+  await seedProducts();
 
   console.log('👥 Creating test users...');
   // Create only 2 users for testing
@@ -260,6 +270,106 @@ async function seedWorldData() {
   });
 
   console.log('✅ World data seeding completed!');
+}
+
+async function seedCategories() {
+  const categories = [
+    { name: 'Protein', slug: 'protein' },
+    { name: 'Kreatin', slug: 'kreatin' },
+    { name: 'Amino Asit', slug: 'amino-asit' },
+    { name: 'Yağ Yakıcı', slug: 'yag-yakici' },
+  ];
+
+  for (const category of categories) {
+    await prisma.category.upsert({
+      where: { slug: category.slug },
+      update: {},
+      create: {
+        name: category.name,
+        slug: category.slug,
+      },
+    });
+  }
+
+  console.log('✅ Categories seeded!');
+}
+
+async function seedProducts() {
+  const proteinCategory = await prisma.category.findFirst({
+    where: { slug: 'protein' }
+  });
+
+  if (!proteinCategory) {
+    console.log('❌ Protein category not found');
+    return;
+  }
+
+  const products = [
+    {
+      uuid: '790e8f3a-5627-408e-a238-f347d84c03aa',
+      name: 'Fıstık Ezmesi Protein',
+      slug: 'fistik-ezmesi-protein',
+      shortDescription: 'Doğal fıstık ezmesi aromalı protein tozu',
+      longDescription: 'Premium kalitede, doğal fıstık ezmesi aromalı whey protein tozu. Kas gelişimi ve toparlanma için ideal.',
+      price: 299.99,
+      stock: 50,
+      isActive: true,
+      primaryPhotoUrl: '/images/fistik-ezmesi-protein.jpg',
+      categoryId: proteinCategory.id,
+      mainCategoryId: proteinCategory.uuid,
+      tags: ['protein', 'fıstık ezmesi', 'whey', 'kas gelişimi'],
+      explanation: {
+        nutrition_facts: {
+          serving_size: '30g',
+          servings_per_container: 33,
+          calories: 120,
+          protein: '25g',
+          carbohydrates: '2g',
+          fat: '1.5g',
+          fiber: '1g',
+          sodium: '80mg',
+          portion_sizes: ['30g']
+        }
+      }
+    },
+    {
+      uuid: '123e4567-e89b-12d3-a456-426614174000',
+      name: 'Çikolata Protein',
+      slug: 'cikolata-protein',
+      shortDescription: 'Lezzetli çikolata aromalı protein tozu',
+      longDescription: 'Yüksek kaliteli whey protein ile hazırlanmış, zengin çikolata aromalı protein tozu.',
+      price: 279.99,
+      stock: 30,
+      isActive: true,
+      primaryPhotoUrl: '/images/cikolata-protein.jpg',
+      categoryId: proteinCategory.id,
+      mainCategoryId: proteinCategory.uuid,
+      tags: ['protein', 'çikolata', 'whey', 'lezzet'],
+      explanation: {
+        nutrition_facts: {
+          serving_size: '30g',
+          servings_per_container: 33,
+          calories: 115,
+          protein: '24g',
+          carbohydrates: '3g',
+          fat: '1g',
+          fiber: '0.5g',
+          sodium: '70mg',
+          portion_sizes: ['30g']
+        }
+      }
+    }
+  ];
+
+  for (const product of products) {
+    await prisma.product.upsert({
+      where: { uuid: product.uuid },
+      update: {},
+      create: product,
+    });
+  }
+
+  console.log('✅ Products seeded!');
 }
 
 main()
