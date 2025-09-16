@@ -1,5 +1,5 @@
 import { SearchProps } from "#types/search.js";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import React from "react";
 
@@ -15,6 +15,19 @@ export const SearchDropdown = React.forwardRef<
   HTMLDivElement,
   SearchDropdownProps
 >(({ items, isLoading, isOpen, onItemClick, onClose }, ref) => {
+  const navigate = useNavigate();
+
+  const handleProductClick = (productId: string, event: React.MouseEvent) => {
+    console.log('🚀 SEARCH CLICKED! Product ID:', productId);
+    alert('CLICKED: ' + productId);
+    
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Direct navigation
+    window.location.href = `/products/${productId}`;
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -32,16 +45,19 @@ export const SearchDropdown = React.forwardRef<
       ) : (
         <div className="py-2">
           {items.map((product) => (
-            <Link
+            <div
               key={product.id}
-              to="/products/$productId"
-              params={{ productId: product.id }}
-              className="flex cursor-pointer items-center border-b border-gray-100 p-3 last:border-b-0 hover:bg-gray-100"
-              onClick={onItemClick}
+              className="flex cursor-pointer items-center border-b border-gray-100 p-3 last:border-b-0 hover:bg-gray-100 transition-colors duration-200"
+              onClick={(event) => handleProductClick(product.id, event)}
+              style={{ 
+                pointerEvents: 'auto',
+                zIndex: 999,
+                position: 'relative'
+              }}
             >
               <div className="flex-shrink-0">
                 <img
-                  src={"/images/collagen.jpg"}
+                  src={product.primaryPhotoUrl || "/images/collagen.jpg"}
                   alt={product.name}
                   className="h-12 w-12 rounded object-cover"
                 />
@@ -57,11 +73,11 @@ export const SearchDropdown = React.forwardRef<
               {/* Price Info */}
               <div className="flex-shrink-0 text-right">
                 <div className="text-sm font-bold text-gray-900">
-                  {product.price} TL
+                  ₺{product.price.toFixed(0)}
                 </div>
                 {product.oldPrice && (
                   <div className="text-xs text-gray-500 line-through">
-                    {product.oldPrice} TL
+                    ₺{product.oldPrice}
                   </div>
                 )}
                 {product.discountPercentage && (
@@ -70,7 +86,7 @@ export const SearchDropdown = React.forwardRef<
                   </div>
                 )}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
