@@ -1,74 +1,64 @@
 import { SafeImage } from "#components/ui/safe-image.js";
+import { api } from "#lib/api.js";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import React from "react";
 
-interface PopularProduct {
+// API'den gelen Product type'ını kullan
+interface ApiProduct {
   id: string;
   name: string;
-  description: string;
-  price: number;
-  image: string;
   slug: string;
-  category: string;
-  rating: number;
+  short_explanation: string;
+  shortDescription: string;
+  longDescription: string;
+  price: number;
+  primaryPhotoUrl: string;
+  averageRating: number;
+  comment_count: number;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  tags: string[];
+  stock: number;
+  isActive: boolean;
 }
-
-// Görseldeki popüler ürünler
-const popularProducts: PopularProduct[] = [
-  {
-    id: "pea-protein-001",
-    name: "PEA PROTEIN",
-    description: "En Popüler Vegan Protein Kaynağı",
-    price: 349.00,
-    image: "/images/pea-protein.jpg",
-    slug: "pea-protein",
-    category: "Protein",
-    rating: 4.5
-  },
-  {
-    id: "whey-protein-001", 
-    name: "WHEY PROTEIN",
-    description: "En Saf Whey",
-    price: 549.00,
-    image: "/images/whey-protein.jpg",
-    slug: "whey-protein",
-    category: "Protein",
-    rating: 4.8
-  },
-  {
-    id: "cream-of-rice-001",
-    name: "CREAM OF RICE",
-    description: "En Lezzetli Pirinç Kreması",
-    price: 239.00,
-    image: "/images/cream-of-rice.jpg", 
-    slug: "cream-of-rice",
-    category: "Karbonhidrat",
-    rating: 4.6
-  },
-  {
-    id: "mass-gainer-001",
-    name: "MASS GAINER",
-    description: "Yüksek Kalorili Pratik Gainer",
-    price: 999.00,
-    image: "/images/mass-gainer.jpg",
-    slug: "mass-gainer", 
-    category: "Gainer",
-    rating: 4.7
-  },
-  {
-    id: "selenium-001",
-    name: "SELENIUM",
-    description: "Saç + Tırnak",
-    price: 179.00,
-    image: "/images/selenium.jpg",
-    slug: "selenium",
-    category: "Vitamin",
-    rating: 4.4
-  }
-];
 
 export const PopularProductsDropdown: React.FC = () => {
   const navigate = useNavigate();
+
+  // Protein kategorisindeki ürünleri çek
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await (api as any).categories.get();
+      return response.data;
+    },
+  });
+
+  // Protein kategorisinin ID'sini bul
+  const proteinCategory = categoriesData?.data?.find(
+    (cat: any) => cat.name === "PROTEİN" || cat.name.toLowerCase().includes("protein")
+  );
+
+  // Protein kategorisindeki popüler ürünleri çek
+  const { data: productsData, isLoading } = useQuery({
+    queryKey: ["popular-protein-products", proteinCategory?.id],
+    queryFn: async () => {
+      const response = await (api as any).products.get({
+        query: { 
+          main_category: proteinCategory?.id,
+          limit: 6 // İlk 6 ürünü al
+        },
+      });
+      return response.data;
+    },
+    enabled: !!proteinCategory?.id, // Protein kategorisi bulunduğunda çalıştır
+  });
+
+  const popularProducts: ApiProduct[] = productsData?.data || [];
 
   const handleProductClick = (productId: string, slug: string) => {
     navigate({ to: `/products/${productId}` });
@@ -94,7 +84,9 @@ export const PopularProductsDropdown: React.FC = () => {
           </div>
           <div>
             <h3 className="text-sm font-semibold text-gray-900">Popüler Ürünler</h3>
-            <p className="text-xs text-gray-500">{popularProducts.length} ürün</p>
+            <p className="text-xs text-gray-500">
+              {isLoading ? 'Yükleniyor...' : `${popularProducts.length} ürün`}
+            </p>
           </div>
         </div>
       </div>
@@ -102,7 +94,24 @@ export const PopularProductsDropdown: React.FC = () => {
       {/* Scrollable Product List */}
       <div className="flex-1 overflow-y-auto p-3 scrollbar-thin scrollbar-thumb-orange-300 scrollbar-track-transparent hover:scrollbar-track-orange-100">
         <div className="space-y-2">
-          {popularProducts.map((product: PopularProduct) => (
+          {/* Loading State */}
+          {isLoading && (
+            <div className="space-y-2">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="animate-pulse flex items-center space-x-3 p-3">
+                  <div className="w-14 h-14 bg-gray-200 rounded-xl flex-shrink-0"></div>
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Product List */}
+          {!isLoading && popularProducts.map((product: ApiProduct) => (
             <div 
               key={product.id} 
               className="group flex items-center space-x-3 p-3 hover:bg-orange-50 rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-orange-200 hover:shadow-sm"
@@ -111,7 +120,7 @@ export const PopularProductsDropdown: React.FC = () => {
               {/* Product Image */}
               <div className="w-14 h-14 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex-shrink-0 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                 <SafeImage 
-                  src={product.image}
+                  src={product.primaryPhotoUrl || '/images/placeholder.jpg'}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                 />
@@ -123,7 +132,7 @@ export const PopularProductsDropdown: React.FC = () => {
                   {product.name}
                 </h4>
                 <p className="text-xs text-gray-500 truncate mb-2">
-                  {product.description}
+                  {product.short_explanation || product.shortDescription}
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-1">
@@ -131,23 +140,37 @@ export const PopularProductsDropdown: React.FC = () => {
                     {[...Array(5)].map((_, i) => (
                       <svg 
                         key={i}
-                        className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                        className={`w-3 h-3 ${i < Math.floor(product.averageRating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
                         fill="currentColor" 
                         viewBox="0 0 20 20"
                       >
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     ))}
-                    <span className="text-xs text-gray-500 ml-1">{product.rating}</span>
+                    <span className="text-xs text-gray-500 ml-1">
+                      {product.averageRating ? product.averageRating.toFixed(1) : '0.0'}
+                    </span>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="text-sm font-bold text-gray-900">₺{product.price.toFixed(0)}</p>
-                    <p className="text-xs text-orange-500 font-medium">{product.category}</p>
+                    <p className="text-xs text-orange-500 font-medium">{product.category.name}</p>
                   </div>
                 </div>
               </div>
             </div>
           ))}
+
+          {/* Empty State */}
+          {!isLoading && popularProducts.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <p className="text-sm">Protein ürünleri yükleniyor...</p>
+            </div>
+          )}
         </div>
       </div>
 
