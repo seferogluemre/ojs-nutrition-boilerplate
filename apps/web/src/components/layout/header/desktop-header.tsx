@@ -20,6 +20,7 @@ interface DesktopHeaderProps {
   isSearchLoading: boolean;
   searchContainerRef: React.RefObject<HTMLDivElement>;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchFocus: () => void;
   onSearchItemClick: () => void;
   onCloseSearch: () => void;
   onLogout: () => void;
@@ -35,6 +36,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
   isSearchLoading,
   searchContainerRef,
   onSearchChange,
+  onSearchFocus,
   onSearchItemClick,
   onCloseSearch,
   onLogout,
@@ -65,7 +67,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
         isSearchLoading={isSearchLoading}
         searchContainerRef={searchContainerRef}
         onSearchChange={onSearchChange}
-        onSearchFocus={() => searchQuery.length >= 2}
+        onSearchFocus={onSearchFocus}
         onSearchItemClick={onSearchItemClick}
         onCloseSearch={onCloseSearch}
       />

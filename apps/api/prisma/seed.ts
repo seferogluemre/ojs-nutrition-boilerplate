@@ -1,6 +1,6 @@
-import { loadEnv } from '#config/env';
-import prisma from '#core/prisma';
-import { USER_PERMISSIONS } from '#modules/auth/roles/constants';
+import { loadEnv } from '@config/env';
+import prisma from '@core/prisma';
+import { USER_PERMISSIONS } from '@modules/auth/roles/constants';
 import { RolesService } from '#modules/auth/roles/service';
 import { Gender } from '#prisma/client';
 import { faker } from '@faker-js/faker';

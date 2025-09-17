@@ -19,6 +19,7 @@ interface TabletHeaderProps {
   isSearchLoading: boolean;
   searchContainerRef: React.RefObject<HTMLDivElement>;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchFocus: () => void;
   onSearchItemClick: () => void;
   onCloseSearch: () => void;
   onLogout: () => void;
@@ -34,6 +35,7 @@ export const TabletHeader: React.FC<TabletHeaderProps> = ({
   isSearchLoading,
   searchContainerRef,
   onSearchChange,
+  onSearchFocus,
   onSearchItemClick,
   onCloseSearch,
   onLogout,
@@ -64,7 +66,7 @@ export const TabletHeader: React.FC<TabletHeaderProps> = ({
         isSearchLoading={isSearchLoading}
         searchContainerRef={searchContainerRef}
         onSearchChange={onSearchChange}
-        onSearchFocus={() => searchQuery.length >= 2}
+        onSearchFocus={onSearchFocus}
         onSearchItemClick={onSearchItemClick}
         onCloseSearch={onCloseSearch}
       />

@@ -18,14 +18,12 @@ export const SearchDropdown = React.forwardRef<
   const navigate = useNavigate();
 
   const handleProductClick = (productId: string, event: React.MouseEvent) => {
-    console.log('🚀 SEARCH CLICKED! Product ID:', productId);
-    alert('CLICKED: ' + productId);
-    
     event.preventDefault();
     event.stopPropagation();
     
-    // Direct navigation
-    window.location.href = `/products/${productId}`;
+    onItemClick();
+    
+    navigate({ to: `/products/${productId}` });
   };
 
   if (!isOpen) return null;

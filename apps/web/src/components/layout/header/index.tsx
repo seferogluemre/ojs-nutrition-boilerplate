@@ -156,6 +156,7 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
         isSearchLoading={isSearchLoading}
         searchContainerRef={searchContainerRef}
         onSearchChange={handleSearchChange}
+        onSearchFocus={() => searchQuery.length >= 2 && setIsSearchOpen(true)}
         onSearchItemClick={handleSearchItemClick}
         onCloseSearch={handleCloseSearch}
         onLogout={handleLogout}
@@ -172,6 +173,7 @@ export const Header = ({ className, fixed, ...props }: HeaderProps) => {
         isSearchLoading={isSearchLoading}
         searchContainerRef={searchContainerRef}
         onSearchChange={handleSearchChange}
+        onSearchFocus={() => searchQuery.length >= 2 && setIsSearchOpen(true)}
         onSearchItemClick={handleSearchItemClick}
         onCloseSearch={handleCloseSearch}
         onLogout={handleLogout}
