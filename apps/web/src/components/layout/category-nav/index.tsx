@@ -14,7 +14,6 @@ interface CategoryNavProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 
-
 const categories = [
   "Proteinler",
   "Spor Gıdaları", 
@@ -47,7 +46,7 @@ export const CategoryNav = ({
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await (api as any).categories.get();
+      const response = await api.categories.get();
       return response.data as CategoriesApiResponse;
     },
   });

@@ -81,17 +81,13 @@ interface ExternalProductDetailResponse {
   data: ExternalProductDetail;
 }
 
-// Category UUID to DB ID mapping
 const categoryMapping = new Map<string, { id: number, uuid: string }>();
 
-// Product slug to UUID mapping for sub_children products
 const productUuidMapping = new Map<string, string>();
 
-// Helper function to create full image URL
 function createImageUrl(photoSrc: string | null): string {
   if (!photoSrc) return '';
   if (photoSrc.startsWith('http')) return photoSrc;
-  // Görseller için /media/ prefixi kullanılıyor, /api/v1 değil
   const baseUrl = 'https://fe1111.projects.academy.onlyjs.com';
   return `${baseUrl}${photoSrc}`;
 }
@@ -248,7 +244,6 @@ async function syncCategories(): Promise<void> {
               });
 
               if (dbSubChildCategory) {
-                // Update existing sub child category with new UUID
                 dbSubChildCategory = await prisma.category.update({
                   where: { id: dbSubChildCategory.id },
                   data: {
@@ -259,7 +254,6 @@ async function syncCategories(): Promise<void> {
                   },
                 });
               } else {
-                // Create new sub child category
                 try {
                   dbSubChildCategory = await prisma.category.create({
                     data: {
@@ -272,7 +266,6 @@ async function syncCategories(): Promise<void> {
                   });
                 } catch (error: any) {
                   if (error.code === 'P2002') {
-                    // Handle unique constraint violation
                     console.warn(`⚠️  Slug already exists: ${subChildCategory.slug}, skipping...`);
                     continue;
                   }
@@ -294,7 +287,6 @@ async function syncCategories(): Promise<void> {
   }
 }
 
-// Sync products with variants
 async function syncProducts(): Promise<void> {
   console.log('📦 Ürün senkronizasyonu başlatılıyor...');
 
@@ -310,11 +302,9 @@ async function syncProducts(): Promise<void> {
       try {
         console.log(`🔍 Ürün detayı çekiliyor: ${product.slug}`);
 
-        // Fetch product detail
         const detailResponse = await fetchExternalAPI<ExternalProductDetailResponse>(`/products/${product.slug}`);
         const productDetail = detailResponse.data;
 
-        // Find category ID from mapping
         const categoryInfo = categoryMapping.get(productDetail.sub_category_id);
         if (!categoryInfo) {
           console.warn(`⚠️  Kategori bulunamadı: ${productDetail.sub_category_id} (${product.name})`);
@@ -322,13 +312,10 @@ async function syncProducts(): Promise<void> {
         }
         const categoryId = categoryInfo.id;
 
-        // Calculate total stock from variants
         const totalStock = productDetail.variants.reduce((sum, variant) => sum + (variant.size.pieces || 0), 0);
 
-        // Get product UUID from mapping (if it's a sub_children product) or generate new one
         const productUuid = productUuidMapping.get(product.slug) || generateUUID();
 
-        // Prepare explanation JSON
         const explanation = {
           usage: productDetail.explanation.usage || null,
           features: productDetail.explanation.features || null,
@@ -336,13 +323,11 @@ async function syncProducts(): Promise<void> {
           nutritional_content: productDetail.explanation.nutritional_content || null,
         };
 
-        // Try to find existing product by name
         let dbProduct = await prisma.product.findFirst({
           where: { name: product.name },
         });
 
         if (dbProduct) {
-          // Update existing product
           dbProduct = await prisma.product.update({
             where: { id: dbProduct.id },
             data: {
@@ -363,7 +348,6 @@ async function syncProducts(): Promise<void> {
             },
           });
         } else {
-          // Create new product
           try {
             dbProduct = await prisma.product.create({
               data: {
@@ -397,7 +381,6 @@ async function syncProducts(): Promise<void> {
         const isSubChildrenProduct = productUuidMapping.has(product.slug);
         console.log(`✅ Ürün ${isSubChildrenProduct ? 'güncellendi/oluşturuldu (sub_children)' : 'oluşturuldu'}: ${product.name} (UUID: ${productUuid})`);
 
-        // Sync product variants
         console.log(`🔧 ${productDetail.variants.length} varyant işleniyor...`);
 
         for (const variant of productDetail.variants) {
@@ -408,7 +391,6 @@ async function syncProducts(): Promise<void> {
             discount_percentage: variant.price.discount_percentage || null,
           };
 
-          // Try to find existing variant
           const variantName = variant.aroma || 'Default';
           const dbVariant = await prisma.productVariant.findFirst({
             where: {
@@ -418,7 +400,6 @@ async function syncProducts(): Promise<void> {
           });
 
           if (dbVariant) {
-            // Update existing variant
             await prisma.productVariant.update({
               where: { id: dbVariant.id },
               data: {
@@ -430,7 +411,6 @@ async function syncProducts(): Promise<void> {
               },
             });
           } else {
-            // Create new variant
             await prisma.productVariant.create({
               data: {
                 uuid: generateUUID(),
@@ -448,17 +428,15 @@ async function syncProducts(): Promise<void> {
 
         processedCount++;
 
-        // Progress logging every 5 products
         if (processedCount % 5 === 0) {
           console.log(`⏱️  İlerleme: ${processedCount}/${products.length} ürün işlendi`);
         }
 
-        // Rate limiting delay
         await delay(100);
 
       } catch (error) {
         console.error(`❌ Ürün işleme hatası [${product.slug}]:`, error instanceof Error ? error.message : error);
-        continue; // Continue with next product
+        continue; 
       }
     }
 
@@ -478,10 +456,8 @@ async function main(): Promise<void> {
   console.log(`📡 API Base URL: ${API_BASE_URL}`);
 
   try {
-    // Step 1: Sync categories
     await syncCategories();
 
-    // Step 2: Sync products
     await syncProducts();
 
     const duration = Date.now() - startTime;
@@ -495,7 +471,6 @@ async function main(): Promise<void> {
   }
 }
 
-// Run the script
 if (import.meta.main) {
   main();
 }
