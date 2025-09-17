@@ -38,20 +38,20 @@ export function ReviewTabs({
   };
 
   return (
-    <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
+    <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-full max-w-full overflow-hidden">
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 rounded-md h-8 flex-1 min-w-0 text-xs sm:text-sm font-medium transition-all duration-200 ${
             activeTab === tab.id
               ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm dark:shadow-none"
               : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
           }`}
         >
           {tab.icon}
-          {tab.label}
-          <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full">
+          <span className="truncate">{tab.label}</span>
+          <span className="ml-0.5 sm:ml-1 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-1.5 sm:px-2 py-0.5 rounded-full flex-shrink-0">
             {getTabCount(tab.id)}
           </span>
         </button>

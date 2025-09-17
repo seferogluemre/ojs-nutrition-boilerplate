@@ -208,7 +208,7 @@ export function ProductReviews({ productId }: { productId: string }) {
   };
 
   return (
-    <section className="mt-12" data-reviews-section>
+    <section className="mt-12 " data-reviews-section>
       {/* Header */}
       <div className="mb-8">
         <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
@@ -216,12 +216,14 @@ export function ProductReviews({ productId }: { productId: string }) {
         </h2>
 
         {/* Tabs */}
-        <ReviewTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          reviewsWithoutImagesCount={reviewsWithoutImages.length}
-          reviewsWithImagesCount={reviewsWithImages.length}
-        />
+        <div className="w-full max-w-full overflow-hidden">
+          <ReviewTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            reviewsWithoutImagesCount={reviewsWithoutImages.length}
+            reviewsWithImagesCount={reviewsWithImages.length}
+          />
+        </div>
       </div>
 
       {/* Rating Overview */}
