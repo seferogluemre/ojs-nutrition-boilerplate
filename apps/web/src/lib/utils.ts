@@ -5,23 +5,33 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Fiyatı Türkiye formatında formatlar (2.890,00 TL)
- */
 export function formatPrice(price: number | string): string {
   const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+  const priceInTL = numericPrice / 100;
   
-  if (isNaN(numericPrice)) return '0,00 TL';
+  if (isNaN(priceInTL)) return '0';
   
-  return numericPrice.toLocaleString('tr-TR', {
+  if (priceInTL >= 100000) {
+    return priceInTL.toLocaleString('tr-TR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+  }
+  
+  
+  if (priceInTL % 1 === 0) {
+    return priceInTL.toLocaleString('tr-TR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+  }
+  
+  return priceInTL.toLocaleString('tr-TR', {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }) + ' TL';
+    maximumFractionDigits: 2
+  });
 }
 
-/**
- * Sipariş durumunu İngilizce'den Türkçe'ye çevirir ve renk kodunu döner
- */
 export function getOrderStatus(status: string): { text: string; colorClass: string } {
   const statusMap: Record<string, { text: string; colorClass: string }> = {
     PENDING: {
