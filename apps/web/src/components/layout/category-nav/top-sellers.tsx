@@ -45,11 +45,14 @@ export const PopularProductsDropdown: React.FC = () => {
       }
     });
     
+    // Debug: Veriyi kontrol et
+    console.log('🔍 Top Sellers Debug:', topSellers);
+    
     return topSellers.sort((a, b) => {
       if (a.average_rating !== b.average_rating) {
         return b.average_rating - a.average_rating;
       }
-      return a.price - b.price;
+      return (a.price || 0) - (b.price || 0);
     }).slice(0, 8); 
   }, [categoriesData]);
 
@@ -59,14 +62,16 @@ export const PopularProductsDropdown: React.FC = () => {
     navigate({ to: `/products/${productId}` });
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    e.stopPropagation(); 
+  // Scroll handling - basit ve etkili çözüm
+  const handleContainerWheel = (e: React.WheelEvent) => {
+    // Event'in dropdown dışına çıkmasını engelle
+    e.stopPropagation();
   };
 
   return (
     <div 
       className="w-full h-[70vh] flex flex-col bg-white"
-      onWheel={handleWheel}
+      onWheel={handleContainerWheel}
     >
       {/* Fixed Header */}
       <div className="flex-shrink-0 p-3 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-red-50">
@@ -85,7 +90,14 @@ export const PopularProductsDropdown: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 scrollbar-thin scrollbar-thumb-orange-300 scrollbar-track-transparent hover:scrollbar-track-orange-100">
+      <div 
+        className="flex-1 overflow-y-auto p-3 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-orange-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-track]:bg-orange-100"
+        style={{ 
+          scrollBehavior: 'smooth',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#fb923c transparent'
+        }}
+      >
         <div className="space-y-2">
           {/* Loading State */}
           {isLoading && (
@@ -145,7 +157,9 @@ export const PopularProductsDropdown: React.FC = () => {
                     </span>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-bold text-gray-900">₺{(product.price / 100).toFixed(0)}</p>
+                    <p className="text-sm font-bold text-gray-900">
+                      ₺{product.price ? (product.price / 100).toFixed(0) : '0'}
+                    </p>
                     <p className="text-xs text-orange-500 font-medium">
                       {product.review_count > 0 ? `${product.review_count} yorum` : 'Yeni ürün'}
                     </p>
@@ -173,7 +187,7 @@ export const PopularProductsDropdown: React.FC = () => {
       {/* Fixed Footer with Brand Info */}
       <div className="flex-shrink-0 px-3 py-2 bg-gradient-to-r from-orange-50 to-red-50 border-t border-orange-200">
         <p className="text-xs text-orange-600 text-center font-medium">
-          🔥 En Çok Tercih Edilen Ürünler
+           En Çok Tercih Edilen Ürünler
         </p>
       </div>
     </div>
