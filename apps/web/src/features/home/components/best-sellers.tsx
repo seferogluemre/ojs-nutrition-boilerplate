@@ -46,8 +46,8 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
               params={{ productId: product.id }}
               className="relative w-full max-w-[200px] mx-auto cursor-pointer rounded-lg bg-white dark:bg-gray-800 shadow-lg transition-shadow duration-300 hover:shadow-xl"
               style={{
-                aspectRatio: "200/375", // Sabit aspect ratio
-                minHeight: "320px",
+                aspectRatio: "200/375", 
+                minHeight: "360px",
                 maxHeight: "380px"
               }}
           >
@@ -69,7 +69,7 @@ export const BestSellers = ({ className, ...props }: BestSellersProps) => {
                 </div>
               </div>
 
-              <div className="p-4 pt-3">
+              <div className="p-4 pt-3 h-[100px]">
                 {/* Product Name */}
                 <h3 className="mb-1 text-sm font-bold leading-tight text-gray-900 dark:text-white">
                   {product.name}
