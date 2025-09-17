@@ -15,7 +15,6 @@ export function AuthenticatedLayout({ children }: Props) {
   return (
     <SearchProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
-        {/* <SkipToMain /> */}
         <AppSidebar />
         <div
           id="content"

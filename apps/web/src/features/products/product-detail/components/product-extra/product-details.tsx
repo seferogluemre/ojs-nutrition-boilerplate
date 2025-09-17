@@ -52,7 +52,7 @@ export function ProductDetails({ explanation }: { explanation: ProductExplanatio
                       <div key={index} className="flex justify-between items-center py-1 border-b border-gray-100 dark:border-gray-800">
                         <span className="font-medium text-gray-900 dark:text-white">{ingredient.name}</span>
                         <span className="text-gray-600 dark:text-gray-400">
-                          {ingredient.amounts.join(", ")}
+                          {ingredient?.amounts?.join(", ")}
                         </span>
                       </div>
                     ))}

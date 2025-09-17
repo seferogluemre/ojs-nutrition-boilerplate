@@ -189,7 +189,6 @@ async function syncCategories(): Promise<void> {
           });
 
           if (dbChildCategory) {
-            // Update existing child category
             dbChildCategory = await prisma.category.update({
               where: { id: dbChildCategory.id },
               data: {
@@ -199,7 +198,6 @@ async function syncCategories(): Promise<void> {
               },
             });
           } else {
-            // Create new child category
             try {
               dbChildCategory = await prisma.category.create({
                 data: {

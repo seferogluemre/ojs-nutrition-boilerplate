@@ -540,6 +540,9 @@ model Product {
   /// @prismabox.options{minimum:0,maximum:5}
   averageRating Int @default(0) @map("average_rating")
 
+  /// @prismabox.options{default:false}
+  isTopSeller Boolean @default(false) @map("is_top_seller")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
