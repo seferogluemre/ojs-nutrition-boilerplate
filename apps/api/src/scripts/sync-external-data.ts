@@ -1,4 +1,5 @@
 import prisma from "../core/prisma";
+import { assignTopSellers } from "./assign-top-sellers";
 
 // External API base URL
 const API_BASE_URL = 'https://fe1111.projects.academy.onlyjs.com/api/v1'
@@ -457,6 +458,10 @@ async function main(): Promise<void> {
     await syncCategories();
 
     await syncProducts();
+
+    // Ürünler sync edildikten sonra top sellers'ları ata
+    console.log('\n🏆 Top sellers atama işlemi başlatılıyor...');
+    await assignTopSellers();
 
     const duration = Date.now() - startTime;
     console.log(`🎉 Senkronizasyon başarıyla tamamlandı! Süre: ${Math.round(duration / 1000)}s`);

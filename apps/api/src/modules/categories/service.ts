@@ -94,14 +94,20 @@ export abstract class CategoriesService {
 
     // Top sellers için helper method
     private static async getTopSellersByCategory(categoryId: number) {
+        // Bu ana kategoriye ait tüm top seller ürünleri getir (direkt + alt kategorilerden)
         const topSellers = await prisma.product.findMany({
             where: {
-                categoryId: categoryId,
+                isTopSeller: true,
                 isActive: true,
+                OR: [
+                    { categoryId: categoryId }, // Direkt bu kategorideki ürünler
+                    { category: { parentId: categoryId } } // Alt kategorilerdeki ürünler
+                ]
             },
             orderBy: [
                 { averageRating: 'desc' },
                 { reviewCount: 'desc' },
+                { price: 'asc' }
             ],
             take: 3,
             select: {
@@ -110,6 +116,9 @@ export abstract class CategoriesService {
                 slug: true,
                 shortDescription: true,
                 primaryPhotoUrl: true,
+                price: true,
+                averageRating: true,
+                reviewCount: true,
             },
         });
 
@@ -119,6 +128,9 @@ export abstract class CategoriesService {
             slug: product.slug,
             description: product.shortDescription,
             picture_src: product.primaryPhotoUrl,
+            price: product.price,
+            average_rating: product.averageRating,
+            review_count: product.reviewCount,
         }));
     }
 

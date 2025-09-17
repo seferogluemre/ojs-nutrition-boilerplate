@@ -4,69 +4,63 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import React from "react";
 
-// API'den gelen Product type'ını kullan
-interface ApiProduct {
+interface TopSeller {
   id: string;
   name: string;
   slug: string;
-  short_explanation: string;
-  shortDescription: string;
-  longDescription: string;
+  description: string;
+  picture_src: string;
   price: number;
-  primaryPhotoUrl: string;
-  averageRating: number;
-  comment_count: number;
-  category: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  tags: string[];
-  stock: number;
-  isActive: boolean;
+  average_rating: number;
+  review_count: number;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  order: number;
+  children: any[];
+  top_sellers: TopSeller[];
 }
 
 export const PopularProductsDropdown: React.FC = () => {
   const navigate = useNavigate();
 
-  // Protein kategorisindeki ürünleri çek
-  const { data: categoriesData } = useQuery({
+  const { data: categoriesData, isLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await (api as any).categories.get();
+      const response = await api.categories.get();
       return response.data;
     },
   });
 
-  // Protein kategorisinin ID'sini bul
-  const proteinCategory = categoriesData?.data?.find(
-    (cat: any) => cat.name === "PROTEİN" || cat.name.toLowerCase().includes("protein")
-  );
+  const allTopSellers: TopSeller[] = React.useMemo(() => {
+    if (!categoriesData?.data) return [];
+    
+    const topSellers: TopSeller[] = [];
+    categoriesData.data.forEach((category: Category) => {
+      if (category.top_sellers && category.top_sellers.length > 0) {
+        topSellers.push(...category.top_sellers);
+      }
+    });
+    
+    return topSellers.sort((a, b) => {
+      if (a.average_rating !== b.average_rating) {
+        return b.average_rating - a.average_rating;
+      }
+      return a.price - b.price;
+    }).slice(0, 8); 
+  }, [categoriesData]);
 
-  // Protein kategorisindeki popüler ürünleri çek
-  const { data: productsData, isLoading } = useQuery({
-    queryKey: ["popular-protein-products", proteinCategory?.id],
-    queryFn: async () => {
-      const response = await (api as any).products.get({
-        query: { 
-          main_category: proteinCategory?.id,
-          limit: 6 // İlk 6 ürünü al
-        },
-      });
-      return response.data;
-    },
-    enabled: !!proteinCategory?.id, // Protein kategorisi bulunduğunda çalıştır
-  });
-
-  const popularProducts: ApiProduct[] = productsData?.data || [];
+  const popularProducts = allTopSellers;
 
   const handleProductClick = (productId: string, slug: string) => {
     navigate({ to: `/products/${productId}` });
   };
 
-  // Scroll olaylarını handle et - dropdown kapanmasını engellemek için
   const handleWheel = (e: React.WheelEvent) => {
-    e.stopPropagation(); // Parent'a scroll event'i göndermemek için
+    e.stopPropagation(); 
   };
 
   return (
@@ -91,7 +85,6 @@ export const PopularProductsDropdown: React.FC = () => {
         </div>
       </div>
 
-      {/* Scrollable Product List */}
       <div className="flex-1 overflow-y-auto p-3 scrollbar-thin scrollbar-thumb-orange-300 scrollbar-track-transparent hover:scrollbar-track-orange-100">
         <div className="space-y-2">
           {/* Loading State */}
@@ -111,7 +104,7 @@ export const PopularProductsDropdown: React.FC = () => {
           )}
 
           {/* Product List */}
-          {!isLoading && popularProducts.map((product: ApiProduct) => (
+          {!isLoading && popularProducts.map((product: TopSeller) => (
             <div 
               key={product.id} 
               className="group flex items-center space-x-3 p-3 hover:bg-orange-50 rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-orange-200 hover:shadow-sm"
@@ -120,7 +113,7 @@ export const PopularProductsDropdown: React.FC = () => {
               {/* Product Image */}
               <div className="w-14 h-14 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex-shrink-0 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                 <SafeImage 
-                  src={product.primaryPhotoUrl || '/images/placeholder.jpg'}
+                  src={product.picture_src || '/images/placeholder.jpg'}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                 />
@@ -132,7 +125,7 @@ export const PopularProductsDropdown: React.FC = () => {
                   {product.name}
                 </h4>
                 <p className="text-xs text-gray-500 truncate mb-2">
-                  {product.short_explanation || product.shortDescription}
+                  {product.description}
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-1">
@@ -140,7 +133,7 @@ export const PopularProductsDropdown: React.FC = () => {
                     {[...Array(5)].map((_, i) => (
                       <svg 
                         key={i}
-                        className={`w-3 h-3 ${i < Math.floor(product.averageRating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                        className={`w-3 h-3 ${i < Math.floor(product.average_rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
                         fill="currentColor" 
                         viewBox="0 0 20 20"
                       >
@@ -148,12 +141,14 @@ export const PopularProductsDropdown: React.FC = () => {
                       </svg>
                     ))}
                     <span className="text-xs text-gray-500 ml-1">
-                      {product.averageRating ? product.averageRating.toFixed(1) : '0.0'}
+                      {product.average_rating ? product.average_rating.toFixed(1) : '0.0'}
                     </span>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-bold text-gray-900">₺{product.price.toFixed(0)}</p>
-                    <p className="text-xs text-orange-500 font-medium">{product.category.name}</p>
+                    <p className="text-sm font-bold text-gray-900">₺{(product.price / 100).toFixed(0)}</p>
+                    <p className="text-xs text-orange-500 font-medium">
+                      {product.review_count > 0 ? `${product.review_count} yorum` : 'Yeni ürün'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -168,7 +163,8 @@ export const PopularProductsDropdown: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
               </div>
-              <p className="text-sm">Protein ürünleri yükleniyor...</p>
+              <p className="text-sm">Henüz top seller ürün bulunmuyor...</p>
+              <p className="text-xs text-gray-400 mt-1">Script çalıştırılarak top seller ürünler atanabilir</p>
             </div>
           )}
         </div>

@@ -28,6 +28,9 @@ export type TopSeller = {
     slug: string;
     description: string;
     picture_src: string;
+    price: number;
+    average_rating: number;
+    review_count: number;
 };
 
 export type HierarchicalCategory = {
