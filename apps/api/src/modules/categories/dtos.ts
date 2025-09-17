@@ -51,6 +51,9 @@ const topSellerSchema = t.Object({
     slug: t.String(),
     description: t.String(),
     picture_src: t.String(),
+    price: t.Number(),
+    average_rating: t.Number(),
+    review_count: t.Number(),
 });
 
 export const categoryResponseDto = t.Object({

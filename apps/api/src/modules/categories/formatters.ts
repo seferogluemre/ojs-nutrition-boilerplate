@@ -1,7 +1,7 @@
-import { Category } from '#prisma/client';
 import { BaseFormatter } from '../../utils';
 import { categoryResponseDto } from './dtos';
 import { CategoryShowResponse } from './types';
+import { Category } from '@prisma/client/index.ts';
 
 type CategoryWithChildren = Category & {
     children?: (Category & {
@@ -12,6 +12,9 @@ type CategoryWithChildren = Category & {
         slug: string;
         description: string;
         picture_src: string;
+        price: number;
+        average_rating: number;
+        review_count: number;
     }[];
 };
 
@@ -34,7 +37,7 @@ export abstract class CategoryFormatter {
                         slug: subChild.slug,
                         order: subChild.order,
                     })) || [],
-                    products: (child as any).products?.map((product: any) => ({
+                    products: child?.products?.map((product) => ({
                         id: product.uuid,
                         name: product.name,
                         slug: product.slug,

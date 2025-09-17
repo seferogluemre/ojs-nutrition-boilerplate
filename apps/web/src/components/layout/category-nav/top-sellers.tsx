@@ -1,5 +1,6 @@
 import { SafeImage } from "#components/ui/safe-image.js";
 import { api } from "#lib/api.js";
+import { formatPrice } from "#lib/utils.js";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import React from "react";
@@ -67,6 +68,7 @@ export const PopularProductsDropdown: React.FC = () => {
     // Event'in dropdown dışına çıkmasını engelle
     e.stopPropagation();
   };
+
 
   return (
     <div 
@@ -158,7 +160,7 @@ export const PopularProductsDropdown: React.FC = () => {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="text-sm font-bold text-gray-900">
-                      ₺{product.price ? (product.price / 100).toFixed(0) : '0'}
+                      ₺{product.price ? formatPrice(product.price) : '0'}
                     </p>
                     <p className="text-xs text-orange-500 font-medium">
                       {product.review_count > 0 ? `${product.review_count} yorum` : 'Yeni ürün'}
@@ -169,7 +171,6 @@ export const PopularProductsDropdown: React.FC = () => {
             </div>
           ))}
 
-          {/* Empty State */}
           {!isLoading && popularProducts.length === 0 && (
             <div className="text-center py-8 text-gray-500">
               <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
@@ -177,8 +178,7 @@ export const PopularProductsDropdown: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
               </div>
-              <p className="text-sm">Henüz top seller ürün bulunmuyor...</p>
-              <p className="text-xs text-gray-400 mt-1">Script çalıştırılarak top seller ürünler atanabilir</p>
+              <p className="text-sm">Henüz çok satan ürün bulunmuyor...</p>
             </div>
           )}
         </div>

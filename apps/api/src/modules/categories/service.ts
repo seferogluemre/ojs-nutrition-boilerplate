@@ -16,7 +16,6 @@ export abstract class CategoriesService {
         throw error;
     }
 
-    // Parent-child validation helper methods
     private static async validateParentCategory(parentId?: string) {
         if (!parentId) return null;
 
@@ -35,7 +34,7 @@ export abstract class CategoriesService {
     }
 
     private static async validateCategoryDepth(parentId?: string) {
-        if (!parentId) return 0; // Ana kategori
+        if (!parentId) return 0; 
 
         let depth = 0;
         let currentParentId = parentId;
@@ -92,7 +91,6 @@ export abstract class CategoriesService {
         }
     }
 
-    // Top sellers için helper method
     private static async getTopSellersByCategory(categoryId: number) {
         // Bu ana kategoriye ait tüm top seller ürünleri getir (direkt + alt kategorilerden)
         const topSellers = await prisma.product.findMany({
@@ -119,6 +117,7 @@ export abstract class CategoriesService {
                 price: true,
                 averageRating: true,
                 reviewCount: true,
+                
             },
         });
 

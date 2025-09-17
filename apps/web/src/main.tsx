@@ -1,5 +1,5 @@
 import { toast } from "#hooks/use-toast";
-import { AuthState, useAuthStore } from "#stores/authStore";
+import { AuthState, useAuthStore } from "#stores/authStore.js";
 import { handleServerError } from "#utils/handle-server-error";
 import {
   QueryCache,
@@ -12,7 +12,6 @@ import { StrictMode, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { ThemeProvider } from "./context/theme-context";
 import "./index.css";
-// Generated Routes
 import { routeTree } from "./routeTree.gen";
 
 const queryClient = new QueryClient({
