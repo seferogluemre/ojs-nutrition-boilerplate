@@ -86,7 +86,10 @@ export const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
           </div>
 
           {/* Sağ kısım - Alt Kategoriler - Scrollable */}
-          <div className="flex-1 overflow-y-auto max-h-[70vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-track-gray-100">
+          <div 
+            className="flex-1 overflow-y-auto max-h-[70vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-track-gray-100"
+            data-dropdown-scroll
+          >
             <div className="p-6">
               <CategoryList 
                 children={category.children} 

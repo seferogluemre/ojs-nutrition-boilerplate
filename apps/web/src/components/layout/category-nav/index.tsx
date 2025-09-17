@@ -178,9 +178,20 @@ export const CategoryNav = ({
       }
     };
 
-    const handleScroll = () => {
-      setHoveredCategory(null);
-      setActiveCategory(null);
+    const handleScroll = (event: Event) => {
+      // Eğer scroll olayı dropdown içindeyse, dropdown'ı kapatma
+      const target = event.target as Element;
+      
+      
+      const isDropdownScroll = target?.closest('[data-dropdown-scroll]') || 
+                              target?.classList?.contains('overflow-y-auto') ||
+                              target?.closest('.overflow-y-auto');
+      
+      
+      if (!isDropdownScroll) {
+        setHoveredCategory(null);
+        setActiveCategory(null);
+      }
     };
 
     if (typeof document !== 'undefined') {

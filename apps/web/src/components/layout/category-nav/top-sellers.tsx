@@ -94,6 +94,7 @@ export const PopularProductsDropdown: React.FC = () => {
 
       <div 
         className="flex-1 overflow-y-auto p-3 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-orange-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-track]:bg-orange-100"
+        data-dropdown-scroll
         style={{ 
           scrollBehavior: 'smooth',
           scrollbarWidth: 'thin',
