@@ -66,11 +66,11 @@ export function ReviewCard({
             >
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                 <SafeImage
-                  src={"http://localhost:3000" + imageUrl}
+                  src={"http://apiojsnutritionboilerpe.lat" + imageUrl}
                   alt={`Yorum fotoğrafı ${index + 1}`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
                   onClick={() => {
-                    window.open("http://localhost:3000" + imageUrl, '_blank');
+                    window.open("http://apiojsnutritionboilerpe.lat" + imageUrl, '_blank');
                   }}
                 />
               </div>

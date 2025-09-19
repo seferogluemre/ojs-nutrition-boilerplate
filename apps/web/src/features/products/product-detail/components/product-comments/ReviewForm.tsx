@@ -61,7 +61,7 @@ export function ReviewForm({ productId, onSuccess, onCancel }: ReviewFormProps) 
         submitFormData.append('images', file);
       });
 
-      const response = await fetch(`http://localhost:3000/api/products/${productId}/comments`, {
+      const response = await fetch(`https://apiojsnutritionboilerpe.lat/api/products/${productId}/comments`, {
         method: 'POST',
         credentials: 'include',
         body: submitFormData,
