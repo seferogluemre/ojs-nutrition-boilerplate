@@ -1,6 +1,6 @@
-import { prisma } from '#core/index.ts';
-import { HandleError } from '#shared/error/handle-error.ts';
-import { BadRequestException } from '#utils/index.ts';
+import { prisma } from '#core/index';
+import { HandleError } from '#shared/error/handle-error';
+import { BadRequestException } from '#utils/index';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NotFoundError } from 'elysia';
 

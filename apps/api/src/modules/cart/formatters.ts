@@ -30,8 +30,8 @@ export abstract class CartFormatter {
   static format(cart: CartPayload) {
     const subtotal = cart.items.reduce((acc, item) => {
       // Variant price'ı kullan (discounted_price varsa onu, yoksa total_price)
-      const variantPrice = item.productVariant.price;
-      const itemPrice = variantPrice?.discounted_price || variantPrice?.total_price || item.product.price;
+      const variantPrice = item.productVariant.price as any;
+      const itemPrice = (variantPrice?.discounted_price || variantPrice?.total_price || item.product.price) as number;
       return acc + itemPrice * item.quantity;
     }, 0);
 

@@ -10,8 +10,8 @@ export abstract class ProductFormatter {
       // 🔥 YENİ ALANLAR:
       short_explanation: data.shortDescription,
       explanation: data.explanation as any || undefined,
-      main_category_id: data.mainCategoryId || undefined,
-      sub_category_id: data.subCategoryId || undefined,
+      mainCategoryId: data.mainCategoryId || undefined,
+      subCategoryId: data.subCategoryId || undefined,
       tags: data.tags || [],
 
       // Mevcut alanlar

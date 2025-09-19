@@ -5,6 +5,8 @@
     "baseUrl": ".",
     "rootDir": ".",
     "tsBuildInfoFile": "../../dist/apps/api/.tsbuildinfo",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "paths": {
       "#prisma/*": ["./prisma/client/*"],
       "#prismabox/*": ["./prisma/prismabox/*"],

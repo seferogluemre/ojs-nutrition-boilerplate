@@ -1,6 +1,6 @@
-import { prisma } from "#core/index.ts";
-import { NotFoundException } from "#utils/http-errors.ts";
-import { PaginationQuery } from "#utils/pagination.ts";
+import { prisma } from "#core/index";
+import { NotFoundException } from "#utils/http-errors";
+import { PaginationQuery } from "#utils/pagination";
 import { Prisma } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { CategoryCreatePayload, CategoryUpdatePayload } from "./types";

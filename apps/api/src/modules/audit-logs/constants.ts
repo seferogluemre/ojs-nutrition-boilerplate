@@ -1,4 +1,4 @@
-import { PrismaModelNamePascalCase } from '#core';
+import { PrismaModelNamePascalCase } from '#core/prisma.ts';
 
 export enum AuditLogAction {
   CREATE = 'Create',
@@ -15,5 +15,4 @@ export const AuditLogEntity = {
   CATEGORY: 'Category',
   ORDER: 'Order',
   CART: 'Cart',
-  PARCEL: 'Parcel',
 } as const satisfies Record<string, PrismaModelNamePascalCase>;

@@ -17,7 +17,7 @@ import {
 import { Tailwind } from '@react-email/tailwind';
 
 const tailwindConfig = {
-  darkMode: ['class'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {

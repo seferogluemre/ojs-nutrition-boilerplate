@@ -1,4 +1,4 @@
-import { auth } from '#modules/auth/authentication/plugin.ts';
+  import { auth } from '#modules/auth/authentication/plugin.ts';
 import { Elysia } from 'elysia';
 import { canReviewDto, commentIndexDto } from './dto';
 import { ProductCommentFormatter } from './formatter';

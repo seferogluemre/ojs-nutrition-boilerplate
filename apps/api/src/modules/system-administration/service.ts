@@ -56,7 +56,7 @@ export class SystemAdministrationService {
       userRole = await RolesService.store({
         name: 'User',
         description: 'Normal kullanıcı',
-        permissions: USER_PERMISSIONS,
+        permissions: [...USER_PERMISSIONS],
       });
     }
 

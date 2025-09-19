@@ -1,4 +1,4 @@
-import { dtoWithMiddlewares } from '#utils/middleware-utils.ts';
+import { dtoWithMiddlewares } from '#utils/middleware-utils';
 import Elysia from 'elysia';
 
 import { AuditLogAction, AuditLogEntity, withAuditLog } from '../audit-logs';
