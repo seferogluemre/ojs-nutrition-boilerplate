@@ -24,9 +24,17 @@ export default function SignInForm() {
       return response.data;
     },
     onSuccess: (data) => {
+      console.log("Login response:", data);
+      console.log("User data:", data.user);
       
       auth.setAccessToken(data.token);
       auth.setUser(data.user);
+
+      // LocalStorage'ı kontrol et
+      setTimeout(() => {
+        console.log("Auth store after login:", auth.user, auth.accessToken);
+        console.log("LocalStorage:", localStorage.getItem('auth-storage'));
+      }, 100);
 
       toast({
         title: "Başarılı giriş ✅", 
