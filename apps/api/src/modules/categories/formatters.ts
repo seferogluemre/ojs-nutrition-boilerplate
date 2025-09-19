@@ -26,7 +26,7 @@ export abstract class CategoryFormatter {
                 name: data.name,
                 slug: data.slug,
                 order: data.order,
-                children: data.children?.map((child: Category) => ({
+                children: data.children?.map((child: CategoryWithChildren) => ({
                     id: child.uuid,
                     name: child.name,
                     slug: child.slug,

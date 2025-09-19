@@ -22,7 +22,7 @@ const app = new Elysia({
   '', 
   async ({ body }) => {
     console.log('body', body);
-    const user = await UsersService.store(body);
+    const user = await UsersService.store(body as any);
     return UserFormatter.response(user);
   },
   // dtoWithMiddlewares(
@@ -67,7 +67,7 @@ const app = new Elysia({
           if (user.id !== id) {
             ensureUserHasPermission(user, PERMISSIONS.USERS.UPDATE);
           }
-          const updatedUser = await UsersService.update(id, body);
+          const updatedUser = await UsersService.update(id, body as any);
           const response = UserFormatter.response(updatedUser);
           return response;
         },

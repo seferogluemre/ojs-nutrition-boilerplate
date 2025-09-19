@@ -59,7 +59,7 @@ export const app = new Elysia({
       const cart = await CartService.get({
         user_id: user.id,
       });
-      return CartFormatter.format(cart!);
+      return CartFormatter.format(cart! as any);
     },
     dtoWithMiddlewares(
       getCartDto,

@@ -3,11 +3,11 @@ import { Prisma, UserAddress } from '#prisma/index';
 import { HandleError } from '#shared/error/handle-error';
 import { InternalServerErrorException, NotFoundException } from '#utils';
 
-import { UserAddressCreatePayload, UserAddressIndexQuery, UserAddressUpdatePayload } from './types';
+import { UserAddressCreatePayload, UserAddressUpdatePayload } from './types';
 
 
 export abstract class UserAddressesService {
-  static async index(query?: UserAddressIndexQuery): Promise<UserAddress[]> {
+  static async index(query?: any): Promise<UserAddress[]> {
     try {
       const filterQuery = query
         ? {

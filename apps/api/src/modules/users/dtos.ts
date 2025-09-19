@@ -2,7 +2,6 @@ import { UserInputUpdate, UserPlain } from '#prismabox/User';
 import { __nullable__, Gender } from '#prismabox/barrel';
 import { t } from 'elysia';
 
-import { Prisma } from '@prisma/client';
 import { ControllerHook, errorResponseDto } from '../../utils';
 import { passwordValidation } from './field-validations';
 
@@ -15,7 +14,7 @@ export function getUserFilters(query?: { id?: string; username?: string; email?:
     return [false, [], undefined] as const;
   }
 
-  const filters: Prisma.UserWhereInput[] = [];
+  const filters: any[] = [];
   const { id, email } = query;
 
   if (id) {

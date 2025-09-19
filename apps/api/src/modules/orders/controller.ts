@@ -41,7 +41,7 @@ export const app = new Elysia({
         order_id: params.id,
       });
       if (!order) throw new NotFoundException('Sipariş bulunamadı');
-      return OrderFormatter.format(order);
+      return OrderFormatter.format(order) as any;
     },
     dtoWithMiddlewares(
       getOrderDetailDto,

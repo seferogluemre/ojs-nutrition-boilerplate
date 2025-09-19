@@ -59,8 +59,8 @@ const app = new Elysia({
         async ({ body }) => {
           let productData = { ...body };
 
-          if (typeof body.primaryPhotoUrl === 'object' && body.primaryPhotoUrl instanceof File) {
-            const { fileUrl } = await FileUploadUtil.uploadProductPhoto(body.primaryPhotoUrl);
+          if (typeof (body as any).primaryPhotoUrl === 'object' && (body as any).primaryPhotoUrl instanceof File) {
+            const { fileUrl } = await FileUploadUtil.uploadProductPhoto((body as any).primaryPhotoUrl!);
             productData = {
               ...productData,
               primaryPhotoUrl: fileUrl,

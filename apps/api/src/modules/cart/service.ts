@@ -1,10 +1,8 @@
 import { prisma } from '#core/index';
 import { HandleError } from '#shared/error/handle-error';
 import { BadRequestException } from '#utils/index';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '#prisma/index';
 import { NotFoundError } from 'elysia';
-
-import { Prisma } from '@prisma/client';
 import { AddToCartParams, GetCartParams, RemoveFromCartParams } from './types';
 
 export abstract class CartService {
@@ -137,7 +135,7 @@ export abstract class CartService {
 
       return cart;
     } catch (error) {
-      throw HandleError.handlePrismaError(error as PrismaClientKnownRequestError, 'cart', 'find');
+      throw HandleError.handlePrismaError(error as any, 'cart', 'find');
     }
   }
 

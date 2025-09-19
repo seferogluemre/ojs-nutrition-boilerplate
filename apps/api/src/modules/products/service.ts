@@ -258,7 +258,8 @@ export abstract class ProductsService {
       const product = await prisma.product.create({
         data: {
           ...data,
-          categoryId: category.id, 
+          categoryId: category.id,
+          primaryPhotoUrl: data.primaryPhotoUrl || '',
         },
         include: {
           category: {

@@ -42,7 +42,7 @@ const app = new Elysia({
         entityType: AuditLogEntity.USER,
         getEntityUuid: (ctx) => {
           const response = ctx.response as ReturnType<typeof UserAddressFormatter.response>;
-          return response.id;
+          return String(response.id);
         },
         getDescription: () => 'Yeni kullanıcı adresi oluşturuldu',
       })
@@ -90,17 +90,11 @@ const app = new Elysia({
   .patch(
     '/:id', 
     async ({ params: { id }, body, user }) => {
-      const existingAddress = await UserAddressesService.show({ 
-        id: id,
-        userId: user.id 
-      });
-      
       const updatedUserAddress = await UserAddressesService.update(id, body);
       
       const response = UserAddressFormatter.response(updatedUserAddress);
       return response;
     },
-    // @ts-ignore - Complex middleware composition
     dtoWithMiddlewares(
       userAddressUpdateDto,
       withAuditLog({

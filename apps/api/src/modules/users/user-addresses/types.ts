@@ -1,5 +1,5 @@
 import { Static } from 'elysia';
-import { userAddressCreateDto, userAddressIndexDto, userAddressShowDto, userAddressUpdateDto } from './dtos';
+import { userAddressCreateDto, userAddressShowDto, userAddressUpdateDto } from './dtos';
 
 export type UserAddressShowResponse = Static<typeof userAddressShowDto.response[200]>;
 
@@ -8,7 +8,7 @@ export type UserAddressCreateResponse = Static<typeof userAddressCreateDto.respo
 
 export type UserAddressUpdatePayload = Static<(typeof userAddressUpdateDto)['body']>;
 
-export type UserAddressIndexQuery = Static<(typeof userAddressIndexDto)['query']>;
+// export type UserAddressIndexQuery = Static<(typeof userAddressIndexDto)['query']>; // Query yok
 
 export type UserAddressShowParams = Static<(typeof userAddressShowDto)['params']>;
 export type UserAddressDestroyParams = UserAddressShowParams;

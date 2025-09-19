@@ -1,13 +1,12 @@
 import { prisma } from "#core/index";
 import { NotFoundException } from "#utils/http-errors";
 import { PaginationQuery } from "#utils/pagination";
-import { Prisma } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "#prisma/index";
 import { CategoryCreatePayload, CategoryUpdatePayload } from "./types";
 
 export abstract class CategoriesService {
     private static async handlePrismaError(error: unknown, context: 'find' | 'create' | 'update' | 'delete') {
-        if (error instanceof PrismaClientKnownRequestError) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2025') {
                 throw new NotFoundException('Kategori bulunamadı');
             }
@@ -138,20 +137,20 @@ export abstract class CategoriesService {
             const { page = 1, perPage = 20, search } = query;
             const skip = (page - 1) * perPage;
 
-            const where: Prisma.CategoryWhereInput = {
+            const where: any = {
                 parentId: null, 
                 ...(search && {
                     OR: [
                         {
                             name: {
                                 contains: search,
-                                mode: Prisma.QueryMode.insensitive,
+                                mode: 'insensitive',
                             },
                         },
                         {
                             slug: {
                                 contains: search,
-                                mode: Prisma.QueryMode.insensitive,
+                                mode: 'insensitive',
                             },
                         },
                     ],

@@ -59,11 +59,11 @@ export const app = new Elysia({
           const files: File[] = [];
           for (const [key, value] of formData.entries()) {
             if (key === 'images' && typeof value === 'object' && 'name' in value) {
-              files.push(value as File);
+              files.push(value as unknown as File);
             } else if (key === 'rating') {
               commentData.rating = Number(value);
             } else {
-              commentData[key] = value || undefined;
+              (commentData as any)[key] = value || undefined;
             }
           }
 

@@ -128,7 +128,7 @@ export function OrderConfirmation({
   const socialLinks = footer.socialLinks;
 
   return (
-    <Tailwind config={tailwindConfig}>
+    <Tailwind config={tailwindConfig as any}>
       <Html className={isDarkMode ? 'dark' : ''}>
         <Head>
           <style>{`

@@ -1,7 +1,6 @@
-import { Prisma } from '@prisma/client';
 
 type SwapDecimalWithNumber<T> = {
-    [k in keyof T]: T[k] extends Prisma.DecimalJsLike
+    [k in keyof T]: T[k] extends any
     ? number
     : T[k] extends object
     ? SwapDecimalWithNumber<T[k]>
@@ -15,7 +14,7 @@ export const decimalsToNumber = <T extends object>(obj: T): SwapDecimalWithNumbe
 
     // @ts-ignore
     Object.keys(obj).forEach((key: keyof T) => {
-        if (Prisma.Decimal.isDecimal(obj[key])) {
+        if (typeof obj[key] === 'object' && obj[key] && 'toNumber' in obj[key]) {
             // @ts-ignore
             obj[key] = obj[key].toNumber();
         } else if (Array.isArray(obj[key])) {
