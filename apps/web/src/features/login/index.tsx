@@ -1,10 +1,10 @@
-import { Card, CardContent } from "#components/ui/card.js";
+import { Card, CardContent } from "#components/ui/card";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "#components/ui/tabs.js";
+} from "#components/ui/tabs";
 import { useState } from "react";
 import SignInForm from "./components/sign-in-form";
 import SignUpForm from "./components/sign-up-form";

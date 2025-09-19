@@ -1,4 +1,4 @@
-import Login from '#features/login/index.js'
+import Login from '#features/login/index'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(public)/login/')({

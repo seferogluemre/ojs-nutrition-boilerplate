@@ -1,8 +1,8 @@
-import { Button } from "#components/ui/button.js";
-import { Input } from "#components/ui/input.js";
-import { Label } from "#components/ui/label.js";
-import { toast } from "#hooks/use-toast.js";
-import { api } from "#lib/api.js";
+import { Button } from "#components/ui/button";
+import { Input } from "#components/ui/input";
+import { Label } from "#components/ui/label";
+import { toast } from "#hooks/use-toast";
+import { api } from "#lib/api";
 import { useAuthStore } from "#stores/authStore.js";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
