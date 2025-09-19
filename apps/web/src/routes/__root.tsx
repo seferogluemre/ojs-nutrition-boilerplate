@@ -23,14 +23,10 @@ export const Route = createRootRouteWithContext<{
       queryFn: async () => {
         if (!auth.accessToken) return null;
 
-        const response = await api.auth.me.get({
-          headers: {
-            authorization: `Bearer ${auth?.accessToken}`,
-          },
-        });
+        const response = await (api as any).auth.me.get();
         return response.data;
       },
-      enabled: !!auth?.accessToken,
+      enabled: !!auth?.accessToken && auth.isHydrated,
       retry: false,
     });
 
@@ -39,24 +35,26 @@ export const Route = createRootRouteWithContext<{
       queryFn: async () => {
         if (!auth.accessToken) return { items: [] };
 
-        const response = await api["cart-items"].get({
-          headers: {
-            authorization: `Bearer ${auth?.accessToken}`,
-          },
-        });
+        const response = await (api as any)["cart-items"].get();
         return response.data;
       },
-      enabled: !!auth?.accessToken,
+      enabled: !!auth?.accessToken && auth.isHydrated,
     });
     
     useEffect(() => {
       if (authData) {
-        auth.setUser(authData);
-      } else if (auth.accessToken && authData === null) {
+        // Transform the /auth/me response to match the login response structure
+        const transformedUser = {
+          ...authData,
+          name: authData.name || `${authData.firstName || ''} ${authData.lastName || ''}`.trim(),
+        };
+        auth.setUser(transformedUser);
+      } else if (auth.accessToken && authData === null && auth.isHydrated) {
+        // Only reset if hydration is complete and we have a token but no user data
         auth.reset();
         clearCart();
       }
-    }, [authData, auth.accessToken]);
+    }, [authData, auth.accessToken, auth.isHydrated]);
     
     useEffect(() => {
       if (cartData?.items) {

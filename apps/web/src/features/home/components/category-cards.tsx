@@ -89,7 +89,6 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
     const subCategory = mainCategory.children?.find((child: any) => child.products && child.products.length > 0);
     return subCategory?.id || null;
   };
-  console.log("data", data);
   useEffect(() => {
     if (data?.data) {
       const updatedCategories = categories.map((cat) => {
@@ -101,7 +100,6 @@ export const CategoryCards = ({ className, ...props }: CategoryCardsProps) => {
         }
 
         const subCategoryId = getSubCategoryId(data.data, cat.name);
-        console.log(`${cat.name} -> SubCategory ID:`, subCategoryId);
         if (subCategoryId) {
           return {
             ...cat,

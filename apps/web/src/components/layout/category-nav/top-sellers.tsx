@@ -46,8 +46,6 @@ export const PopularProductsDropdown: React.FC = () => {
       }
     });
     
-    // Debug: Veriyi kontrol et
-    console.log('🔍 Top Sellers Debug:', topSellers);
     
     return topSellers.sort((a, b) => {
       if (a.average_rating !== b.average_rating) {

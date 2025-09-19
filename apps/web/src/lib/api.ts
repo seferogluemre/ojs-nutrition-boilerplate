@@ -8,6 +8,7 @@ export const api = treaty(env.apiUrl, {
   },
   headers: () => {
     const token = useAuthStore.getState().accessToken;
+    console.log('API headers function called, token:', token);
     return token ? { Authorization: `Bearer ${token}` } : {};
   },
 });

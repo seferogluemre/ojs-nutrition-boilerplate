@@ -17,7 +17,7 @@ export default function SignInForm() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = await api.auth["sign-in"].email.post({
+      const response = await (api as any).auth["sign-in"].email.post({
         email,
         password,
       });
@@ -27,13 +27,16 @@ export default function SignInForm() {
       console.log("Login response:", data);
       console.log("User data:", data.user);
       
-      auth.setAccessToken(data.token);
+      const accessToken = data.token || data.accessToken;
+      
+      auth.setAccessToken(accessToken);
       auth.setUser(data.user);
+      auth.setIsHydrated(true);
 
-      // LocalStorage'ı kontrol et
       setTimeout(() => {
-        console.log("Auth store after login:", auth.user, auth.accessToken);
+        console.log("Auth store after login:", auth.user, auth.accessToken, auth.isHydrated);
         console.log("LocalStorage:", localStorage.getItem('auth-storage'));
+        console.log("Store state:", useAuthStore.getState());
       }, 100);
 
       toast({
@@ -106,7 +109,6 @@ export default function SignInForm() {
 
       <Button
         type="submit"
-        onClick={handleSubmit}
         className="w-full bg-blue-600 py-3 text-sm font-medium text-white hover:bg-blue-700"
       >
         GİRİŞ YAP

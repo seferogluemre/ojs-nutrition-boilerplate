@@ -31,14 +31,11 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
     queryFn: async () => {
       if (!auth.accessToken) return { items: [] };
 
-      const response = await api["cart-items"].get({
-        headers: {
-          authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
+      console.log('Cart sidebar API call, token:', auth.accessToken);
+      const response = await (api as any)["cart-items"].get();
       return response.data;
     },
-    enabled: !!auth.accessToken,
+    enabled: !!auth.accessToken && auth.isHydrated,
   });
 
   useEffect(() => {
@@ -65,12 +62,7 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
         quantity,
       };
 
-      return await api["cart-items"].post(data, {
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
+      return await (api as any)["cart-items"].post(data);
     },
     onSuccess: (response) => {
       // Optimistic update başarılı oldu, backend response ile senkronize et
