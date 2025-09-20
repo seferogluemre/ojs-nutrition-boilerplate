@@ -19,15 +19,15 @@ export const HeroBanner = ({
         // Background image - cover to fill entire space
         "bg-cover bg-center bg-no-repeat",
         // Background image path
-        "bg-[url('/images/banner.png')]",
+        "bg-[url('/images/banner.webp')]",
         // Ensure no overflow
         "overflow-hidden",
         className,
       )}
       style={{
-        backgroundImage: "url('/images/banner.png')"
+        backgroundImage: "url('/images/banner.webp')"
       }}
-      {...props}
+      {...props}  
     >
     </div>
   );
