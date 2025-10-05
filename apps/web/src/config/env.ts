@@ -1,3 +1,3 @@
 export const env = {
-  apiUrl: 'https://apiojsnutritionboilerpe.lat/api'
+  apiUrl: 'http://localhost:3000/api'
 }
