@@ -8,7 +8,7 @@
         "@tanstack/react-query": "^5.72.2",
         "date-fns": "^4.1.0",
         "qrcode": "^1.5.4",
-        "syncpack": "^13.0.2",
+        "syncpack": "^13.0.2"
       },
       "devDependencies": {
         "@dotenvx/dotenvx": "^1.44.1",
@@ -193,7 +193,7 @@
     },
     "packages/tooling-config/tsconfig": {
       "name": "tsconfig-custom",
-      "version": "0.0.0",
+      "version": "0.0.0"
     },
   },
   "trustedDependencies": [
